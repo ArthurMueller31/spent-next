@@ -16,7 +16,7 @@ export default function Funcionalidades() {
               width={150}
               height={150}
             />
-            <p className="text-4xl text-center p-5">
+            <p className="text-4xl text-center p-5 leading-tight">
               Veja suas notas fiscais adicionadas e gastos gerais
             </p>
           </div>
@@ -29,14 +29,14 @@ export default function Funcionalidades() {
               alt="graphic svg"
             />
 
-            <p className="text-4xl text-center p-5">
+            <p className="text-4xl text-center p-5 leading-tight">
               Gráficos para você acompanhar despesas ao longo do tempo
             </p>
           </div>
 
           <div className="flex flex-col items-center max-w-xl">
             <Image src={"table.svg"} width={150} height={150} alt="table svg" />
-            <p className="text-4xl text-center p-5">
+            <p className="text-4xl text-center p-5 leading-tight">
               Tabelas para fácil e rápida visualização das compras
             </p>
           </div>

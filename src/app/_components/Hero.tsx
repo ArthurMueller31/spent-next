@@ -27,7 +27,8 @@ export default function Hero() {
                   alt="spent-logo"
                   width={100}
                   height={100}
-                  quality={100}
+                  unoptimized={true}
+                  priority
                 />
               </a>
             </div>
