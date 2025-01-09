@@ -42,7 +42,7 @@ export default function Funcionalidades() {
           </div>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-center lg:flex lg:justify-end">
           <Link href={"sobre"}>
             <button
               className="flex flex-row items-center
@@ -51,7 +51,9 @@ export default function Funcionalidades() {
               text-white
               rounded-xl 
               transition ease-in-out duration-250
-            bg-customBlueColor  hover:bg-customBlueLighterColor"
+            bg-customBlueColor  hover:bg-customBlueLighterColor
+            
+            "
             >
               Saiba mais
               <Image className="ml-2"
