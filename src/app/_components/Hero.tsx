@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="relative w-full h-[80vh] text-white font-raleway scroll-smooth">
+    <section className="relative w-full h-[80vh] text-white font-raleway">
       {/* Bg image */}
       <Image
         className="bg-black bg-opacity-50"
@@ -36,18 +36,18 @@ export default function Hero() {
             </a>
           </div>
           <nav className="flex gap-10">
-            <a
+            <Link
               href="sobre"
               className="hover:text-gray-300 text-3xl font-light z-20 transition ease-in-out duration-250"
             >
               Sobre
-            </a>
-            <a
+            </Link>
+            <Link
               href="login"
               className="hover:text-gray-300 text-3xl font-medium z-20 transition ease-in-out duration-250"
             >
               Login
-            </a>
+            </Link>
           </nav>
         </header>
 
