@@ -22,7 +22,7 @@ export default function Hero() {
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="flex items-center justify-center rounded z-20">
               <a href="#">
-                <Image
+                <Image className="size-[50] md:size-[100]"
                   src={"/spent-logo1.png"}
                   alt="spent-logo"
                   width={100}
@@ -33,7 +33,7 @@ export default function Hero() {
               </a>
             </div>
             <a href="#" className="z-20">
-              <h1 className="text-5xl z-20">SPENT</h1>
+              <h1 className="text-4xl md:text-5xl z-20">SPENT</h1>
             </a>
           </div>
           <nav className="flex gap-10">
@@ -55,7 +55,7 @@ export default function Hero() {
         {/* Main text for hero */}
         <div className="absolute inset-0 flex flex-col justify-center items-center">
           <div className="text-center px-6 space-y-6 ">
-            <h1 className="text-7xl font-bold text-center leading-snug">
+            <h1 className="text-6xl md:text-7xl font-bold text-center leading-snug">
               Seus gastos organizados <br /> da melhor forma.
             </h1>
             <div className="pt-5">
