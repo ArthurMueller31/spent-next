@@ -5,7 +5,7 @@ export default function Funcionalidades() {
   return (
     <section className="font-raleway">
       <div className="m-16">
-        <h1 className="text-5xl font-bold text-center lg:text-start lg:text-6xl">
+        <h1 className="text-5xl font-bold text-center lg:text-start lg:text-6xl lg:pl-12">
           Funcionalidades
         </h1>
         <div className="flex flex-col m-20 md:flex-row justify-around items-center space-y-10 md:space-y-0">
@@ -42,7 +42,7 @@ export default function Funcionalidades() {
           </div>
         </div>
 
-        <div className="flex justify-center lg:flex lg:justify-end">
+        <div className="flex justify-center lg:flex lg:justify-end lg:pr-28">
           <Link href={"sobre"}>
             <button
               className="flex flex-row items-center
