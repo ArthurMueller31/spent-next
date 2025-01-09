@@ -38,13 +38,13 @@ export default function Hero() {
           <nav className="flex gap-10">
             <a
               href="sobre"
-              className="hover:text-gray-300 text-3xl font-light z-20"
+              className="hover:text-gray-300 text-3xl font-light z-20 transition ease-in-out duration-250"
             >
               Sobre
             </a>
             <a
               href="login"
-              className="hover:text-gray-300 text-3xl font-medium z-20"
+              className="hover:text-gray-300 text-3xl font-medium z-20 transition ease-in-out duration-250"
             >
               Login
             </a>
