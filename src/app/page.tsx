@@ -1,3 +1,4 @@
+import Footer from "./_components/Footer";
 import Funcionalidades from "./_components/Funcionalidades";
 import Hero from "./_components/Hero";
 import LastPage from "./_components/LastPage";
@@ -11,6 +12,7 @@ export default function Home() {
         <Funcionalidades />
         <SmallBanner />
         <LastPage />
+        <Footer />
       </div>
     </>
   );

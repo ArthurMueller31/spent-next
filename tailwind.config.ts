@@ -17,7 +17,8 @@ export default {
         darkBlue: "#243948"
       },
       fontFamily: {
-        "raleway": ["Raleway", "sans-serif"]
+        "raleway": ["Raleway", "sans-serif"],
+        "workSans": ["Work Sans", "serif"]
       }
     },
   },
