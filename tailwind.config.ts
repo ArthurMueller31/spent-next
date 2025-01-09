@@ -12,7 +12,8 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         customBlueColor: "#2b546d",
-        customBlueLighterColor: "#5087a8"
+        customBlueLighterColor: "#5087a8",
+        darkerCustomColor: "#1d1e22"
       },
       fontFamily: {
         "raleway": ["Raleway", "sans-serif"]
