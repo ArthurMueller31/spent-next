@@ -1,8 +1,8 @@
-import Footer from "./_components/Footer";
-import Funcionalidades from "./_components/Funcionalidades";
-import Hero from "./_components/Hero";
-import LastPage from "./_components/LastPage";
-import SmallBanner from "./_components/SmallBanner";
+import Footer from "./_components/LandingPage/Footer";
+import Funcionalidades from "./_components/LandingPage/Funcionalidades";
+import Hero from "./_components/LandingPage/Hero";
+import LastPage from "./_components/LandingPage/LastPage";
+import SmallBanner from "./_components/LandingPage/SmallBanner";
 
 export default function Home() {
   return (

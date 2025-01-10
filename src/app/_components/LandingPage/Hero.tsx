@@ -21,7 +21,7 @@ export default function Hero() {
         <header className="flex justify-between items-center p-6">
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="flex items-center justify-center rounded z-20">
-              <a href="#">
+              <Link href="#">
                 <Image className="size-[50] md:size-[80]"
                   src={"/spent-logo1.png"}
                   alt="spent-logo"
@@ -30,11 +30,11 @@ export default function Hero() {
                   unoptimized={true}
                   priority
                 />
-              </a>
+              </Link>
             </div>
-            <a href="#" className="z-20">
+            <Link href="#" className="z-20">
               <h1 className="hidden sm:text-3xl sm:block md:text-4xl z-20">SPENT</h1>
-            </a>
+            </Link>
           </div>
           <nav className="flex gap-10">
             <Link
