@@ -1,33 +1,15 @@
 import Link from "next/link";
 
-export default function SignUp() {
+export default function Login() {
   return (
     <>
       <div className="font-raleway flex justify-center">
-        <div className="min-h-[90vh] flex flex-col  justify-center py-6 px-4">
+        <div className="min-h-[90vh] flex flex-col justify-center py-6 px-4">
           <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full">
-            <div>
-              <h2 className="lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor">
-                Faça seu cadastro para acessar nosso serviço
-              </h2>
-              <p className="text-md mt-6 text-darkerCustomColor">
-                Começe a gerenciar seus gastos com o nosso site e tenha um
-                controle maior sobre seu dinheiro.
-              </p>
-              <p className="text-md mt-12 text-darkerCustomColor">
-                Já tem uma conta?
-                <Link
-                  href="/login"
-                  className="text-blue-600 font-semibold hover:underline ml-1"
-                >
-                  Faça login
-                </Link>
-              </p>
-            </div>
-
-            <form className="max-w-md md:ml-auto w-full">
+            {/* Form agora está à esquerda */}
+            <form className="max-w-md md:mr-auto w-full">
               <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8">
-                Cadastre-se
+                Acessar minha conta
               </h3>
 
               <div className="space-y-4">
@@ -80,7 +62,7 @@ export default function SignUp() {
                   type="button"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-customBlueColor hover:bg-customBlueLighterColor focus:outline-none"
                 >
-                  Cadastrar-se
+                  Entrar
                 </button>
               </div>
 
@@ -92,7 +74,7 @@ export default function SignUp() {
 
               <div className="space-x-6 flex justify-center">
                 <button type="button" className="border-none outline-none">
-                  <svg
+                <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32px"
                     viewBox="0 0 512 512"
@@ -130,7 +112,7 @@ export default function SignUp() {
                   </svg>
                 </button>
                 <button type="button" className="border-none outline-none">
-                  <svg
+                <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32px"
                     viewBox="0 0 512 512"
@@ -149,6 +131,23 @@ export default function SignUp() {
                 </button>
               </div>
             </form>
+
+            {/* Texto agora está à direita */}
+            <div>
+              <h2 className="hidden md:flex lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor">
+                Faça login para acessar sua conta novamente
+              </h2>
+
+              <p className="text-md mt-12 text-darkerCustomColor">
+                Ainda não tem uma conta?
+                <Link
+                  href="/cadastro"
+                  className="text-blue-600 font-semibold hover:underline ml-1"
+                >
+                  Cadastre-se
+                </Link>
+              </p>
+            </div>
           </div>
         </div>
       </div>
