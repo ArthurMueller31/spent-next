@@ -1,1 +1,1 @@
-*O site está sendo feito, com UI melhorada (melhor do que o MVP que foi testado anteriormente: [https://](https://github.com/ArthurMueller31/spent-web-app))
+# O site está sendo feito, com UI melhorada (melhor do que o MVP que foi testado anteriormente: [link](https://github.com/ArthurMueller31/spent-web-app))
