@@ -37,7 +37,7 @@ export default function SignUp() {
                     type="email"
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
-                    placeholder="Endereço de e-mail"
+                    placeholder="Nome"
                   />
                 </div>
                 <div>
@@ -46,22 +46,13 @@ export default function SignUp() {
                     type="password"
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
-                    placeholder="Senha"
+                    placeholder="E-mail"
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor="remember-me"
-                      className="ml-3 block text-sm text-darkerCustomColor"
-                    >
-                      Salvar para próximo login?
+                    <label className="block text-sm text-darkerCustomColor">
+                      Enviaremos um e-mail com link de confirmação
                     </label>
                   </div>
                   <div className="text-sm">
