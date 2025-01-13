@@ -1,6 +1,70 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
+import { auth, firestore } from "../../../../firebase/firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc} from "firebase/firestore";
+import { format, toZonedTime } from "date-fns-tz"
 
 export default function SignUp() {
+  const [formInputData, setFormInputData] = useState({
+    name: "",
+    email: "",
+    password: ""
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormInputData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        formInputData.email,
+        formInputData.password
+      );
+
+      const user = userCredential.user;
+
+      const timeZone = "America/Sao_Paulo";
+      const dateTimezone = toZonedTime(new Date(), timeZone);
+      const formattedDate = format(dateTimezone, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
+
+      const userDoc = {
+        uid: user.uid,
+        name: formInputData.name,
+        email: formInputData.email,
+        createdAt: formattedDate,
+        pictures: [], // armazenar no futuro
+      }
+
+      await setDoc(doc(firestore, "users", user.uid), userDoc);
+
+      alert("Usuário criado com sucesso e salvo no db");
+      setFormInputData({name: "", email: "", password: ""}); // reset fields
+      
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Erro: ", err);
+        setError(err.message);
+      } else {
+        throw err;
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
       <div className="font-raleway flex justify-center">
@@ -25,7 +89,10 @@ export default function SignUp() {
               </p>
             </div>
 
-            <form className="max-w-md md:ml-auto w-full">
+            <form
+              className="max-w-md md:ml-auto w-full"
+              onSubmit={handleSubmit}
+            >
               <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8">
                 Cadastre-se
               </h3>
@@ -33,8 +100,10 @@ export default function SignUp() {
               <div className="space-y-4">
                 <div>
                   <input
-                    name="email"
-                    type="email"
+                    name="name"
+                    type="text"
+                    value={formInputData.name}
+                    onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
                     placeholder="Nome"
@@ -42,36 +111,52 @@ export default function SignUp() {
                 </div>
                 <div>
                   <input
-                    name="password"
-                    type="password"
+                    name="email"
+                    type="email"
+                    value={formInputData.email}
+                    onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
                     placeholder="E-mail"
                   />
                 </div>
+                <div>
+                  <input
+                    name="password"
+                    type="password"
+                    value={formInputData.password}
+                    onChange={handleChange}
+                    required
+                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    placeholder="Senha"
+                  />
+                </div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center">
                     <label className="block text-sm text-darkerCustomColor">
-                      Enviaremos um e-mail com link de confirmação
+                      Vou ver ainda o que colocar
                     </label>
                   </div>
                   <div className="text-sm">
-                    <a
-                      href="jajvascript:void(0);"
+                    <Link
+                      href="/sobre"
                       className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 font-semibold"
                     >
                       Dúvidas?
-                    </a>
+                    </Link>
                   </div>
                 </div>
+
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
 
               <div className="mt-8">
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-customBlueColor hover:bg-customBlueLighterColor focus:outline-none"
+                  disabled={isLoading}
                 >
-                  Cadastrar-se
+                  {isLoading ? "Cadastrando..." : "Cadastrar-se"}
                 </button>
               </div>
 

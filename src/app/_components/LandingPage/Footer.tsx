@@ -20,7 +20,7 @@ export default function Footer() {
 
       <span className="flex p-2">
         <Image
-          src={"/info.svg"}
+          src={"/icons/info.svg"}
           width={20}
           height={20}
           alt="info svg"
