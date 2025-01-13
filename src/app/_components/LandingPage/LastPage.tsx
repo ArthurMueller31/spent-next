@@ -17,7 +17,7 @@ export default function LastPage() {
 
           <div className="flex justify-center order-1 md:order-2">
             <Image
-              src="/last-page-img1.jpeg"
+              src="/images/last-page-img1.jpeg"
               alt="Homem com várias notas fiscais"
               width={600}
               height={300}
@@ -36,7 +36,7 @@ export default function LastPage() {
 
           <div className="flex justify-center order-4 md:order-3">
             <Image
-              src="/last-page-img2.jpeg"
+              src="/images/last-page-img2.jpeg"
               alt="Homem controlando dinheiro no notebook"
               width={600}
               height={300}

@@ -11,7 +11,7 @@ export default function Funcionalidades() {
         <div className="flex flex-col m-20 md:flex-row justify-around items-center space-y-10 md:space-y-0">
           <div className="flex flex-col items-center max-w-xl">
             <Image
-              src={"/dollar-sign-w-circle.svg"}
+              src={"/icons/dollar-sign-w-circle.svg"}
               alt="dollar sign with circle"
               width={150}
               height={150}
@@ -23,7 +23,7 @@ export default function Funcionalidades() {
 
           <div className="flex flex-col items-center max-w-xl">
             <Image
-              src={"/graphic.svg"}
+              src={"/icons/graphic.svg"}
               width={150}
               height={150}
               alt="graphic svg"
@@ -35,7 +35,7 @@ export default function Funcionalidades() {
           </div>
 
           <div className="flex flex-col items-center max-w-xl">
-            <Image src={"table.svg"} width={150} height={150} alt="table svg" />
+            <Image src={"/icons/table.svg"} width={150} height={150} alt="table svg" />
             <p className="text-4xl text-center p-5 leading-tight">
               Tabelas para fácil e rápida visualização das compras
             </p>
@@ -57,7 +57,7 @@ export default function Funcionalidades() {
             >
               Saiba mais
               <Image className="ml-2"
-                src={"/arrow-forward.svg"}
+                src={"/icons/arrow-forward.svg"}
                 width={30}
                 height={30}
                 alt="arrow"

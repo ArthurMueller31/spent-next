@@ -7,7 +7,7 @@ export default function Hero() {
       {/* Bg image */}
       <Image
         className="bg-black bg-opacity-50"
-        src={"/hero-img.jpeg"}
+        src={"/images/hero-img.jpeg"}
         alt="spent-hero"
         layout="fill"
         objectFit="cover"
@@ -23,7 +23,7 @@ export default function Hero() {
             <div className="flex items-center justify-center rounded z-20">
               <Link href="#">
                 <Image className="size-[50] md:size-[80]"
-                  src={"/spent-logo1.png"}
+                  src={"/images/spent-logo1.png"}
                   alt="spent-logo"
                   width={100}
                   height={100}

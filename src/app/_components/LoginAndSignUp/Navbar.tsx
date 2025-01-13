@@ -7,7 +7,7 @@ export default function Navbar() {
         <div>
           <Link href={"/"} className="p-10 flex flex-row items-center">
             <Image
-              src={"/spent-logo1.png"}
+              src={"/images/spent-logo1.png"}
               width={50}
               height={50}
               alt="spent logo"
