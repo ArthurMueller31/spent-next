@@ -3,70 +3,39 @@
 import Link from "next/link";
 import { useState } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { format, toZonedTime } from "date-fns-tz";
 
 export default function SignUp() {
   // arruma a hora no firestore
   const timeZone = "America/Sao_Paulo";
-  const dateTimezone = toZonedTime(new Date(), timeZone);
-  const formattedDate = format(dateTimezone, "yyyy-MM-dd'T'HH:mm:ssXXX", {
-    timeZone
-  });
+  const formattedDate = format(
+    toZonedTime(new Date(), timeZone),
+    "yyyy-MM-dd'T'HH:mm:ssXXX",
+    {
+      timeZone
+    }
+  );
+
+  // states
 
   const [formInputData, setFormInputData] = useState({
     name: "",
     email: "",
     password: ""
   });
-
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // handlers
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormInputData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleGoogleAuth = async () => {
-    const provider = new GoogleAuthProvider();
-    const firestore = getFirestore();
-
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      const popUpLogin = await signInWithPopup(auth, provider);
-      const user = popUpLogin.user;
-
-      const userDocRef = doc(firestore, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
-
-      if (!userDoc.exists()) {
-        const newUser = {
-          uid: user.uid,
-          name: user.displayName || "Usuário sem nome",
-          email: user.email,
-          photoULR: user.photoURL || null,
-          createdAt: formattedDate
-        };
-
-        await setDoc(userDocRef, newUser);
-      }
-
-      alert("Login com google feito com sucesso");
-    } catch (err) {
-      if (err instanceof Error) {
-        console.error("erro:", err.message);
-        setError(err.message);
-      } else {
-        throw err;
-      }
-    } finally {
-      setIsLoading(false);
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,9 +76,44 @@ export default function SignUp() {
     }
   };
 
-  {
-    /* Google Sign Up */
-  }
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const firestore = getFirestore();
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const popUpLogin = await signInWithPopup(auth, provider);
+      const user = popUpLogin.user;
+
+      const userDocRef = doc(firestore, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        const newUser = {
+          uid: user.uid,
+          name: user.displayName || "Usuário sem nome",
+          email: user.email,
+          photoULR: user.photoURL || null,
+          createdAt: formattedDate
+        };
+
+        await setDoc(userDocRef, newUser);
+      }
+
+      alert("Login com google feito com sucesso");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("erro:", err.message);
+        setError(err.message);
+      } else {
+        throw err;
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>
