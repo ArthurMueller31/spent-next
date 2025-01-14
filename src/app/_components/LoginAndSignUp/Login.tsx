@@ -1,13 +1,78 @@
+"use client";
+
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { auth } from "../../../../firebase/firebase";
 
 export default function Login() {
+  const [formInputData, setFormInputData] = useState({
+    email: "",
+    password: ""
+  });
+
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormInputData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    try {
+      await signInWithEmailAndPassword(
+        auth,
+        formInputData.email,
+        formInputData.password
+      );
+
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Erro: ", err.message);
+        setError(err.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      await signInWithPopup(auth, provider);
+
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("Erro: ", err.message);
+        setError(err.message);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
     <>
       <div className="font-raleway flex justify-center">
         <div className="min-h-[90vh] flex flex-col justify-center py-6 px-4">
           <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full">
             {/* Form agora está à esquerda */}
-            <form className="max-w-md md:mr-auto w-full">
+            <form
+              className="max-w-md md:mr-auto w-full"
+              onSubmit={handleSubmit}
+            >
               <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8">
                 Acessar minha conta
               </h3>
@@ -17,6 +82,8 @@ export default function Login() {
                   <input
                     name="email"
                     type="email"
+                    value={formInputData.email}
+                    onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
                     placeholder="Endereço de e-mail"
@@ -26,11 +93,15 @@ export default function Login() {
                   <input
                     name="password"
                     type="password"
+                    value={formInputData.password}
+                    onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
                     placeholder="Senha"
                   />
                 </div>
+
+                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                 <div className="flex flex-wrap items-center justify-between gap-4">
                   <div className="flex items-center">
                     <input
@@ -59,10 +130,11 @@ export default function Login() {
 
               <div className="mt-8">
                 <button
-                  type="button"
+                  type="submit"
                   className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-customBlueColor hover:bg-customBlueLighterColor focus:outline-none"
+                  disabled={isLoading}
                 >
-                  Entrar
+                  {isLoading ? "Entrando" : "Entrar"}
                 </button>
               </div>
 
@@ -73,8 +145,12 @@ export default function Login() {
               </div>
 
               <div className="space-x-6 flex justify-center">
-                <button type="button" className="border-none outline-none">
-                <svg
+                <button
+                  type="button"
+                  onClick={handleGoogleAuth}
+                  className="border-none outline-none"
+                >
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32px"
                     viewBox="0 0 512 512"
@@ -112,7 +188,7 @@ export default function Login() {
                   </svg>
                 </button>
                 <button type="button" className="border-none outline-none">
-                <svg
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32px"
                     viewBox="0 0 512 512"
