@@ -4,10 +4,18 @@ import Link from "next/link";
 import { useState } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc} from "firebase/firestore";
-import { format, toZonedTime } from "date-fns-tz"
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import { format, toZonedTime } from "date-fns-tz";
 
 export default function SignUp() {
+  // arruma a hora no firestore
+  const timeZone = "America/Sao_Paulo";
+  const dateTimezone = toZonedTime(new Date(), timeZone);
+  const formattedDate = format(dateTimezone, "yyyy-MM-dd'T'HH:mm:ssXXX", {
+    timeZone
+  });
+
   const [formInputData, setFormInputData] = useState({
     name: "",
     email: "",
@@ -20,6 +28,45 @@ export default function SignUp() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormInputData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleGoogleAuth = async () => {
+    const provider = new GoogleAuthProvider();
+    const firestore = getFirestore();
+
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const popUpLogin = await signInWithPopup(auth, provider);
+      const user = popUpLogin.user;
+
+      const userDocRef = doc(firestore, "users", user.uid);
+      const userDoc = await getDoc(userDocRef);
+
+      if (!userDoc.exists()) {
+        const newUser = {
+          uid: user.uid,
+          name: user.displayName || "Usuário sem nome",
+          email: user.email,
+          photoULR: user.photoURL || null,
+          createdAt: formattedDate
+        };
+
+        await setDoc(userDocRef, newUser);
+      }
+
+      alert("Login com google feito com sucesso");
+    } catch (err) {
+      if (err instanceof Error) {
+        console.error("erro:", err.message);
+        setError(err.message);
+      } else {
+        throw err;
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -36,23 +83,18 @@ export default function SignUp() {
 
       const user = userCredential.user;
 
-      const timeZone = "America/Sao_Paulo";
-      const dateTimezone = toZonedTime(new Date(), timeZone);
-      const formattedDate = format(dateTimezone, "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone });
-
       const userDoc = {
         uid: user.uid,
         name: formInputData.name,
         email: formInputData.email,
         createdAt: formattedDate,
-        pictures: [], // armazenar no futuro
-      }
+        pictures: [] // armazenar no futuro
+      };
 
       await setDoc(doc(firestore, "users", user.uid), userDoc);
 
       alert("Usuário criado com sucesso e salvo no db");
-      setFormInputData({name: "", email: "", password: ""}); // reset fields
-      
+      setFormInputData({ name: "", email: "", password: "" }); // reset fields
     } catch (err) {
       if (err instanceof Error) {
         console.error("Erro: ", err);
@@ -64,6 +106,10 @@ export default function SignUp() {
       setIsLoading(false);
     }
   };
+
+  {
+    /* Google Sign Up */
+  }
 
   return (
     <>
@@ -167,7 +213,11 @@ export default function SignUp() {
               </div>
 
               <div className="space-x-6 flex justify-center">
-                <button type="button" className="border-none outline-none">
+                <button
+                  type="button"
+                  onClick={handleGoogleAuth}
+                  className="border-none outline-none"
+                >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="32px"

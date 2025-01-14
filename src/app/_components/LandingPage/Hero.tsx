@@ -6,11 +6,10 @@ export default function Hero() {
     <section className="relative w-full h-[80vh] text-white font-raleway">
       {/* Bg image */}
       <Image
-        className="bg-black bg-opacity-50"
+        className="bg-black bg-opacity-50 object-cover"
         src={"/images/hero-img.jpeg"}
         alt="spent-hero"
-        layout="fill"
-        objectFit="cover"
+        fill={true}
         priority
       />
 
@@ -22,7 +21,8 @@ export default function Hero() {
           <div className="flex items-center space-x-2 cursor-pointer">
             <div className="flex items-center justify-center rounded z-20">
               <Link href="#">
-                <Image className="size-[50] md:size-[80]"
+                <Image
+                  className="size-[50] md:size-[80]"
                   src={"/images/spent-logo1.png"}
                   alt="spent-logo"
                   width={100}
@@ -33,7 +33,9 @@ export default function Hero() {
               </Link>
             </div>
             <Link href="#" className="z-20">
-              <h1 className="hidden sm:text-3xl sm:block md:text-4xl z-20">SPENT</h1>
+              <h1 className="hidden sm:text-3xl sm:block md:text-4xl z-20">
+                SPENT
+              </h1>
             </Link>
           </div>
           <nav className="flex gap-10">
