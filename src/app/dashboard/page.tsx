@@ -1,9 +1,9 @@
 import AuthGuard from "../_components/Auth/AuthGuard";
 
-export default function Dashboard() {
+export default function page() {
   return (
     <AuthGuard>
-      <div>aqui está a página principal</div>
+      <div>Essa é a pg de dashboard</div>
     </AuthGuard>
   );
 }
