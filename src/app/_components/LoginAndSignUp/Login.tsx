@@ -33,7 +33,7 @@ export default function Login() {
         formInputData.password
       );
 
-      router.push("/dashboard");
+      router.push("/home");
     } catch (err) {
       if (err instanceof Error) {
         console.error("Erro: ", err.message);

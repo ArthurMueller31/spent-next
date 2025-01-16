@@ -1,14 +1,28 @@
+"use client"
+
 import Image from "next/image";
 import Link from "next/link";
+import { signOut } from "firebase/auth";
+import { auth } from "../../../../firebase/firebase";
+import { useRouter } from "next/navigation";
 
 export default function AddPageSidebar() {
+  const router = useRouter();
 
-  const totalSpent = "1000,00"
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      router.push("/");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const totalSpent = "1000,00";
 
   return (
     <>
       <aside className="flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700 font-raleway ">
-
         <div className="relative mt-16 flex flex-row items-center justify-center font-workSans border rounded-md">
           <div className="flex flex-row items-center m-2 font-medium">
             <Image
@@ -98,9 +112,9 @@ export default function AddPageSidebar() {
               <span className="mx-4 font-medium">Conta</span>
             </Link>
 
-            <a
-              className="flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
-              href="#"
+            <button
+              className="flex items-center px-4 py-2 mt-5 w-full text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
+              onClick={handleLogout}
             >
               <Image
                 src={"/icons/sidebar-logout.svg"}
@@ -110,7 +124,7 @@ export default function AddPageSidebar() {
               />
 
               <span className="mx-4 font-medium">Sair</span>
-            </a>
+            </button>
           </nav>
 
           <a href="#" className="flex items-center px-4 -mx-2">
