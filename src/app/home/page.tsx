@@ -1,9 +1,11 @@
 import AuthGuard from "../_components/Auth/AuthGuard";
+import Sidebar from "../_components/Dashboard/Sidebar";
 
 export default function page() {
   return (
     <AuthGuard>
-      <div>Essa é a pg de dashboard</div>
+      
+      <Sidebar />
     </AuthGuard>
   );
 }

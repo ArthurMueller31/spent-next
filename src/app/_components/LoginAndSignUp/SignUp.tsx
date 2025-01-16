@@ -203,7 +203,7 @@ export default function SignUp() {
               <div className="mt-8">
                 <button
                   type="submit"
-                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-customBlueColor hover:bg-customBlueLighterColor focus:outline-none"
+                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-darkerCustomColor hover:bg-gray-700 focus:outline-none"
                   disabled={isLoading}
                 >
                   {isLoading ? "Cadastrando..." : "Cadastrar-se"}

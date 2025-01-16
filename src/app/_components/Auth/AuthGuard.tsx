@@ -9,13 +9,13 @@ const AuthGuard = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unlogged = onAuthStateChanged(auth, (user) => {
       if (!user) {
         router.push("/login");
       }
     });
 
-    return () => unsubscribe();
+    return () => unlogged();
   }, [router]);
 
   return <>{children}</>;
