@@ -1,7 +1,7 @@
 export default function AddProducts() {
   return (
     <>
-      <section className="bg-white dark:bg-gray-900 font-raleway flex">
+      <div className="bg-white dark:bg-gray-900 font-raleway flex">
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 flex flex-col justify-center">
           <h2 className="mb-4 text-xl font-medium text-gray-900 dark:text-white max-w-lg text-center">
             Adicione uma nova compra preenchendo as informações abaixo
@@ -13,30 +13,30 @@ export default function AddProducts() {
                   htmlFor="name"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Product Name
+                  Nome do item
                 </label>
                 <input
                   type="text"
                   name="name"
                   id="name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Type product name"
+                  placeholder="Digite o nome do produto"
                   required
                 />
               </div>
               <div className="w-full">
                 <label
-                  htmlFor="brand"
+                  htmlFor="establishment"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Brand
+                  Estabelecimento
                 </label>
                 <input
                   type="text"
-                  name="brand"
-                  id="brand"
+                  name="establishment"
+                  id="establishment"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Product brand"
+                  placeholder="Local da Compra"
                   required
                 />
               </div>
@@ -45,14 +45,14 @@ export default function AddProducts() {
                   htmlFor="price"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Price
+                  Preço
                 </label>
                 <input
                   type="number"
                   name="price"
                   id="price"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="$2999"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
+                  placeholder="R$1200,00"
                   required
                 />
               </div>
@@ -61,19 +61,17 @@ export default function AddProducts() {
                   htmlFor="category"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Category
+                  Categoria
                 </label>
                 <select
                   id="category"
                   className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 >
-                  <option defaultValue={"Select category"}>
-                    Select a category
-                  </option>
-                  <option value="TV">TV/Monitors</option>
-                  <option value="PC">PC</option>
-                  <option value="GA">Gaming/Console</option>
-                  <option value="PH">Phones</option>
+                  <option defaultValue={"0"}>Selecionar</option>
+                  <option value="1">Compra do mercado</option>
+                  <option value="2">Eletrônicos</option>
+                  <option value="3">Utilidades Domésticas</option>
+                  <option value="4">Outro</option>
                 </select>
               </div>
               <div>
@@ -81,14 +79,14 @@ export default function AddProducts() {
                   htmlFor="item-weight"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Item Weight (kg)
+                  Peso (g)
                 </label>
                 <input
                   type="number"
                   name="item-weight"
                   id="item-weight"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="12"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
+                  placeholder="100"
                   required
                 />
               </div>
@@ -97,25 +95,26 @@ export default function AddProducts() {
                   htmlFor="description"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Description
+                  Link da nota fiscal (opcional)
                 </label>
-                <textarea
-                  id="description"
-                  rows={8}
-                  className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-primary-500 focus:border-primary-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Your description here"
-                ></textarea>
+                <input
+                  type="text"
+                  name="invoice-link"
+                  id="invoice-link"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
+                  placeholder="12"
+                />
               </div>
             </div>
             <button
               type="submit"
-              className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+              className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-black bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
             >
-              Add product
+              Adicionar produto
             </button>
           </form>
         </div>
-      </section>
+      </div>
     </>
   );
 }

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { signOut } from "firebase/auth";
-import { auth } from "../../../../firebase/firebase";
+import { auth } from "../../../../../firebase/firebase";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 
@@ -16,7 +16,7 @@ const navItems = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const totalSpent = 10;
+  const totalSpent = 100;
 
   const router = useRouter();
 
@@ -41,10 +41,11 @@ export default function Sidebar() {
               height={40}
             />
             <span title="Seus gastos até hoje">Gastos:</span>
-          </div>
-          <span className="flex flex-row items-center w-auto p-2 text-gray-700 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
+            <span className="flex flex-row items-center w-auto p-2 text-gray-700 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
             <p className="font-medium">R${totalSpent}</p>
           </span>
+          </div>
+          
         </div>
 
         <div className="flex flex-col justify-between flex-1 mt-6">

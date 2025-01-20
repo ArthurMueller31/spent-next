@@ -5,7 +5,7 @@ export default function Navbar() {
   return (
       <nav className="bg-darkerCustomColor w-screen h-16 flex items-center justify-between font-raleway overflow-hidden fixed">
         <div>
-          <Link href={"/"} className="p-10 px-6 flex flex-row items-center">
+          <Link href={"/"} className="p-10 px-14 flex flex-row items-center">
             <Image
               src={"/images/spent-logo1.png"}
               width={50}
