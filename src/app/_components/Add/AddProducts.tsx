@@ -1,118 +1,77 @@
+"use client";
+
+import { firestore } from "../../../../firebase/firebase";
+import { collection, addDoc } from "firebase/firestore";
+import { useState } from "react";
+import { format, toZonedTime } from "date-fns-tz";
+import Image from "next/image";
+
 export default function AddProducts() {
+  const [formData, setFormData] = useState({
+    name: "",
+    establishment: "",
+    price: "",
+    category: "",
+    weight: "",
+    invoiceLink: ""
+  });
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  // arruma a hora no firestore
+  const timeZone = "America/Sao_Paulo";
+  const formattedDate = format(
+    toZonedTime(new Date(), timeZone),
+    "yyyy-MM-dd'T'HH:mm:ssXXX",
+    {
+      timeZone
+    }
+  );
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const docRef = await addDoc(collection(firestore, "users/purchases"), {
+        ...formData,
+        createdAt: formattedDate
+      });
+
+      console.log("Doc adicionado com id: ", docRef.id);
+    } catch (error) {
+      console.error("Erro ao adc doc", error);
+    }
+  };
   return (
     <>
       <div className="bg-white dark:bg-gray-900 font-raleway flex">
-        <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 flex flex-col justify-center">
-          <h2 className="mb-4 text-xl font-medium text-gray-900 dark:text-white max-w-lg text-center">
-            Adicione uma nova compra preenchendo as informações abaixo
+        <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 flex flex-col justify-center mt-16">
+          <h2 className="mb-4 mt-4 text-xl font-medium text-gray-900 dark:text-white max-w-xl text-center">
+            Adicione uma nova compra arrastando ou selecionando a imagem para escanear a nota fiscal e extrair os dados para você, ou de forma manual.
           </h2>
-          <form action="#">
-            <div className="grid gap-4 sm:grid-cols-2 sm:gap-6">
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="name"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Nome do item
-                </label>
-                <input
-                  type="text"
-                  name="name"
-                  id="name"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Digite o nome do produto"
-                  required
-                />
-              </div>
-              <div className="w-full">
-                <label
-                  htmlFor="establishment"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Estabelecimento
-                </label>
-                <input
-                  type="text"
-                  name="establishment"
-                  id="establishment"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                  placeholder="Local da Compra"
-                  required
-                />
-              </div>
-              <div className="w-full">
-                <label
-                  htmlFor="price"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Preço
-                </label>
-                <input
-                  type="number"
-                  name="price"
-                  id="price"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
-                  placeholder="R$1200,00"
-                  required
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="category"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Categoria
-                </label>
-                <select
-                  id="category"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-500 focus:border-primary-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                >
-                  <option defaultValue={"0"}>Selecionar</option>
-                  <option value="1">Compra do mercado</option>
-                  <option value="2">Eletrônicos</option>
-                  <option value="3">Utilidades Domésticas</option>
-                  <option value="4">Outro</option>
-                </select>
-              </div>
-              <div>
-                <label
-                  htmlFor="item-weight"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Peso (g)
-                </label>
-                <input
-                  type="number"
-                  name="item-weight"
-                  id="item-weight"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
-                  placeholder="100"
-                  required
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label
-                  htmlFor="description"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Link da nota fiscal (opcional)
-                </label>
-                <input
-                  type="text"
-                  name="invoice-link"
-                  id="invoice-link"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500 font-workSans"
-                  placeholder="12"
-                />
-              </div>
-            </div>
-            <button
-              type="submit"
-              className="inline-flex items-center px-5 py-2.5 mt-4 sm:mt-6 text-sm font-medium text-center text-black bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
-            >
-              Adicionar produto
+          <Image className="self-center"
+            src={"/icons/drop-here.svg"}
+            width={400}
+            height={400}
+            alt="drop-here"
+          />
+          <input type="file" id="file-input" className="self-center" />
+
+          <div className="my-10 flex items-center gap-4 ">
+            <hr className="w-full border-gray-300" />
+            <p className="text-sm text-darkerCustomColor text-center">ou</p>
+            <hr className="w-full border-gray-300" />
+          </div>
+
+          <div className="flex justify-center">
+            <button className="border border-black border-solid rounded-lg p-2 hover:bg-gray-100 transition duration-200">
+              Adicionar manualmente
             </button>
-          </form>
+          </div>
         </div>
       </div>
     </>
