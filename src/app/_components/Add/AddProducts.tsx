@@ -110,11 +110,10 @@ export default function AddProducts() {
       setIsProcessing(false);
     }
   };
-  
+
   const cleanUpOcrData = (ocrText: string) => {
     const establishmentRegex = /^([\w\s&]+)\s+CNPJ/i;
-    const itemRegex =
-      /^(.*?)\s+Qtde\.\s*([\w:]+)\s+Vl\.?\s*Unit:\s*([\d,.]+)/gm;
+    const itemRegex = /^(.*?)\s+\(Código:/gm;
     const totalRegex = /Valor a pagar R\$:\s*([\d,.]+)/i;
     const dateRegex = /Emissão:\s*(\d{2}\/\d{2}\/\d{4})/i;
 
@@ -128,11 +127,15 @@ export default function AddProducts() {
     const items = [];
     let itemMatch;
     while ((itemMatch = itemRegex.exec(ocrText)) !== null) {
-      items.push({
-        name: itemMatch[1].trim(),
-        quantity: itemMatch[2].trim(),
-        price: parseFloat(itemMatch[3].replace(",", "."))
-      });
+      if (itemMatch[1] /* && itemMatch[3]*/) {
+        items.push({
+          name: itemMatch[1].trim()
+          // quantity: itemMatch[2].trim(),
+          // price: parseFloat(itemMatch[3].replace(",", ".")) || 0
+        });
+      } else {
+        console.warn("Item incompleto: ", itemMatch);
+      }
     }
 
     // extrair valor total
