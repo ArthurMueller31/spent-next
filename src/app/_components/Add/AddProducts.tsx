@@ -92,7 +92,7 @@ export default function AddProducts() {
         const imageData = reader.result as string;
 
         const result = await Tesseract.recognize(imageData, "por", {
-          logger: (info) => console.log(info) // logs da info
+          logger: (info) => console.log(info) // logs de progresso
         });
 
         console.log("Texto bruto: ", result.data.text);
@@ -113,7 +113,7 @@ export default function AddProducts() {
 
   const cleanUpOcrData = (ocrText: string) => {
     const establishmentRegex = /^([\w\s&]+)\s+CNPJ/i;
-    const itemRegex = /^(.*?)\s+\(Código:/gm;
+    const itemRegex = /(.*?)\(Código:/gm;
     const totalRegex = /Valor a pagar R\$:\s*([\d,.]+)/i;
     const dateRegex = /Emissão:\s*(\d{2}\/\d{2}\/\d{4})/i;
 
@@ -124,12 +124,14 @@ export default function AddProducts() {
       : "Nome do estabelecimento não encontrado";
 
     // extrair itens
-    const items = [];
+    const items: { name: string}[] = [];
     let itemMatch;
     while ((itemMatch = itemRegex.exec(ocrText)) !== null) {
-      if (itemMatch[1] /* && itemMatch[3]*/) {
+      const itemName = itemMatch[1]?.trim();
+      
+      if (itemName /* && itemMatch[3]*/) {
         items.push({
-          name: itemMatch[1].trim()
+          name: itemName,
           // quantity: itemMatch[2].trim(),
           // price: parseFloat(itemMatch[3].replace(",", ".")) || 0
         });
@@ -142,7 +144,7 @@ export default function AddProducts() {
 
     const totalMatch = ocrText.match(totalRegex);
     const total = totalMatch
-      ? `valor total: ${parseFloat(totalMatch[1].replace(",", "."))}`
+      ? `Valor total: ${parseFloat(totalMatch[1].replace(",", "."))}`
       : "Total não encontrado";
 
     // extrair data da compra
@@ -152,9 +154,11 @@ export default function AddProducts() {
 
     return { establishment, items, total, purchaseDate };
   };
+
+  
   return (
     <>
-      <div className="bg-white dark:bg-gray-900 font-raleway flex">
+      <div className="bg-gray-100 dark:bg-gray-900 font-raleway flex">
         <div className="py-8 px-4 mx-auto max-w-2xl lg:py-16 flex flex-col justify-center mt-10">
           <h2 className="mb-4 mt-4 text-xl font-medium text-gray-900 dark:text-white max-w-xl text-center">
             Adicione uma nova compra arrastando ou selecionando a imagem para
@@ -166,7 +170,7 @@ export default function AddProducts() {
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             onClick={handleClick}
-            className="border-2 border-dashed border-gray-400 rounded-lg p-8 text-center cursor-pointer flex flex-col"
+            className="border-2 border-dashed border-gray-400 rounded-lg p-8 text-center cursor-pointer flex flex-col bg-white"
           >
             <Image
               className="self-center"
@@ -194,7 +198,7 @@ export default function AddProducts() {
           />
 
           <button
-            className="mt-4 border border-black rounded-lg p-2 hover:bg-gray-100 transition duration-200 cursor-pointer"
+            className="mt-4 border border-black rounded-lg p-2 bg-white hover:bg-gray-100 transition duration-200 cursor-pointer"
             onClick={handleOcrProcessing}
             disabled={!selectedFile || isProcessing}
           >
@@ -217,7 +221,7 @@ export default function AddProducts() {
           </div>
 
           <div className="flex justify-center">
-            <button className="border border-black border-solid rounded-lg p-2 hover:bg-gray-100 transition duration-200">
+            <button className="border border-black border-solid rounded-lg p-2 bg-white hover:bg-gray-100 transition duration-200">
               Adicionar manualmente
             </button>
           </div>
