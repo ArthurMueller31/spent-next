@@ -1,42 +1,15 @@
 "use client";
 
-import { firestore } from "../../../../firebase/firebase";
-import { collection, addDoc, doc } from "firebase/firestore";
 import { useState } from "react";
-import { format, toZonedTime } from "date-fns-tz";
 import Image from "next/image";
 import Tesseract from "tesseract.js";
 
 export default function AddProducts() {
-  const [formData, setFormData] = useState({
-    name: "",
-    establishment: "",
-    price: "",
-    category: "",
-    weight: "",
-    invoiceLink: ""
-  });
+  // parte do ocr
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [ocrText, setOcrText] = useState<string>("");
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({ ...prevData, [name]: value }));
-  };
-
-  // arruma a hora no firestore
-  const timeZone = "America/Sao_Paulo";
-  const formattedDate = format(
-    toZonedTime(new Date(), timeZone),
-    "yyyy-MM-dd'T'HH:mm:ssXXX",
-    {
-      timeZone
-    }
-  );
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -63,20 +36,6 @@ export default function AddProducts() {
     const fileInput = document.getElementById("file-input") as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const docRef = await addDoc(collection(firestore, "purchases"), {
-        ...formData,
-        createdAt: formattedDate
-      });
-
-      console.log("Doc adicionado com id: ", docRef.id);
-    } catch (error) {
-      console.error("Erro ao adc doc", error);
     }
   };
 
@@ -124,14 +83,14 @@ export default function AddProducts() {
       : "Nome do estabelecimento não encontrado";
 
     // extrair itens
-    const items: { name: string}[] = [];
+    const items: { name: string }[] = [];
     let itemMatch;
     while ((itemMatch = itemRegex.exec(ocrText)) !== null) {
       const itemName = itemMatch[1]?.trim();
-      
+
       if (itemName /* && itemMatch[3]*/) {
         items.push({
-          name: itemName,
+          name: itemName
           // quantity: itemMatch[2].trim(),
           // price: parseFloat(itemMatch[3].replace(",", ".")) || 0
         });
@@ -155,7 +114,6 @@ export default function AddProducts() {
     return { establishment, items, total, purchaseDate };
   };
 
-  
   return (
     <>
       <div className="bg-gray-100 dark:bg-gray-900 font-raleway flex">
