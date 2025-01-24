@@ -10,6 +10,7 @@ import {
 } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { format, toZonedTime } from "date-fns-tz";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   // arruma a hora no firestore
@@ -21,6 +22,8 @@ export default function SignUp() {
       timeZone
     }
   );
+
+  const router = useRouter();
 
   // states
 
@@ -62,7 +65,7 @@ export default function SignUp() {
 
       await setDoc(doc(firestore, "users", user.uid), userDoc);
 
-      alert("Usuário criado com sucesso e salvo no db");
+      router.push("/home");
       setFormInputData({ name: "", email: "", password: "" }); // reset fields
     } catch (err) {
       if (err instanceof Error) {
@@ -102,7 +105,7 @@ export default function SignUp() {
         await setDoc(userDocRef, newUser);
       }
 
-      alert("Login com google feito com sucesso");
+      router.push("/home");
     } catch (err) {
       if (err instanceof Error) {
         console.error("erro:", err.message);
