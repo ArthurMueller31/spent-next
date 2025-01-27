@@ -1,35 +1,6 @@
-"use client";
+// só a tabela
 
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../../../firebase/firebase";
-
-async function fetchPurchaseData(userId: string, purchaseId: string) {
-  try {
-    const purchaseRef = doc(
-      firestore,
-      `users/${userId}/purchases/${purchaseId}`
-    );
-    const purchaseDoc = await getDoc(purchaseRef);
-
-    if (purchaseDoc.exists()) {
-      console.log("Dados da Compra:", purchaseDoc.data());
-    } else {
-      console.log("Nenhuma compra encontrada para este ID.");
-    }
-  } catch (error) {
-    console.error("Erro ao buscar dados da compra:", error);
-  }
-}
-
-// Exemplo de uso
-const userId = "Xyr05d43WFgGz7fglJcruM7xkXs2"; // Substitua pelo UID do usuário
-const purchaseId = "IC8Dd9yGEjQ1SnigRd02"; // Substitua pelo ID da compra
-
-const handleClick = () => {
-  fetchPurchaseData(userId, purchaseId);
-};
-
-export default function ProductTable() {
+export default function temp() {
   return (
     <div className="flex h-screen">
       {/* Main Content */}
@@ -44,10 +15,7 @@ export default function ProductTable() {
               className="border border-gray-300 rounded-lg p-2 w-1/4"
             />
             <div className="flex gap-2">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg "
-                onClick={handleClick}
-              >
+              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg">
                 + Adicionar Compra
               </button>
               <button className="bg-gray-200 text-black px-4 py-2 rounded-lg">
