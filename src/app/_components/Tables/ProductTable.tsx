@@ -74,7 +74,23 @@ export default function ProductTable() {
     const fetchData = async () => {
       if (userId) {
         const data = await fetchPurchases(userId);
-        setPurchases(data);
+
+        // ordenar compras de mais recente para mais antiga
+        // mais de uma compra no mesmo dia = ordenar por preço
+        const sortedData = data.sort((a, b) => {
+          const dateA = new Date(a.purchaseDate).getTime();
+          const dateB = new Date(b.purchaseDate).getTime();
+
+          if (dateB !== dateA) {
+            return dateB - dateA;
+          }
+
+          const totalPriceA = calculateTotalPrice(a.items);
+          const totalPriceB = calculateTotalPrice(b.items);
+          return totalPriceB - totalPriceA;
+        });
+
+        setPurchases(sortedData);
       }
     };
 
