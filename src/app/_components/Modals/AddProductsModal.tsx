@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { firestore } from "../../../../firebase/firebase";
-import { collection, addDoc /*doc */ } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
+import { collection, addDoc, doc } from "firebase/firestore";
 import { format, toZonedTime } from "date-fns-tz";
 
 type AddProductsProps = {
@@ -17,6 +18,16 @@ export default function AddProductsModal({
     establishment: "",
     items: [{ name: "", price: "", quantity: "", weight: "" }]
   });
+
+  // arruma a hora no firestore
+  const timeZone = "America/Sao_Paulo";
+  const formattedDate = format(
+    toZonedTime(new Date(), timeZone),
+    "yyyy-MM-dd'T'HH:mm:ssXXX",
+    {
+      timeZone
+    }
+  );
 
   const handleAddItem = () => {
     setFormData((prev) => ({
@@ -40,27 +51,30 @@ export default function AddProductsModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      const docRef = await addDoc(collection(firestore, "purchases"), {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        // não ter possibilidade de ser null
+        return;
+      }
+
+      const userId = user.uid;
+      const userRef = doc(firestore, "users", userId);
+      const purchasesRef = collection(userRef, "purchases");
+
+      const docRef = await addDoc(purchasesRef, {
         ...formData,
         createdAt: formattedDate
       });
 
-      console.log("Doc adicionado com id: ", docRef.id);
+      console.log("Compra adicionada com ID: ", docRef.id);
     } catch (error) {
-      console.error("Erro ao adc doc", error);
+      console.error("Erro ao add compra: ", error);
     }
   };
-
-  // arruma a hora no firestore
-  const timeZone = "America/Sao_Paulo";
-  const formattedDate = format(
-    toZonedTime(new Date(), timeZone),
-    "yyyy-MM-dd'T'HH:mm:ssXXX",
-    {
-      timeZone
-    }
-  );
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
