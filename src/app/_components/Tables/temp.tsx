@@ -1,5 +1,4 @@
-// só a tabela
-
+// tabela antes
 export default function temp() {
   return (
     <div className="flex h-screen">

@@ -1,109 +1,136 @@
 "use client";
 
-import { doc, getDoc } from "firebase/firestore";
-import { firestore } from "../../../../firebase/firebase";
+import { collection, getDocs } from "firebase/firestore";
+import { firestore, auth } from "../../../../firebase/firebase";
+import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 
-async function fetchPurchaseData(userId: string, purchaseId: string) {
-  try {
-    const purchaseRef = doc(
-      firestore,
-      `users/${userId}/purchases/${purchaseId}`
-    );
-    const purchaseDoc = await getDoc(purchaseRef);
-
-    if (purchaseDoc.exists()) {
-      console.log("Dados da Compra:", purchaseDoc.data());
-    } else {
-      console.log("Nenhuma compra encontrada para este ID.");
-    }
-  } catch (error) {
-    console.error("Erro ao buscar dados da compra:", error);
-  }
-}
-
-// Exemplo de uso
-const userId = "Xyr05d43WFgGz7fglJcruM7xkXs2"; // Substitua pelo UID do usuário
-const purchaseId = "IC8Dd9yGEjQ1SnigRd02"; // Substitua pelo ID da compra
-
-const handleClick = () => {
-  fetchPurchaseData(userId, purchaseId);
+type Purchase = {
+  id?: string;
+  establishment: string;
+  purchaseDate: string;
+  createdAt: string;
+  items: Item[];
 };
 
+type Item = {
+  name: string;
+  price: string;
+  quantity: string;
+  weight: string;
+};
+
+async function fetchPurchases(userId: string): Promise<Purchase[]> {
+  const purchasesRef = collection(firestore, `users/${userId}/purchases`);
+  const querySnapshot = await getDocs(purchasesRef);
+
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data()
+  })) as Purchase[];
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString);
+  return Intl.DateTimeFormat("pt-BR").format(date);
+}
+
+function calculateTotalItems(items: Item[]): number {
+  return items.reduce((total, item) => total + Number(item.quantity || 0), 0);
+}
+
+function standardPriceFormat(price: string): number {
+  const standard = price.replace(/[^0-9,.-]/g, "").replace(",", ".");
+  const parsed = parseFloat(standard);
+  return isNaN(parsed) ? 0 : parsed;
+}
+
+function calculateTotalPrice(items: Item[]): number {
+  return items.reduce((total, item) => {
+    const price = standardPriceFormat(item.price);
+    const quantity = parseFloat(item.quantity) || 1;
+    return total + price * quantity;
+  }, 0);
+}
+
 export default function ProductTable() {
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+      }
+    });
+
+    return () => setUidFromLoggedUser();
+  }, []);
+
+  useEffect(() => {
+    // Busca as compras somente se o usuário estiver autenticado
+    const fetchData = async () => {
+      if (userId) {
+        const data = await fetchPurchases(userId);
+        setPurchases(data);
+      }
+    };
+
+    fetchData();
+  }, [userId]);
+
   return (
-    <div className="flex h-screen">
-      {/* Main Content */}
+    <div className="flex h-screen font-raleway tracking-wide">
       <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
-        {/* Table Container */}
         <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
-          <div className="flex justify-between items-center mb-4">
-            {/* Search Bar */}
-            <input
-              type="text"
-              placeholder="Pesquisar"
-              className="border border-gray-300 rounded-lg p-2 w-1/4"
-            />
-            <div className="flex gap-2">
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded-lg "
-                onClick={handleClick}
-              >
-                + Adicionar Compra
-              </button>
-              <button className="bg-gray-200 text-black px-4 py-2 rounded-lg">
-                Ações
-              </button>
-              <button className="bg-gray-200 text-black px-4 py-2 rounded-lg">
-                Filtrar
-              </button>
-            </div>
-          </div>
-          {/* Table */}
-          <table className="w-full border border-gray-300 text-sm text-left">
-            <thead className="bg-gray-100">
-              <tr className="flex justify-around">
-                <th className="flex-1 p-3 border-b text-center">
-                  Local da Compra
-                </th>
-                <th className="flex-1 p-3 border-b text-center">Dia</th>
-                <th className="flex-1 p-3 border-b text-center">Item</th>
-                <th className="flex-1 p-3 border-b text-center">Preço</th>
-                <th className="flex-1 p-3 border-b text-center">Quantidade</th>
-                <th className="flex-1 p-3 border-b text-center">Peso</th>
-                <th className="flex-1 p-3 border-b text-center">
-                  Editar/Excluir
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr className="flex justify-around">
-                <td className="flex-1 p-3 border-b text-center">TOP</td>
-                <td className="flex-1 p-3 border-b text-center">27/01/2025</td>
-                <td className="flex-1 p-3 border-b text-center">Maçã</td>
-                <td className="flex-1 p-3 border-b text-center">12,40</td>
-                <td className="flex-1 p-3 border-b text-center">6</td>
-                <td className="flex-1 p-3 border-b text-center">640</td>
-                <td className="flex-1 p-3 border-b text-center">
-                  <button className="bg-blue-500 text-white px-3 py-1 rounded-md">
-                    Edit
-                  </button>
-                  <button className="bg-red-500 text-white px-3 py-1 ml-2 rounded-md">
-                    Delete
-                  </button>
-                </td>
-              </tr>
-              {/* Repita mais linhas aqui */}
-            </tbody>
-          </table>
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <p>Mostrando 1-10</p>
-            <div className="flex gap-2">
-              <button className="px-3 py-1 bg-gray-200 rounded-md">1</button>
-              <button className="px-3 py-1 bg-gray-200 rounded-md">2</button>
-              <button className="px-3 py-1 bg-gray-200 rounded-md">3</button>
-            </div>
-          </div>
+          {userId && (
+            <table className="w-full border border-gray-300 text-sm text-left rounded-lg">
+              <thead className="bg-gray-100">
+                <tr className="flex justify-around">
+                  <th className="flex-1 p-3 border-b text-center">
+                    Local da Compra
+                  </th>
+                  <th className="flex-1 p-3 border-b text-center">
+                    Quantidade Total de Itens
+                  </th>
+                  <th className="flex-1 p-3 border-b text-center">
+                    Preço Total
+                  </th>
+                  <th className="flex-1 p-3 border-b text-center">
+                    Dia da Compra
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="">
+                {purchases.map((purchase) => (
+                  <tr
+                    key={purchase.id}
+                    className="flex justify-around hover:bg-gray-50"
+                  >
+                    <td className="flex-1 p-3 border-b text-center">
+                      {purchase.establishment || "Desconhecido"}
+                    </td>
+                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                      {calculateTotalItems(purchase.items)}
+                    </td>
+                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                      R${" "}
+                      {calculateTotalPrice(purchase.items)
+                        .toFixed(2)
+                        .replace(".", ",")}
+                    </td>
+                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                      {purchase.purchaseDate
+                        ? formatDate(purchase.purchaseDate)
+                        : "Sem Data"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
       </main>
     </div>
