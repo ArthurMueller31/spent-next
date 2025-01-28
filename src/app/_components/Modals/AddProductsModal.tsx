@@ -73,6 +73,8 @@ export default function AddProductsModal({
       console.log("Compra adicionada com ID: ", docRef.id);
     } catch (error) {
       console.error("Erro ao add compra: ", error);
+    } finally {
+      location.reload();
     }
   };
 

@@ -112,57 +112,59 @@ export default function ProductTable() {
   }, [userId, setTotalSpent]);
 
   return (
-    <div className="flex h-screen font-raleway tracking-wide">
-      <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
-        <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
-          {userId && (
-            <table className="w-full border border-gray-300 text-sm text-left rounded-lg">
-              <thead className="bg-gray-100">
-                <tr className="flex justify-around">
-                  <th className="flex-1 p-3 border-b text-center">
-                    Local da Compra
-                  </th>
-                  <th className="flex-1 p-3 border-b text-center">
-                    Quantidade Total de Itens
-                  </th>
-                  <th className="flex-1 p-3 border-b text-center">
-                    Preço Total
-                  </th>
-                  <th className="flex-1 p-3 border-b text-center">
-                    Dia da Compra
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="">
-                {purchases.map((purchase) => (
-                  <tr
-                    key={purchase.id}
-                    className="flex justify-around hover:bg-gray-50"
-                  >
-                    <td className="flex-1 p-3 border-b text-center">
-                      {purchase.establishment || "Desconhecido"}
-                    </td>
-                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                      {calculateTotalItems(purchase.items)}
-                    </td>
-                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                      R${" "}
-                      {calculateTotalPrice(purchase.items)
-                        .toFixed(2)
-                        .replace(".", ",")}
-                    </td>
-                    <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                      {purchase.purchaseDate
-                        ? formatDate(purchase.purchaseDate)
-                        : "Sem Data"}
-                    </td>
+    <>
+      <div className="flex h-screen font-raleway tracking-wide">
+        <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
+          <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
+            {userId && (
+              <table className="w-full border border-gray-300 text-sm text-left rounded-lg">
+                <thead className="bg-gray-100">
+                  <tr className="flex justify-around">
+                    <th className="flex-1 p-3 border-b text-center">
+                      Local da Compra
+                    </th>
+                    <th className="flex-1 p-3 border-b text-center">
+                      Quantidade Total de Itens
+                    </th>
+                    <th className="flex-1 p-3 border-b text-center">
+                      Preço Total
+                    </th>
+                    <th className="flex-1 p-3 border-b text-center">
+                      Dia da Compra
+                    </th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
-        </div>
-      </main>
-    </div>
+                </thead>
+                <tbody className="">
+                  {purchases.map((purchase) => (
+                    <tr
+                      key={purchase.id}
+                      className="flex justify-around hover:bg-gray-50"
+                    >
+                      <td className="flex-1 p-3 border-b text-center">
+                        {purchase.establishment || "Desconhecido"}
+                      </td>
+                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                        {calculateTotalItems(purchase.items)}
+                      </td>
+                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                        R${" "}
+                        {calculateTotalPrice(purchase.items)
+                          .toFixed(2)
+                          .replace(".", ",")}
+                      </td>
+                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
+                        {purchase.purchaseDate
+                          ? formatDate(purchase.purchaseDate)
+                          : "Sem Data"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+        </main>
+      </div>
+    </>
   );
 }
