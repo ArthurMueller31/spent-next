@@ -15,7 +15,11 @@ const navItems = [
   { href: "/graficos", label: "Gráficos", icon: "/icons/sidebar-graph.svg" }
 ];
 
-export default function Sidebar() {
+type SidebarProps = {
+  totalSpent: number;
+};
+
+export default function Sidebar({ totalSpent }: SidebarProps) {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -30,7 +34,6 @@ export default function Sidebar() {
   };
 
   const pathname = usePathname();
-  const totalSpent = 100;
 
   const router = useRouter();
 
@@ -56,7 +59,9 @@ export default function Sidebar() {
             />
             <span title="Seus gastos até hoje">Gastos:</span>
             <span className="flex flex-row items-center w-auto p-2 text-gray-700 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
-              <p className="font-medium">R${totalSpent}</p>
+              <p className="font-medium">
+                R${totalSpent} {/* .toFixed(2).replace(",", ".") */}
+              </p>
             </span>
           </div>
           <div className="flex flex-row m-2 font-medium justify-center items-center">

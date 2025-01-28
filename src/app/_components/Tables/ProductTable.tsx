@@ -4,6 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import Sidebar from "../Navigation/Sidebar/Sidebar";
 
 type Purchase = {
   id?: string;
@@ -56,6 +57,8 @@ function calculateTotalPrice(items: Item[]): number {
 export default function ProductTable() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
+  const [totalSpent, setTotalSpent] = useState<number>(0);
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -72,6 +75,7 @@ export default function ProductTable() {
   useEffect(() => {
     // Busca as compras somente se o usuário estiver autenticado
     const fetchData = async () => {
+      setLoading(true);
       if (userId) {
         const data = await fetchPurchases(userId);
 
@@ -90,7 +94,13 @@ export default function ProductTable() {
           return totalPriceB - totalPriceA;
         });
 
+        const total = sortedData.reduce((sum, purchase) => {
+          return sum + calculateTotalPrice(purchase.items);
+        }, 0);
+
         setPurchases(sortedData);
+        setTotalSpent(total);
+        setLoading(false);
       }
     };
 
