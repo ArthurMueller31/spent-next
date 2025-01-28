@@ -1,13 +1,13 @@
 import { create } from "zustand";
 
 type SidebarState = {
-  totalSpent: number;
-  setTotalSpent: (value: number) => void;
+  totalSpent: number | string;
+  setTotalSpent: (value: number | string) => void;
 };
 
 const useSidebarStore = create<SidebarState>((set) => ({
   totalSpent: 0,
-  setTotalSpent: (value: number) => set(() => ({ totalSpent: value }))
+  setTotalSpent: (value: number | string) => set(() => ({ totalSpent: value }))
 }));
 
 export default useSidebarStore;

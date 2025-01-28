@@ -54,6 +54,13 @@ function calculateTotalPrice(items: Item[]): number {
   }, 0);
 }
 
+function formatCurrencyToBRL(value: number): string {
+  return new Intl.NumberFormat("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  }).format(value);
+}
+
 export default function ProductTable() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
@@ -97,7 +104,7 @@ export default function ProductTable() {
         }, 0);
 
         setPurchases(sortedData);
-        setTotalSpent(total);
+        setTotalSpent(formatCurrencyToBRL(total));
       }
     };
 

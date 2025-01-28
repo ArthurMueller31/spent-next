@@ -58,7 +58,7 @@ export default function Sidebar() {
             <span title="Seus gastos até hoje">Gastos:</span>
             <span className="flex flex-row items-center w-auto p-2 text-gray-700 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
               <p className="font-medium">
-                R${totalSpent} {/* .toFixed(2).replace(",", ".") */}
+                {totalSpent} {/* Já formatado em BRL */}
               </p>
             </span>
           </div>
