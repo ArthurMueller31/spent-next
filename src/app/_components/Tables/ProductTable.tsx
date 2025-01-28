@@ -4,7 +4,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
 import { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
-import Sidebar from "../Navigation/Sidebar/Sidebar";
+import useSidebarStore from "../Navigation/Sidebar/sidebarStore";
 
 type Purchase = {
   id?: string;
@@ -57,7 +57,7 @@ function calculateTotalPrice(items: Item[]): number {
 export default function ProductTable() {
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-  const [totalSpent, setTotalSpent] = useState<number>(0);
+  const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -102,9 +102,7 @@ export default function ProductTable() {
     };
 
     fetchData();
-  }, [userId]);
-
-  <Sidebar totalSpent={totalSpent} />;
+  }, [userId, setTotalSpent]);
 
   return (
     <div className="flex h-screen font-raleway tracking-wide">

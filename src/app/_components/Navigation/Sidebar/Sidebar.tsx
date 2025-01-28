@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import AddProductsModal from "../../Modals/AddProductsModal";
+import useSidebarStore from "./sidebarStore";
 
 const navItems = [
   { href: "/home", label: "Home", icon: "/icons/sidebar-home.svg" },
@@ -15,11 +16,8 @@ const navItems = [
   { href: "/graficos", label: "Gráficos", icon: "/icons/sidebar-graph.svg" }
 ];
 
-type SidebarProps = {
-  totalSpent: number;
-};
-
-export default function Sidebar({ totalSpent }: SidebarProps) {
+export default function Sidebar() {
+  const totalSpent = useSidebarStore((state) => state.totalSpent);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
