@@ -2,7 +2,7 @@
 
 import { collection, getDocs } from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import useSidebarStore from "../Navigation/Sidebar/sidebarStore";
 
@@ -62,9 +62,10 @@ function formatCurrencyToBRL(value: number): string {
 }
 
 export default function ProductTable() {
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [userId, setUserId] = useState<string | null>(null);
-  const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar
+  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const [expandedPurchase, setExpandedPurchase] = useState<string | null>(null);
+  const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar estado
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -134,30 +135,79 @@ export default function ProductTable() {
                     </th>
                   </tr>
                 </thead>
-                <tbody className="">
+                <tbody>
                   {purchases.map((purchase) => (
-                    <tr
-                      key={purchase.id}
-                      className="flex justify-around hover:bg-gray-50"
-                    >
-                      <td className="flex-1 p-3 border-b text-center">
-                        {purchase.establishment || "Desconhecido"}
-                      </td>
-                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                        {calculateTotalItems(purchase.items)}
-                      </td>
-                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                        R${" "}
-                        {calculateTotalPrice(purchase.items)
-                          .toFixed(2)
-                          .replace(".", ",")}
-                      </td>
-                      <td className="flex-1 p-3 border-b text-center font-hostGrotesk">
-                        {purchase.purchaseDate
-                          ? formatDate(purchase.purchaseDate)
-                          : "Sem Data"}
-                      </td>
-                    </tr>
+                    <React.Fragment key={purchase.id}>
+                      {/* Linha clicável da compra */}
+                      <tr
+                        className="flex justify-around hover:bg-gray-50 cursor-pointer"
+                        onClick={() =>
+                          setExpandedPurchase(
+                            expandedPurchase === purchase.id
+                              ? null
+                              : purchase.id!
+                          )
+                        }
+                      >
+                        <td className="flex-1 p-3 border-b text-center">
+                          {purchase.establishment}
+                        </td>
+                        <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-light">
+                          {calculateTotalItems(purchase.items)}
+                        </td>
+                        <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-light">
+                          {formatCurrencyToBRL(
+                            calculateTotalPrice(purchase.items)
+                          )}
+                        </td>
+                        <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-light">
+                          {formatDate(purchase.purchaseDate)}
+                        </td>
+                      </tr>
+
+                      {/* Tabela expandida da compra */}
+                      {expandedPurchase === purchase.id && (
+                        <tr className="w-full">
+                          <td colSpan={4} className="p-3 bg-gray-50 border-b">
+                            <table className="w-full text-sm border border-gray-300 mt-2 rounded-lg">
+                              <thead className="bg-gray-200">
+                                <tr>
+                                  <th className="p-2 border-b text-center">
+                                    Nome do Item
+                                  </th>
+                                  <th className="p-2 border-b text-center">
+                                    Quantidade
+                                  </th>
+                                  <th className="p-2 border-b text-center">
+                                    Preço Unitário
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {purchase.items.map((item, index) => (
+                                  <tr
+                                    key={`${purchase.id}-${index}`}
+                                    className="text-center"
+                                  >
+                                    <td className="p-2 border-b">
+                                      {item.name}
+                                    </td>
+                                    <td className="p-2 border-b font-hostGrotesk font-light">
+                                      {item.quantity}
+                                    </td>
+                                    <td className="p-2 border-b font-hostGrotesk font-light">
+                                      {formatCurrencyToBRL(
+                                        standardPriceFormat(item.price)
+                                      )}
+                                    </td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
                   ))}
                 </tbody>
               </table>
