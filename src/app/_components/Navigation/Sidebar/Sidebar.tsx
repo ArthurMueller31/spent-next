@@ -11,8 +11,8 @@ import AddProductsModal from "../../Modals/AddProductsModal";
 import useSidebarStore from "./sidebarStore";
 
 const navItems = [
-  { href: "/home", label: "Home", icon: "/icons/sidebar-home.svg" },
-  { href: "/tabelas", label: "Tabelas", icon: "/icons/sidebar-table.svg" },
+  { href: "/home", label: "Página Inicial", icon: "/icons/sidebar-home.svg" },
+  { href: "/tabelas", label: "Minhas compras", icon: "/icons/sidebar-table.svg" },
   { href: "/graficos", label: "Gráficos", icon: "/icons/sidebar-graph.svg" }
 ];
 
