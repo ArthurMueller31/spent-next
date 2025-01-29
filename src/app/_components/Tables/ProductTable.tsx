@@ -119,8 +119,8 @@ export default function ProductTable() {
           <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
             {userId && (
               <table className="w-full border border-gray-300 text-sm text-left rounded-lg">
-                <thead className="bg-gray-100">
-                  <tr className="flex justify-around">
+                <thead className="bg-darkerCustomColor">
+                  <tr className="flex justify-around text-white">
                     <th className="flex-1 p-3 border-b text-center">
                       Local da Compra
                     </th>
@@ -170,7 +170,7 @@ export default function ProductTable() {
                         <tr className="w-full">
                           <td colSpan={4} className="p-3 bg-gray-50 border-b">
                             <table className="w-full text-sm border border-gray-300 mt-2 rounded-lg">
-                              <thead className="bg-gray-200">
+                              <thead className="bg-darkerCustomColor text-white">
                                 <tr>
                                   <th className="p-2 border-b text-center">
                                     Nome do Item
