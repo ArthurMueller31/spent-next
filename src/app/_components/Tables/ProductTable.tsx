@@ -113,10 +113,6 @@ export default function ProductTable() {
     fetchData();
   }, [userId, setTotalSpent]);
 
-  const handlePurchaseEdit = async (/* purchaseId: string */) => {
-    return;
-  };
-
   const handlePurchaseDelete = async (purchaseId: string) => {
     if (!userId) return;
 
@@ -210,7 +206,6 @@ export default function ProductTable() {
                           <button
                             className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
                             title="Editar"
-                            onClick={() => handlePurchaseEdit}
                           >
                             <Image
                               className="m-1"
