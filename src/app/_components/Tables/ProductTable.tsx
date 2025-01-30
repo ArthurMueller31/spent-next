@@ -33,7 +33,12 @@ async function fetchPurchases(userId: string): Promise<Purchase[]> {
 }
 
 function formatDate(dateString: string): string {
-  const date = new Date(dateString);
+  const dateParts = dateString.split("-"); // "2025-01-30" -> ["2025", "01", "30"]
+  const date = new Date(
+    parseInt(dateParts[0]),
+    parseInt(dateParts[1]) - 1,
+    parseInt(dateParts[2])
+  );
   return Intl.DateTimeFormat("pt-BR").format(date);
 }
 
@@ -171,7 +176,6 @@ export default function ProductTable() {
                 <tbody>
                   {purchases.map((purchase) => (
                     <React.Fragment key={purchase.id}>
-                      {/* Linha clicável da compra */}
                       <tr className="flex justify-around hover:bg-gray-50 cursor-pointer">
                         <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
                           {purchase.establishment}
