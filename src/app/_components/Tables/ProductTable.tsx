@@ -137,6 +137,8 @@ export default function ProductTable() {
     } catch (error) {
       console.log("erro ao excluir", error);
       alert("Erro ao excluir a compra, tente novamente.");
+    } finally {
+      location.reload();
     }
   };
 
@@ -161,7 +163,9 @@ export default function ProductTable() {
                     <th className="flex-1 p-3 border-b text-center">
                       Dia da Compra
                     </th>
-                    <th className="flex-1 p-3 border-b text-center">Ações</th>
+                    <th className="flex-1 p-3 border-b text-center">
+                      Expandir/Excluir
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
@@ -203,18 +207,7 @@ export default function ProductTable() {
                               height={30}
                             />
                           </button>
-                          <button
-                            className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
-                            title="Editar"
-                          >
-                            <Image
-                              className="m-1"
-                              src={"./icons/edit.svg"}
-                              alt="edit-icon"
-                              width={30}
-                              height={30}
-                            />
-                          </button>
+
                           <button
                             className="mx-1 px-2 hover:bg-red-600 transition duration-200 rounded-xl"
                             title="Excluir"
@@ -247,6 +240,9 @@ export default function ProductTable() {
                                   <th className="p-2 border-b text-center">
                                     Preço Unitário
                                   </th>
+                                  <th className="p-2 border-b text-center">
+                                    Editar
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -265,6 +261,20 @@ export default function ProductTable() {
                                       {formatCurrencyToBRL(
                                         standardPriceFormat(item.price)
                                       )}
+                                    </td>
+                                    <td className="p-2 border-b font-hostGrotesk">
+                                      <button
+                                        className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
+                                        title="Editar"
+                                      >
+                                        <Image
+                                          className="m-1"
+                                          src={"./icons/edit.svg"}
+                                          alt="edit-icon"
+                                          width={30}
+                                          height={30}
+                                        />
+                                      </button>
                                     </td>
                                   </tr>
                                 ))}
