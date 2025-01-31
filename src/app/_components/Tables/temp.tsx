@@ -1,6 +1,12 @@
 "use client";
 
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -22,7 +28,7 @@ type Item = {
   weight: string;
 };
 
-export async function fetchPurchases(userId: string): Promise<Purchase[]> {
+async function fetchPurchases(userId: string): Promise<Purchase[]> {
   const purchasesRef = collection(firestore, `users/${userId}/purchases`);
   const querySnapshot = await getDocs(purchasesRef);
 
@@ -74,7 +80,7 @@ export default function TempProductTable() {
   const [editedItem, setEditedItem] = useState<Item | null>(null);
   const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar zustand
   const [editingItem, setEditingItem] = useState<string | null>(null);
-  
+
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -145,20 +151,47 @@ export default function TempProductTable() {
       console.log("erro ao excluir", error);
       alert("Erro ao excluir a compra, tente novamente.");
     } finally {
-      location.reload();
+      setPurchases((prevPurchases) =>
+        prevPurchases.filter((p) => p.id !== purchaseId)
+      );
     }
   };
 
-  const handleEditItem = (item: Item) => {
-    setEditedItem(item);
-    setEditingItem(item.name);
+  const handleEditItem = (item: Item, purchaseId: string, index: number) => {
+    setEditedItem({ ...item });
+    setEditingItem(`${purchaseId}-${index}`); // id único pra edição
   };
 
-  const handleSaveEdit = () => {
-    if (editedItem) {
-      // Lógica para salvar os dados editados (por exemplo, atualizar no Firebase)
-      setEditingItem(null); // Fecha o modo de edição
-      setEditedItem(null); // Limpa o item editado
+  const handleSaveEdit = async (purchaseId: string) => {
+    if (!editedItem || !userId || !editingItem) return;
+
+    try {
+      const [purchaseIdRef, itemIndexStr] = editingItem.split("-");
+      const itemIndex = parseInt(itemIndexStr);
+
+      const purchaseIndex = purchases.findIndex((p) => p.id === purchaseIdRef);
+      if (purchaseIndex === -1) return;
+
+      const updatedItems = [...purchases[purchaseIndex].items];
+      updatedItems[itemIndex] = editedItem;
+
+      const purchaseRef = doc(
+        firestore,
+        `users/${userId}/purchases/${purchaseId}`
+      );
+
+      await updateDoc(purchaseRef, { items: updatedItems });
+
+      setPurchases((prev) =>
+        prev.map((p) =>
+          p.id === purchaseId ? { ...p, items: updatedItems } : p
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao salvar edição:", error);
+    } finally {
+      setEditingItem(null);
+      setEditedItem(null);
     }
   };
 
@@ -276,15 +309,22 @@ export default function TempProductTable() {
                                     className="text-center text-base font-medium"
                                   >
                                     <td className="p-2 border-b">
-                                      {editedItem?.name === item.name ? (
+                                      {editingItem ===
+                                      `${purchase.id}-${index}` ? (
                                         <input
                                           type="text"
-                                          value={editedItem.name}
+                                          value={
+                                            editedItem ? editedItem.name : ""
+                                          }
                                           onChange={(e) =>
-                                            setEditedItem({
-                                              ...editedItem,
-                                              name: e.target.value
-                                            })
+                                            setEditedItem((prev) =>
+                                              prev
+                                                ? {
+                                                    ...prev,
+                                                    name: e.target.value
+                                                  }
+                                                : prev
+                                            )
                                           }
                                           className="text-center p-2 rounded-lg border border-darkerCustomColor"
                                         />
@@ -292,6 +332,7 @@ export default function TempProductTable() {
                                         item.name
                                       )}
                                     </td>
+
                                     <td className="p-2 border-b font-hostGrotesk font-medium">
                                       {editedItem?.name === item.name ? (
                                         <input
@@ -323,7 +364,7 @@ export default function TempProductTable() {
                                           className="text-center p-2 rounded-lg border border-darkerCustomColor"
                                         />
                                       ) : (
-                                        item.price
+                                        formatCurrencyToBRL(Number(item.price))
                                       )}
                                     </td>
                                     <td className="p-2 border-b self-center">
@@ -331,7 +372,9 @@ export default function TempProductTable() {
                                         <>
                                           <button
                                             className="m-1 px-2 py-1 hover:bg-green-600 transition duration-200 rounded"
-                                            onClick={handleSaveEdit}
+                                            onClick={() =>
+                                              handleSaveEdit(purchase.id!)
+                                            }
                                           >
                                             <Image
                                               src={"./icons/check.svg"}
@@ -357,7 +400,13 @@ export default function TempProductTable() {
                                       ) : (
                                         <button
                                           className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
-                                          onClick={() => handleEditItem(item)}
+                                          onClick={() =>
+                                            handleEditItem(
+                                              item,
+                                              purchase.id!,
+                                              index
+                                            )
+                                          }
                                           title="Editar"
                                         >
                                           <Image

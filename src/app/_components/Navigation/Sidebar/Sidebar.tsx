@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import AddProductsModal from "../../Modals/AddProductsModal";
-import useSidebarStore from "./sidebarStore";
 import { doc, getDoc } from "firebase/firestore";
+import useSidebarStore from "./sidebarStore";
+import useTotalSpent from "@/hooks/useTotalSpent";
 
 const navItems = [
   { href: "/home", label: "Página Inicial", icon: "/icons/sidebar-home.svg" },
@@ -22,11 +23,11 @@ const navItems = [
 ];
 
 export default function Sidebar() {
-  const totalSpent = useSidebarStore((state) => state.totalSpent);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const totalSpent = useSidebarStore((state) => state.totalSpent);
 
   const handleModalToggle = () => {
     if (!isModalVisible) {
@@ -74,6 +75,8 @@ export default function Sidebar() {
     return () => getUserID();
   }, []);
 
+  useTotalSpent(userId);
+
   return (
     <>
       <aside className="flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700 font-raleway ">
@@ -88,7 +91,10 @@ export default function Sidebar() {
             <span title="Seus gastos até hoje">Gastos:</span>
             <span className="flex flex-row items-center w-auto p-2 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600">
               <p className="font-medium">
-                {totalSpent} {/* Já formatado em BRL */}
+                {totalSpent.toLocaleString("pt-BR", {
+                  style: "currency",
+                  currency: "BRL"
+                })}
               </p>
             </span>
           </div>
@@ -180,7 +186,7 @@ export default function Sidebar() {
               src="/icons/sidebar-account.svg"
               alt="account-icon"
             />
-            <span className="mx-2 font-medium text-gray-800 dark:text-gray-200">
+            <span className="font-medium text-gray-800 dark:text-gray-200">
               {userName ? userName : ""}
             </span>
           </a>

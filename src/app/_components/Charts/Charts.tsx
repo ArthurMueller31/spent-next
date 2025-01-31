@@ -103,13 +103,14 @@ export default function Charts() {
           <div>
             <span>Gastos nos últimos</span>
             <select
-              className="m-2 p-2 rounded-lg font-hostGrotesk"
+              className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100"
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(Number(e.target.value))}
             >
               <option value="7">7 dias</option>
               <option value="30">30 dias</option>
               <option value="90">90 dias</option>
+              <option value="365">1 ano</option>
             </select>
           </div>
           <LineChart
