@@ -1,10 +1,9 @@
 "use client";
 import { LineChart } from "@mui/x-charts";
 import { useState, useEffect } from "react";
-import { firestore } from "../../../../firebase/firebase";
+import { auth, firestore } from "../../../../firebase/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
+import { onAuthStateChanged } from "firebase/auth";
 
 interface PurchaseItem {
   name: string;
@@ -22,17 +21,29 @@ export default function Charts() {
   const [selectedPeriod, setSelectedPeriod] = useState(7);
   const [chartData, setChartData] = useState<number[]>([]);
   const [dates, setDates] = useState<string[]>([]);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => {
+    const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+      }
+    });
+
+    return () => setUidFromLoggedUser();
+  }, []);
 
   useEffect(() => {
     async function fetchPurchases() {
+      if (!userId) return;
+
       const endDate = new Date();
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - selectedPeriod);
 
-      const purchasesRef = collection(
-        firestore,
-        `/users/Xyr05d43WFgGz7fglJcruM7xkXs2/purchases`
-      );
+      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
       const q = query(
         purchasesRef,
         where("purchaseDate", ">=", startDate.toISOString()),
@@ -40,23 +51,42 @@ export default function Charts() {
       );
 
       const querySnapshot = await getDocs(q);
-      const data: number[] = [];
-      const labels: string[] = [];
+
+      // Agrupar compras por data
+      const totalsByDate: { [date: string]: number } = {};
 
       querySnapshot.forEach((doc) => {
         const purchase = doc.data() as Purchase;
-        const date = new Date(purchase.purchaseDate);
+        const dateParts = purchase.purchaseDate.split("-");
+        const date = new Date(
+          parseInt(dateParts[0]),
+          parseInt(dateParts[1]) - 1,
+          parseInt(dateParts[2])
+        );
+        const formattedDate = Intl.DateTimeFormat("pt-BR").format(date);
 
-        const formattedDate = format(date, "dd/MM/yy", { locale: ptBR });
-
-        labels.push(formattedDate);
-
+        // Calculando o total gasto na compra
         const totalSpent = purchase.items.reduce<number>(
-          (sum, item) => sum + parseFloat(item.price),
+          (sum, item) =>
+            sum + parseFloat(item.price) * parseFloat(item.quantity),
           0
         );
 
-        data.push(parseFloat(totalSpent.toFixed(2)));
+        // Agrupar as compras pelo mesmo dia
+        if (totalsByDate[formattedDate]) {
+          totalsByDate[formattedDate] += totalSpent;
+        } else {
+          totalsByDate[formattedDate] = totalSpent;
+        }
+      });
+
+      // Organizando os dados para o gráfico
+      const data: number[] = [];
+      const labels: string[] = [];
+
+      Object.keys(totalsByDate).forEach((date) => {
+        labels.push(date);
+        data.push(parseFloat(totalsByDate[date].toFixed(2)));
       });
 
       setChartData(data);
@@ -64,7 +94,7 @@ export default function Charts() {
     }
 
     fetchPurchases();
-  }, [selectedPeriod]);
+  }, [selectedPeriod, userId]);
 
   return (
     <div className="flex h-screen font-raleway tracking-wide">
@@ -108,8 +138,12 @@ export default function Charts() {
             margin={{ left: 100 }}
           />
         </div>
-
-        {/* 
+      </main>
+    </div>
+  );
+}
+{
+  /* 
         <div className="w-fit max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
           <PieChart
             series={[
@@ -140,8 +174,5 @@ export default function Charts() {
           />
         </div>
 
-        */}
-      </main>
-    </div>
-  );
+        */
 }
