@@ -2,17 +2,22 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { signOut } from "firebase/auth";
-import { auth } from "../../../../../firebase/firebase";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth, firestore } from "../../../../../firebase/firebase";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AddProductsModal from "../../Modals/AddProductsModal";
 import useSidebarStore from "./sidebarStore";
+import { doc, getDoc } from "firebase/firestore";
 
 const navItems = [
   { href: "/home", label: "Página Inicial", icon: "/icons/sidebar-home.svg" },
-  { href: "/minhas-compras", label: "Minhas compras", icon: "/icons/sidebar-table.svg" },
+  {
+    href: "/minhas-compras",
+    label: "Minhas compras",
+    icon: "/icons/sidebar-table.svg"
+  },
   { href: "/graficos", label: "Gráficos", icon: "/icons/sidebar-graph.svg" }
 ];
 
@@ -20,6 +25,8 @@ export default function Sidebar() {
   const totalSpent = useSidebarStore((state) => state.totalSpent);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>(null);
 
   const handleModalToggle = () => {
     if (!isModalVisible) {
@@ -44,6 +51,29 @@ export default function Sidebar() {
     }
   };
 
+  useEffect(() => {
+    const getUserID = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        setUserId(user.uid);
+
+        const userDocRef = doc(firestore, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserName(userData.name || "Usuário");
+        } else {
+          setUserName("Usuário");
+        }
+      } else {
+        setUserId(null);
+        setUserName(null);
+      }
+    });
+
+    return () => getUserID();
+  }, []);
+
   return (
     <>
       <aside className="flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-gray-900 dark:border-gray-700 font-raleway ">
@@ -56,7 +86,7 @@ export default function Sidebar() {
               height={40}
             />
             <span title="Seus gastos até hoje">Gastos:</span>
-            <span className="flex flex-row items-center w-auto p-2 text-gray-700 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
+            <span className="flex flex-row items-center w-auto p-2 bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600">
               <p className="font-medium">
                 {totalSpent} {/* Já formatado em BRL */}
               </p>
@@ -119,8 +149,8 @@ export default function Sidebar() {
               }`}
             >
               <Image
-                src={"/icons/sidebar-account.svg"}
-                alt={`conta-icon`}
+                src={"/icons/sidebar-settings.svg"}
+                alt="settings-icon"
                 width={30}
                 height={30}
               />
@@ -147,11 +177,11 @@ export default function Sidebar() {
               width={100}
               height={100}
               className="object-cover mx-2 rounded-full h-9 w-9"
-              src="/images/last-page-img2.jpeg"
-              alt="avatar"
+              src="/icons/sidebar-account.svg"
+              alt="account-icon"
             />
             <span className="mx-2 font-medium text-gray-800 dark:text-gray-200">
-              John Doe
+              {userName ? userName : ""}
             </span>
           </a>
         </div>

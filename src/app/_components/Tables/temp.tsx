@@ -74,7 +74,7 @@ export default function TempProductTable() {
   const [editedItem, setEditedItem] = useState<Item | null>(null);
   const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar zustand
   const [editingItem, setEditingItem] = useState<string | null>(null);
-
+  
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
       if (user) {
@@ -330,7 +330,7 @@ export default function TempProductTable() {
                                       {editedItem?.name === item.name ? (
                                         <>
                                           <button
-                                            className="m-1 px-2 py-1 bg-green-600 text-white rounded"
+                                            className="m-1 px-2 py-1 hover:bg-green-600 transition duration-200 rounded"
                                             onClick={handleSaveEdit}
                                           >
                                             <Image
@@ -342,7 +342,7 @@ export default function TempProductTable() {
                                             />
                                           </button>
                                           <button
-                                            className="m-1 px-2 py-1 bg-red-600 text-white rounded"
+                                            className="m-1 px-2 py-1 hover:bg-red-600 transition duration-200 rounded"
                                             onClick={handleCancelEdit}
                                             title="Cancelar"
                                           >
