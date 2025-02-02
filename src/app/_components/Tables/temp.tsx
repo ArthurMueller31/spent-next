@@ -22,6 +22,7 @@ type Purchase = {
 };
 
 type Item = {
+  id: string;
   name: string;
   price: string;
   quantity: string;
@@ -222,7 +223,7 @@ export default function TempProductTable() {
                       Dia da Compra
                     </th>
                     <th className="flex-1 p-3 border-b text-center">
-                      Expandir/Excluir
+                      Expandir/Excluir compra
                     </th>
                   </tr>
                 </thead>
@@ -298,7 +299,10 @@ export default function TempProductTable() {
                                     Preço Unitário
                                   </th>
                                   <th className="p-2 border-b text-center">
-                                    Editar
+                                    Peso (g)
+                                  </th>
+                                  <th className="p-2 border-b text-center">
+                                    Editar/Excluir
                                   </th>
                                 </tr>
                               </thead>
@@ -308,23 +312,17 @@ export default function TempProductTable() {
                                     key={`${purchase.id}-${index}`}
                                     className="text-center text-base font-medium"
                                   >
-                                    <td className="p-2 border-b">
+                                    <td className="p-2 border-b font-hostGrotesk font-medium">
                                       {editingItem ===
                                       `${purchase.id}-${index}` ? (
                                         <input
                                           type="text"
-                                          value={
-                                            editedItem ? editedItem.name : ""
-                                          }
+                                          value={editedItem?.name || ""} // aqui só exibe nome
                                           onChange={(e) =>
-                                            setEditedItem((prev) =>
-                                              prev
-                                                ? {
-                                                    ...prev,
-                                                    name: e.target.value
-                                                  }
-                                                : prev
-                                            )
+                                            setEditedItem({
+                                              ...editedItem!,
+                                              name: e.target.value
+                                            })
                                           }
                                           className="text-center p-2 rounded-lg border border-darkerCustomColor"
                                         />
@@ -334,13 +332,14 @@ export default function TempProductTable() {
                                     </td>
 
                                     <td className="p-2 border-b font-hostGrotesk font-medium">
-                                      {editedItem?.name === item.name ? (
+                                      {editingItem ===
+                                      `${purchase.id}-${index}` ? (
                                         <input
                                           type="text"
-                                          value={editedItem.quantity}
+                                          value={editedItem?.quantity || ""} // aqui só exibe nome
                                           onChange={(e) =>
                                             setEditedItem({
-                                              ...editedItem,
+                                              ...editedItem!,
                                               quantity: e.target.value
                                             })
                                           }
@@ -350,14 +349,16 @@ export default function TempProductTable() {
                                         item.quantity
                                       )}
                                     </td>
+
                                     <td className="p-2 border-b font-hostGrotesk">
-                                      {editedItem?.name === item.name ? (
+                                      {editingItem ===
+                                      `${purchase.id}-${index}` ? (
                                         <input
                                           type="text"
-                                          value={editedItem.price}
+                                          value={editedItem?.price || ""} // aqui só exibe nome
                                           onChange={(e) =>
                                             setEditedItem({
-                                              ...editedItem,
+                                              ...editedItem!,
                                               price: e.target.value
                                             })
                                           }
@@ -367,8 +368,28 @@ export default function TempProductTable() {
                                         formatCurrencyToBRL(Number(item.price))
                                       )}
                                     </td>
+
+                                    <td className="p-2 border-b font-hostGrotesk">
+                                      {editingItem ===
+                                      `${purchase.id}-${index}` ? (
+                                        <input
+                                          type="text"
+                                          value={editedItem?.weight || ""} // aqui só exibe nome
+                                          onChange={(e) =>
+                                            setEditedItem({
+                                              ...editedItem!,
+                                              weight: e.target.value
+                                            })
+                                          }
+                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                        />
+                                      ) : (
+                                        item.weight
+                                      )}
+                                    </td>
                                     <td className="p-2 border-b self-center">
-                                      {editedItem?.name === item.name ? (
+                                      {editingItem ===
+                                      `${purchase.id}-${index}` ? (
                                         <>
                                           <button
                                             className="m-1 px-2 py-1 hover:bg-green-600 transition duration-200 rounded"
@@ -398,25 +419,36 @@ export default function TempProductTable() {
                                           </button>
                                         </>
                                       ) : (
-                                        <button
-                                          className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
-                                          onClick={() =>
-                                            handleEditItem(
-                                              item,
-                                              purchase.id!,
-                                              index
-                                            )
-                                          }
-                                          title="Editar"
-                                        >
-                                          <Image
-                                            className="m-1"
-                                            src={"./icons/edit.svg"}
-                                            alt="edit-icon"
-                                            width={25}
-                                            height={25}
-                                          />
-                                        </button>
+                                        <>
+                                          <button
+                                            className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
+                                            onClick={() =>
+                                              handleEditItem(
+                                                item,
+                                                purchase.id!,
+                                                index
+                                              )
+                                            }
+                                            title="Editar"
+                                          >
+                                            <Image
+                                              className="m-1"
+                                              src={"./icons/edit.svg"}
+                                              alt="edit-icon"
+                                              width={25}
+                                              height={25}
+                                            />
+                                          </button>
+                                          <button className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg">
+                                            <Image
+                                              className="m-1"
+                                              src={"./icons/delete.svg"}
+                                              alt="delete-bin-icon"
+                                              width={25}
+                                              height={25}
+                                            />
+                                          </button>
+                                        </>
                                       )}
                                     </td>
                                   </tr>
