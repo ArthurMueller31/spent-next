@@ -201,6 +201,33 @@ export default function TempProductTable() {
     setEditingItem(null); // Limpa o estado de edição
   };
 
+  const handleItemDelete = async (purchaseId: string, itemIndex: number) => {
+    if (!userId) return;
+
+    try {
+      const purchaseIndex = purchases.findIndex((p) => p.id === purchaseId);
+      if (purchaseIndex === -1) return;
+
+      const updatedItems = [...purchases[purchaseIndex].items];
+      updatedItems.splice(itemIndex, 1);
+
+      const purchaseRef = doc(
+        firestore,
+        `users/${userId}/purchases/${purchaseId}`
+      );
+
+      await updateDoc(purchaseRef, { items: updatedItems });
+
+      setPurchases((prevPurchases) =>
+        prevPurchases.map((p) =>
+          p.id === purchaseId ? { ...p, items: updatedItems } : p
+        )
+      );
+    } catch (error) {
+      console.log("Erro:", error);
+    }
+  };
+
   return (
     <>
       <div className="flex h-screen font-raleway tracking-wide">
@@ -306,153 +333,168 @@ export default function TempProductTable() {
                                   </th>
                                 </tr>
                               </thead>
+
                               <tbody>
-                                {purchase.items.map((item, index) => (
-                                  <tr
-                                    key={`${purchase.id}-${index}`}
-                                    className="text-center text-base font-medium"
-                                  >
-                                    <td className="p-2 border-b font-hostGrotesk font-medium">
-                                      {editingItem ===
-                                      `${purchase.id}-${index}` ? (
-                                        <input
-                                          type="text"
-                                          value={editedItem?.name || ""} // aqui só exibe nome
-                                          onChange={(e) =>
-                                            setEditedItem({
-                                              ...editedItem!,
-                                              name: e.target.value
-                                            })
-                                          }
-                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
-                                        />
-                                      ) : (
-                                        item.name
-                                      )}
-                                    </td>
-
-                                    <td className="p-2 border-b font-hostGrotesk font-medium">
-                                      {editingItem ===
-                                      `${purchase.id}-${index}` ? (
-                                        <input
-                                          type="text"
-                                          value={editedItem?.quantity || ""} // aqui só exibe nome
-                                          onChange={(e) =>
-                                            setEditedItem({
-                                              ...editedItem!,
-                                              quantity: e.target.value
-                                            })
-                                          }
-                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
-                                        />
-                                      ) : (
-                                        item.quantity
-                                      )}
-                                    </td>
-
-                                    <td className="p-2 border-b font-hostGrotesk">
-                                      {editingItem ===
-                                      `${purchase.id}-${index}` ? (
-                                        <input
-                                          type="text"
-                                          value={editedItem?.price || ""} // aqui só exibe nome
-                                          onChange={(e) =>
-                                            setEditedItem({
-                                              ...editedItem!,
-                                              price: e.target.value
-                                            })
-                                          }
-                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
-                                        />
-                                      ) : (
-                                        formatCurrencyToBRL(Number(item.price))
-                                      )}
-                                    </td>
-
-                                    <td className="p-2 border-b font-hostGrotesk">
-                                      {editingItem ===
-                                      `${purchase.id}-${index}` ? (
-                                        <input
-                                          type="text"
-                                          value={editedItem?.weight || ""} // aqui só exibe nome
-                                          onChange={(e) =>
-                                            setEditedItem({
-                                              ...editedItem!,
-                                              weight: e.target.value
-                                            })
-                                          }
-                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
-                                        />
-                                      ) : (
-                                        item.weight
-                                      )}
-                                    </td>
-                                    <td className="p-2 border-b self-center">
-                                      {editingItem ===
-                                      `${purchase.id}-${index}` ? (
-                                        <>
-                                          <button
-                                            className="m-1 px-2 py-1 hover:bg-green-600 transition duration-200 rounded"
-                                            onClick={() =>
-                                              handleSaveEdit(purchase.id!)
+                                {/* Ordena itens em ordem alfabética */}
+                                {purchase.items
+                                  .slice()
+                                  .sort((a, b) => a.name.localeCompare(b.name))
+                                  .map((item, index) => (
+                                    <tr
+                                      key={`${purchase.id}-${index}`}
+                                      className="text-center text-base font-medium"
+                                    >
+                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.name || ""}
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                name: e.target.value
+                                              })
                                             }
-                                          >
-                                            <Image
-                                              src={"./icons/check.svg"}
-                                              alt="save-icon"
-                                              width={20}
-                                              height={20}
-                                              title="Salvar"
-                                            />
-                                          </button>
-                                          <button
-                                            className="m-1 px-2 py-1 hover:bg-red-600 transition duration-200 rounded"
-                                            onClick={handleCancelEdit}
-                                            title="Cancelar"
-                                          >
-                                            <Image
-                                              src={"./icons/cancel.svg"}
-                                              alt="cancel-icon"
-                                              width={20}
-                                              height={20}
-                                            />
-                                          </button>
-                                        </>
-                                      ) : (
-                                        <>
-                                          <button
-                                            className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
-                                            onClick={() =>
-                                              handleEditItem(
-                                                item,
-                                                purchase.id!,
-                                                index
-                                              )
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.name
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.quantity || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                quantity: e.target.value
+                                              })
                                             }
-                                            title="Editar"
-                                          >
-                                            <Image
-                                              className="m-1"
-                                              src={"./icons/edit.svg"}
-                                              alt="edit-icon"
-                                              width={25}
-                                              height={25}
-                                            />
-                                          </button>
-                                          <button className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg">
-                                            <Image
-                                              className="m-1"
-                                              src={"./icons/delete.svg"}
-                                              alt="delete-bin-icon"
-                                              width={25}
-                                              height={25}
-                                            />
-                                          </button>
-                                        </>
-                                      )}
-                                    </td>
-                                  </tr>
-                                ))}
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.quantity
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.price || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                price: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          formatCurrencyToBRL(
+                                            Number(item.price)
+                                          )
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.weight || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                weight: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.weight
+                                        )}
+                                      </td>
+                                      <td className="p-2 border-b self-center">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <>
+                                            <button
+                                              className="m-1 px-2 py-1 hover:bg-green-600 transition duration-200 rounded"
+                                              onClick={() =>
+                                                handleSaveEdit(purchase.id!)
+                                              }
+                                            >
+                                              <Image
+                                                src={"./icons/check.svg"}
+                                                alt="save-icon"
+                                                width={20}
+                                                height={20}
+                                                title="Salvar"
+                                              />
+                                            </button>
+                                            <button
+                                              className="m-1 px-2 py-1 hover:bg-red-600 transition duration-200 rounded"
+                                              onClick={handleCancelEdit}
+                                              title="Cancelar"
+                                            >
+                                              <Image
+                                                src={"./icons/cancel.svg"}
+                                                alt="cancel-icon"
+                                                width={20}
+                                                height={20}
+                                              />
+                                            </button>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <button
+                                              className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
+                                              onClick={() =>
+                                                handleEditItem(
+                                                  item,
+                                                  purchase.id!,
+                                                  index
+                                                )
+                                              }
+                                              title="Editar"
+                                            >
+                                              <Image
+                                                className="m-1"
+                                                src={"./icons/edit.svg"}
+                                                alt="edit-icon"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                            <button
+                                              className="mx-1 px-2 hover:bg-red-600 transition duration-200 rounded-lg"
+                                              onClick={() =>
+                                                handleItemDelete(
+                                                  purchase.id!,
+                                                  index
+                                                )
+                                              }
+                                            >
+                                              <Image
+                                                className="m-1"
+                                                src={"./icons/delete.svg"}
+                                                alt="delete-bin-icon"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                          </>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
                               </tbody>
                             </table>
                           </td>
