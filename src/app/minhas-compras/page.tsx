@@ -1,7 +1,7 @@
 import AuthGuard from "../_components/Auth/AuthGuard";
 import Navbar from "../_components/Navigation/Navbar/Navbar";
 import Sidebar from "../_components/Navigation/Sidebar/Sidebar";
-import TempProductTable from "../_components/Tables/temp";
+import ProductTable from "../_components/Tables/ProductTable";
 
 export default function page() {
   return (
@@ -10,7 +10,7 @@ export default function page() {
       <AuthGuard>
         <Sidebar />
         <Navbar />
-        <TempProductTable />
+        <ProductTable />
       </AuthGuard>
     </>
   );

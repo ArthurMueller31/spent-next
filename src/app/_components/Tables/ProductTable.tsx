@@ -1,6 +1,12 @@
 "use client";
 
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  updateDoc
+} from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
@@ -16,6 +22,7 @@ type Purchase = {
 };
 
 type Item = {
+  id: string;
   name: string;
   price: string;
   quantity: string;
@@ -67,11 +74,13 @@ function formatCurrencyToBRL(value: number): string {
   }).format(value);
 }
 
-export default function ProductTable() {
+export default function TempProductTable() {
   const [userId, setUserId] = useState<string | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [expandedPurchase, setExpandedPurchase] = useState<string | null>(null);
-  const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar estado
+  const [editedItem, setEditedItem] = useState<Item | null>(null);
+  const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar zustand
+  const [editingItem, setEditingItem] = useState<string | null>(null);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -143,7 +152,79 @@ export default function ProductTable() {
       console.log("erro ao excluir", error);
       alert("Erro ao excluir a compra, tente novamente.");
     } finally {
-      location.reload();
+      setPurchases((prevPurchases) =>
+        prevPurchases.filter((p) => p.id !== purchaseId)
+      );
+    }
+  };
+
+  const handleEditItem = (item: Item, purchaseId: string, index: number) => {
+    setEditedItem({ ...item });
+    setEditingItem(`${purchaseId}-${index}`); // id único pra edição
+  };
+
+  const handleSaveEdit = async (purchaseId: string) => {
+    if (!editedItem || !userId || !editingItem) return;
+
+    try {
+      const [purchaseIdRef, itemIndexStr] = editingItem.split("-");
+      const itemIndex = parseInt(itemIndexStr);
+
+      const purchaseIndex = purchases.findIndex((p) => p.id === purchaseIdRef);
+      if (purchaseIndex === -1) return;
+
+      const updatedItems = [...purchases[purchaseIndex].items];
+      updatedItems[itemIndex] = editedItem;
+
+      const purchaseRef = doc(
+        firestore,
+        `users/${userId}/purchases/${purchaseId}`
+      );
+
+      await updateDoc(purchaseRef, { items: updatedItems });
+
+      setPurchases((prev) =>
+        prev.map((p) =>
+          p.id === purchaseId ? { ...p, items: updatedItems } : p
+        )
+      );
+    } catch (error) {
+      console.error("Erro ao salvar edição:", error);
+    } finally {
+      setEditingItem(null);
+      setEditedItem(null);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditedItem(null); // Cancela a edição
+    setEditingItem(null); // Limpa o estado de edição
+  };
+
+  const handleItemDelete = async (purchaseId: string, itemIndex: number) => {
+    if (!userId) return;
+
+    try {
+      const purchaseIndex = purchases.findIndex((p) => p.id === purchaseId);
+      if (purchaseIndex === -1) return;
+
+      const updatedItems = [...purchases[purchaseIndex].items];
+      updatedItems.splice(itemIndex, 1);
+
+      const purchaseRef = doc(
+        firestore,
+        `users/${userId}/purchases/${purchaseId}`
+      );
+
+      await updateDoc(purchaseRef, { items: updatedItems });
+
+      setPurchases((prevPurchases) =>
+        prevPurchases.map((p) =>
+          p.id === purchaseId ? { ...p, items: updatedItems } : p
+        )
+      );
+    } catch (error) {
+      console.log("Erro:", error);
     }
   };
 
@@ -169,7 +250,7 @@ export default function ProductTable() {
                       Dia da Compra
                     </th>
                     <th className="flex-1 p-3 border-b text-center">
-                      Expandir/Excluir
+                      Expandir/Excluir compra
                     </th>
                   </tr>
                 </thead>
@@ -245,44 +326,192 @@ export default function ProductTable() {
                                     Preço Unitário
                                   </th>
                                   <th className="p-2 border-b text-center">
-                                    Editar
+                                    Peso (g)
+                                  </th>
+                                  <th className="p-2 border-b text-center">
+                                    Editar/Excluir
                                   </th>
                                 </tr>
                               </thead>
+
                               <tbody>
-                                {purchase.items.map((item, index) => (
-                                  <tr
-                                    key={`${purchase.id}-${index}`}
-                                    className="text-center text-base font-medium"
-                                  >
-                                    <td className="p-2 border-b">
-                                      {item.name}
-                                    </td>
-                                    <td className="p-2 border-b font-hostGrotesk font-mediu">
-                                      {item.quantity}
-                                    </td>
-                                    <td className="p-2 border-b font-hostGrotesk">
-                                      {formatCurrencyToBRL(
-                                        standardPriceFormat(item.price)
-                                      )}
-                                    </td>
-                                    <td className="p-2 border-b font-hostGrotesk">
-                                      <button
-                                        className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
-                                        title="Editar"
-                                      >
-                                        <Image
-                                          className="m-1"
-                                          src={"./icons/edit.svg"}
-                                          alt="edit-icon"
-                                          width={30}
-                                          height={30}
-                                        />
-                                      </button>
-                                    </td>
-                                  </tr>
-                                ))}
+                                {/* Ordena itens em ordem alfabética */}
+                                {purchase.items
+                                  .slice()
+                                  .sort((a, b) => a.name.localeCompare(b.name))
+                                  .map((item, index) => (
+                                    <tr
+                                      key={`${purchase.id}-${index}`}
+                                      className="text-center text-base font-medium"
+                                    >
+                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.name || ""}
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                name: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.name
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.quantity || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                quantity: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.quantity
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.price || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                price: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          formatCurrencyToBRL(
+                                            Number(item.price)
+                                          )
+                                        )}
+                                      </td>
+
+                                      <td className="p-2 border-b font-hostGrotesk">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <input
+                                            type="text"
+                                            value={editedItem?.weight || ""} // aqui só exibe nome
+                                            onChange={(e) =>
+                                              setEditedItem({
+                                                ...editedItem!,
+                                                weight: e.target.value
+                                              })
+                                            }
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                          />
+                                        ) : (
+                                          item.weight
+                                        )}
+                                      </td>
+                                      <td className="p-2 border-b self-center">
+                                        {editingItem ===
+                                        `${purchase.id}-${index}` ? (
+                                          <>
+                                            <button
+                                              className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded"
+                                              onClick={() =>
+                                                handleSaveEdit(purchase.id!)
+                                              }
+                                            >
+                                              <Image
+                                                src={"./icons/check.svg"}
+                                                alt="save-icon"
+                                                width={25}
+                                                height={25}
+                                                title="Salvar"
+                                              />
+                                            </button>
+                                            <button
+                                              className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded"
+                                              onClick={handleCancelEdit}
+                                              title="Cancelar"
+                                            >
+                                              <Image
+                                                src={"./icons/cancel.svg"}
+                                                alt="cancel-icon"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                          </>
+                                        ) : (
+                                          <>
+                                            <button
+                                              className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
+                                              onClick={() =>
+                                                handleEditItem(
+                                                  item,
+                                                  purchase.id!,
+                                                  index
+                                                )
+                                              }
+                                              title="Editar"
+                                            >
+                                              <Image
+                                                className="m-1"
+                                                src={"./icons/edit.svg"}
+                                                alt="edit-icon"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                            <button
+                                              className="mx-1 px-2 hover:bg-red-600 transition duration-200 rounded-lg"
+                                              onClick={() =>
+                                                handleItemDelete(
+                                                  purchase.id!,
+                                                  index
+                                                )
+                                              }
+                                            >
+                                              <Image
+                                                className="m-1"
+                                                src={"./icons/delete.svg"}
+                                                alt="delete-bin-icon"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                          </>
+                                        )}
+                                      </td>
+                                    </tr>
+                                  ))}
                               </tbody>
+                              <tfoot>
+                                <tr>
+                                  <td className="p-2 flex justify-center">
+                                    <button className="bg-white border border-black rounded p-1.5 flex flex-row justify-center items-center font-medium hover:bg-gray-200 transtition duration-200">
+                                      <Image
+                                        src={"./icons/add.svg"}
+                                        alt="add-icon"
+                                        width={25}
+                                        height={25}
+                                        className="mr-1"
+                                      />
+                                      Adicionar item
+                                    </button>
+                                  </td>
+                                </tr>
+                              </tfoot>
                             </table>
                           </td>
                         </tr>
