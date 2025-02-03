@@ -22,7 +22,6 @@ type Purchase = {
 };
 
 type Item = {
-  id: string;
   name: string;
   price: string;
   quantity: string;
@@ -81,6 +80,8 @@ export default function TempProductTable() {
   const [editedItem, setEditedItem] = useState<Item | null>(null);
   const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar zustand
   const [editingItem, setEditingItem] = useState<string | null>(null);
+  const [addingItem, setAddingItem] = useState(false);
+  const [newItem, setNewItem] = useState<Item | null>(null);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -159,12 +160,25 @@ export default function TempProductTable() {
   };
 
   const handleEditItem = (item: Item, purchaseId: string, index: number) => {
+    if (addingItem) {
+      handleCancelAddItem();
+    }
     setEditedItem({ ...item });
-    setEditingItem(`${purchaseId}-${index}`); // id único pra edição
+    setEditingItem(`${purchaseId}-${index}`); // id para edição
   };
 
   const handleSaveEdit = async (purchaseId: string) => {
     if (!editedItem || !userId || !editingItem) return;
+
+    if (
+      !editedItem.name.trim() ||
+      !editedItem.quantity.trim() ||
+      !editedItem.price.trim() ||
+      !editedItem.weight.trim()
+    ) {
+      alert("Não é possível adicionar itens vazios!");
+      return;
+    }
 
     try {
       const [purchaseIdRef, itemIndexStr] = editingItem.split("-");
@@ -228,6 +242,64 @@ export default function TempProductTable() {
     }
   };
 
+  const handleOpenAddItem = (purchaseId: string) => {
+    setAddingItem(true);
+    setNewItem({
+      name: "",
+      quantity: "",
+      price: "",
+      weight: ""
+    });
+
+    setEditingItem(`add-${purchaseId}`);
+  };
+
+  const handleCancelAddItem = () => {
+    setAddingItem(false);
+    setNewItem(null);
+    setEditedItem(null);
+  };
+
+  const handleSaveNewItem = async (purchaseId: string) => {
+    if (!newItem) return;
+
+    if (
+      !newItem.name.trim() ||
+      !newItem.quantity.trim() ||
+      !newItem.price.trim() ||
+      !newItem.weight.trim()
+    ) {
+      alert("Não é possível adicionar itens vazios!");
+      return;
+    }
+
+    try {
+      const purchaseIndex = purchases.findIndex((p) => p.id === purchaseId);
+
+      if (purchaseIndex === -1) return;
+
+      const updatedItems = [...purchases[purchaseIndex].items, newItem];
+
+      const purchaseRef = doc(
+        firestore,
+        `users/${userId}/purchases/${purchaseId}`
+      );
+
+      await updateDoc(purchaseRef, { items: updatedItems });
+      setPurchases((prevPurchases) =>
+        prevPurchases.map((p) =>
+          p.id === purchaseId ? { ...p, items: updatedItems } : p
+        )
+      );
+    } catch (error) {
+      console.log("Erro ao add", error);
+    } finally {
+      setAddingItem(false);
+      setNewItem(null);
+      setEditingItem(null);
+    }
+  };
+
   return (
     <>
       <div className="flex h-screen font-raleway tracking-wide">
@@ -276,13 +348,17 @@ export default function TempProductTable() {
                           <button
                             className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
                             title="Expandir"
-                            onClick={() =>
-                              setExpandedPurchase(
-                                expandedPurchase === purchase.id
-                                  ? null
-                                  : purchase.id!
-                              )
-                            }
+                            onClick={() => {
+                              if (expandedPurchase === purchase.id) {
+                                handleCancelAddItem();
+                                handleCancelEdit();
+                                setExpandedPurchase(null);
+                              } else {
+                                handleCancelAddItem();
+                                handleCancelEdit();
+                                setExpandedPurchase(purchase.id!);
+                              }
+                            }}
                           >
                             <Image
                               className="m-1"
@@ -326,7 +402,7 @@ export default function TempProductTable() {
                                     Preço Unitário
                                   </th>
                                   <th className="p-2 border-b text-center">
-                                    Peso (g)
+                                    Peso (gramas)
                                   </th>
                                   <th className="p-2 border-b text-center">
                                     Editar/Excluir
@@ -337,16 +413,21 @@ export default function TempProductTable() {
                               <tbody>
                                 {/* Ordena itens em ordem alfabética */}
                                 {purchase.items
-                                  .slice()
-                                  .sort((a, b) => a.name.localeCompare(b.name))
-                                  .map((item, index) => (
+                                  .map((item, originalIndex) => ({
+                                    item,
+                                    originalIndex
+                                  }))
+                                  .sort((a, b) =>
+                                    a.item.name.localeCompare(b.item.name)
+                                  )
+                                  .map(({ item, originalIndex }) => (
                                     <tr
-                                      key={`${purchase.id}-${index}`}
-                                      className="text-center text-base font-medium"
+                                      key={`${purchase.id}-${originalIndex}`}
+                                      className="text-center text-base font-medium font-hostGrotesk"
                                     >
-                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                      <td className="p-2 border-b">
                                         {editingItem ===
-                                        `${purchase.id}-${index}` ? (
+                                        `${purchase.id}-${originalIndex}` ? (
                                           <input
                                             type="text"
                                             value={editedItem?.name || ""}
@@ -363,9 +444,9 @@ export default function TempProductTable() {
                                         )}
                                       </td>
 
-                                      <td className="p-2 border-b font-hostGrotesk font-medium">
+                                      <td className="p-2 border-b ">
                                         {editingItem ===
-                                        `${purchase.id}-${index}` ? (
+                                        `${purchase.id}-${originalIndex}` ? (
                                           <input
                                             type="text"
                                             value={editedItem?.quantity || ""} // aqui só exibe nome
@@ -382,9 +463,9 @@ export default function TempProductTable() {
                                         )}
                                       </td>
 
-                                      <td className="p-2 border-b font-hostGrotesk">
+                                      <td className="p-2 border-b">
                                         {editingItem ===
-                                        `${purchase.id}-${index}` ? (
+                                        `${purchase.id}-${originalIndex}` ? (
                                           <input
                                             type="text"
                                             value={editedItem?.price || ""} // aqui só exibe nome
@@ -403,9 +484,9 @@ export default function TempProductTable() {
                                         )}
                                       </td>
 
-                                      <td className="p-2 border-b font-hostGrotesk">
+                                      <td className="p-2 border-b">
                                         {editingItem ===
-                                        `${purchase.id}-${index}` ? (
+                                        `${purchase.id}-${originalIndex}` ? (
                                           <input
                                             type="text"
                                             value={editedItem?.weight || ""} // aqui só exibe nome
@@ -423,7 +504,7 @@ export default function TempProductTable() {
                                       </td>
                                       <td className="p-2 border-b self-center">
                                         {editingItem ===
-                                        `${purchase.id}-${index}` ? (
+                                        `${purchase.id}-${originalIndex}` ? (
                                           <>
                                             <button
                                               className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded"
@@ -460,7 +541,7 @@ export default function TempProductTable() {
                                                 handleEditItem(
                                                   item,
                                                   purchase.id!,
-                                                  index
+                                                  originalIndex
                                                 )
                                               }
                                               title="Editar"
@@ -478,7 +559,7 @@ export default function TempProductTable() {
                                               onClick={() =>
                                                 handleItemDelete(
                                                   purchase.id!,
-                                                  index
+                                                  originalIndex
                                                 )
                                               }
                                             >
@@ -495,23 +576,120 @@ export default function TempProductTable() {
                                       </td>
                                     </tr>
                                   ))}
+
+                                {addingItem &&
+                                  editingItem === `add-${purchase.id}` && (
+                                    <tr className="text-center text-base font-medium">
+                                      <td className="p-2 border-b">
+                                        <input
+                                          type="text"
+                                          placeholder="Nome do item"
+                                          value={newItem?.name || ""}
+                                          onChange={(e) =>
+                                            setNewItem({
+                                              ...newItem!,
+                                              name: e.target.value
+                                            })
+                                          }
+                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                        />
+                                      </td>
+                                      <td className="p-2 border-b">
+                                        <input
+                                          type="text"
+                                          placeholder="Quantidade"
+                                          value={newItem?.quantity || ""}
+                                          onChange={(e) =>
+                                            setNewItem({
+                                              ...newItem!,
+                                              quantity: e.target.value
+                                            })
+                                          }
+                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                        />
+                                      </td>
+                                      <td className="p-2 border-b">
+                                        <input
+                                          type="text"
+                                          placeholder="Preço Unitário"
+                                          value={newItem?.price || ""}
+                                          onChange={(e) =>
+                                            setNewItem({
+                                              ...newItem!,
+                                              price: e.target.value
+                                            })
+                                          }
+                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                        />
+                                      </td>
+                                      <td className="p-2 border-b">
+                                        <input
+                                          type="text"
+                                          placeholder="Peso (gramas)"
+                                          value={newItem?.weight || ""}
+                                          onChange={(e) =>
+                                            setNewItem({
+                                              ...newItem!,
+                                              weight: e.target.value
+                                            })
+                                          }
+                                          className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                        />
+                                      </td>
+                                      <td className="p-2 border-b self-center">
+                                        <button
+                                          className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded"
+                                          onClick={() =>
+                                            handleSaveNewItem(purchase.id!)
+                                          }
+                                        >
+                                          <Image
+                                            src={"./icons/check.svg"}
+                                            alt="Salvar"
+                                            width={25}
+                                            height={25}
+                                            title="Salvar"
+                                          />
+                                        </button>
+                                        <button
+                                          className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded"
+                                          onClick={handleCancelAddItem}
+                                          title="Cancelar"
+                                        >
+                                          <Image
+                                            src={"./icons/cancel.svg"}
+                                            alt="Cancelar"
+                                            width={25}
+                                            height={25}
+                                          />
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  )}
                               </tbody>
-                              <tfoot>
-                                <tr>
-                                  <td className="p-2 flex justify-center">
-                                    <button className="bg-white border border-black rounded p-1.5 flex flex-row justify-center items-center font-medium hover:bg-gray-200 transtition duration-200">
-                                      <Image
-                                        src={"./icons/add.svg"}
-                                        alt="add-icon"
-                                        width={25}
-                                        height={25}
-                                        className="mr-1"
-                                      />
-                                      Adicionar item
-                                    </button>
-                                  </td>
-                                </tr>
-                              </tfoot>
+                              {!addingItem && (
+                                <tfoot>
+                                  <tr>
+                                    <td className="p-2 flex justify-center">
+                                      <button
+                                        className="bg-white border border-black rounded p-1.5 flex flex-row justify-center items-center font-medium hover:bg-gray-200 transtition duration-200"
+                                        onClick={() =>
+                                          handleOpenAddItem(purchase.id!)
+                                        }
+                                      >
+                                        <Image
+                                          src={"./icons/add.svg"}
+                                          alt="add-icon"
+                                          width={25}
+                                          height={25}
+                                          className="mr-1"
+                                        />
+                                        Adicionar item
+                                      </button>
+                                    </td>
+                                  </tr>
+                                </tfoot>
+                              )}
                             </table>
                           </td>
                         </tr>
