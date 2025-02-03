@@ -18,7 +18,8 @@ export default {
       },
       fontFamily: {
         "raleway": ["Raleway", "sans-serif"],
-        "workSans": ["Work Sans", "serif"]
+        "workSans": ["Work Sans", "serif"],
+        "hostGrotesk": ["Host Grotesk", "sans-serif"]
       }
     },
   },
