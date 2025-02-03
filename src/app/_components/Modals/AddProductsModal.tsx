@@ -81,7 +81,7 @@ export default function AddProductsModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
       <div
-        className={`bg-white p-8 rounded-lg shadow-lg relative transition-transform duration-300 ${
+        className={`bg-white p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-gray-200 ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
         }`}
       >
