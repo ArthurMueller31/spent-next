@@ -1,9 +1,11 @@
 "use client";
-import { LineChart } from "@mui/x-charts";
+import { BarChart, LineChart } from "@mui/x-charts";
 import { useState, useEffect } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
+import Navbar from "../Navigation/Navbar/Navbar";
+import Sidebar from "../Navigation/Sidebar/Sidebar";
 
 interface PurchaseItem {
   name: string;
@@ -18,30 +20,42 @@ interface Purchase {
 }
 
 export default function Charts() {
-  const [selectedPeriod, setSelectedPeriod] = useState(7);
-  const [chartData, setChartData] = useState<number[]>([]);
-  const [dates, setDates] = useState<string[]>([]);
+  // Gráfico de linhas (gastos totais)
+  const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(7);
+  const [lineChartData, setLineChartData] = useState<number[]>([]);
+  const [lineChartDates, setLineChartDates] = useState<string[]>([]);
+
+  // Gráfico de barras (dias com maiores gastos - all time)
+  // Não usamos um estado para o período, pois buscamos todas as compras
+  const [selectedMostSpentDays, setSelectedMostSpentDays] = useState(3);
+  const [barTotalsByDate, setBarTotalsByDate] = useState<{
+    [date: string]: number;
+  }>({});
+  const [mostSpentDaysChartData, setMostSpentDaysChartData] = useState<
+    number[]
+  >([]);
+  const [mostSpentDaysChartDates, setMostSpentDaysChartDates] = useState<
+    string[]
+  >([]);
+
   const [userId, setUserId] = useState<string | null>(null);
 
+  // Monitorar usuário autenticado
   useEffect(() => {
-    const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-      }
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserId(user ? user.uid : null);
     });
-
-    return () => setUidFromLoggedUser();
+    return () => unsubscribe();
   }, []);
 
+  // Query para o gráfico de linhas (gastos totais dos últimos N dias)
   useEffect(() => {
-    async function fetchPurchases() {
+    async function fetchLineChartPurchases() {
       if (!userId) return;
 
       const endDate = new Date();
       const startDate = new Date();
-      startDate.setDate(endDate.getDate() - selectedPeriod);
+      startDate.setDate(endDate.getDate() - selectedPeriodLineChart);
 
       const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
       const q = query(
@@ -51,129 +65,193 @@ export default function Charts() {
       );
 
       const querySnapshot = await getDocs(q);
-
-      // Agrupar compras por data
-      const totalsByDate: { [date: string]: number } = {};
+      const totals: { [date: string]: number } = {};
 
       querySnapshot.forEach((doc) => {
         const purchase = doc.data() as Purchase;
         const dateParts = purchase.purchaseDate.split("-");
-        const date = new Date(
+        const dateObj = new Date(
           parseInt(dateParts[0]),
           parseInt(dateParts[1]) - 1,
           parseInt(dateParts[2])
         );
-        const formattedDate = Intl.DateTimeFormat("pt-BR").format(date);
+        const formattedDate = Intl.DateTimeFormat("pt-BR").format(dateObj);
 
-        // Calculando o total gasto na compra
         const totalSpent = purchase.items.reduce<number>(
           (sum, item) =>
             sum + parseFloat(item.price) * parseFloat(item.quantity),
           0
         );
 
-        // Agrupar as compras pelo mesmo dia
-        if (totalsByDate[formattedDate]) {
-          totalsByDate[formattedDate] += totalSpent;
-        } else {
-          totalsByDate[formattedDate] = totalSpent;
-        }
+        totals[formattedDate] = (totals[formattedDate] || 0) + totalSpent;
       });
 
-      // Organizando os dados para o gráfico
-      const data: number[] = [];
-      const labels: string[] = [];
-
-      Object.keys(totalsByDate).forEach((date) => {
-        labels.push(date);
-        data.push(parseFloat(totalsByDate[date].toFixed(2)));
+      // Organizar dados cronologicamente
+      const sortedDates = Object.keys(totals).sort((a, b) => {
+        const [dayA, monthA, yearA] = a.split("/").map(Number);
+        const [dayB, monthB, yearB] = b.split("/").map(Number);
+        return (
+          new Date(yearA, monthA - 1, dayA).getTime() -
+          new Date(yearB, monthB - 1, dayB).getTime()
+        );
       });
-
-      setChartData(data);
-      setDates(labels);
+      setLineChartDates(sortedDates);
+      setLineChartData(
+        sortedDates.map((date) => parseFloat(totals[date].toFixed(2)))
+      );
     }
+    fetchLineChartPurchases();
+  }, [selectedPeriodLineChart, userId]);
 
-    fetchPurchases();
-  }, [selectedPeriod, userId]);
+  // Query para o gráfico de barras (todas as compras - all time)
+  useEffect(() => {
+    async function fetchBarChartPurchases() {
+      if (!userId) return;
+
+      // Aqui não aplicamos filtro de data, pegamos todas as compras do usuário
+      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
+      const q = query(purchasesRef);
+
+      const querySnapshot = await getDocs(q);
+      const totals: { [date: string]: number } = {};
+
+      querySnapshot.forEach((doc) => {
+        const purchase = doc.data() as Purchase;
+        const dateParts = purchase.purchaseDate.split("-");
+        const dateObj = new Date(
+          parseInt(dateParts[0]),
+          parseInt(dateParts[1]) - 1,
+          parseInt(dateParts[2])
+        );
+        const formattedDate = Intl.DateTimeFormat("pt-BR").format(dateObj);
+
+        const totalSpent = purchase.items.reduce<number>(
+          (sum, item) =>
+            sum + parseFloat(item.price) * parseFloat(item.quantity),
+          0
+        );
+
+        totals[formattedDate] = (totals[formattedDate] || 0) + totalSpent;
+      });
+
+      setBarTotalsByDate(totals);
+    }
+    fetchBarChartPurchases();
+  }, [userId]); // Não depende de período
+
+  // Atualiza o gráfico de barras (top dias) sempre que os dados do bar chart ou o número de dias a mostrar mudarem
+  useEffect(() => {
+    const entries = Object.entries(barTotalsByDate);
+    // Ordena decrescentemente para identificar os dias com maiores gastos
+    entries.sort((a, b) => b[1] - a[1]);
+    // Seleciona os top dias e, em seguida, ordena em ordem crescente (para exibição)
+    const topEntries = entries
+      .slice(0, selectedMostSpentDays)
+      .sort((a, b) => a[1] - b[1]);
+    setMostSpentDaysChartDates(topEntries.map(([date]) => date));
+    setMostSpentDaysChartData(
+      topEntries.map(([, value]) => parseFloat(value.toFixed(2)))
+    );
+  }, [barTotalsByDate, selectedMostSpentDays]);
 
   return (
-    <div className="flex h-screen font-raleway tracking-wide">
-      <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
-        <div className="w-fit max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
-          <div>
-            <span>Gastos nos últimos</span>
-            <select
-              className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100"
-              value={selectedPeriod}
-              onChange={(e) => setSelectedPeriod(Number(e.target.value))}
-            >
-              <option value="7">7 dias</option>
-              <option value="30">30 dias</option>
-              <option value="90">90 dias</option>
-              <option value="365">1 ano</option>
-            </select>
+    <div className="relative">
+      <Sidebar />
+      <Navbar />
+      <div className="ml-64 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50">
+        <div className="grid grid-cols-2 grid-rows-2 gap-8 h-full">
+          {/* placeholder gráficos */}
+          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
+            <span>Gráfico 1</span>
           </div>
-          <LineChart
-            xAxis={[{ data: dates, scaleType: "band" }]}
-            yAxis={[
-              {
-                valueFormatter: (value: number): string => {
-                  return `R$${value.toFixed(2).replace(".", ",")}`;
-                }
-              }
-            ]}
-            series={[
-              {
-                valueFormatter: (value: number | null): string => {
-                  if (value === null) return "R$0,00";
-                  return `R$${value.toFixed(2).replace(".", ",")}`;
-                },
+          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
+            <span>Gráfico 2</span>
+          </div>
 
-                data: chartData,
-                area: true,
-                color: "#1d1e22"
-              }
-            ]}
-            width={800}
-            height={300}
-            margin={{ left: 100 }}
-          />
+          {/* gráfico de linhas, compras nos últimos x dias */}
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+            <div className="mb-4">
+              <span>Gastos nos últimos </span>
+              <select
+                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                value={selectedPeriodLineChart}
+                onChange={(e) =>
+                  setSelectedPeriodLineChart(Number(e.target.value))
+                }
+              >
+                <option value="7">7 dias</option>
+                <option value="30">30 dias</option>
+                <option value="90">90 dias</option>
+                <option value="365">1 ano</option>
+              </select>
+            </div>
+            <div className="w-full h-[80%]">
+              <LineChart
+                xAxis={[{ data: lineChartDates, scaleType: "band" }]}
+                yAxis={[
+                  {
+                    valueFormatter: (value: number): string =>
+                      `R$${value.toFixed(2).replace(".", ",")}`
+                  }
+                ]}
+                series={[
+                  {
+                    valueFormatter: (value: number | null): string =>
+                      value === null
+                        ? "R$0,00"
+                        : `R$${value.toFixed(2).replace(".", ",")}`,
+                    data: lineChartData,
+                    area: true,
+                    color: "#1d1e22"
+                  }
+                ]}
+                margin={{ left: 100 }}
+              />
+            </div>
+          </div>
+
+          {/* gráfico de barras - dias c/ maior valor em compras */}
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+            <div className="mb-4">
+              <span>Dias com maiores gastos. Mostrando</span>
+
+              <select
+                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100 inline-block"
+                value={selectedMostSpentDays}
+                onChange={(e) =>
+                  setSelectedMostSpentDays(Number(e.target.value))
+                }
+              >
+                <option value={3}>3 dias</option>
+                <option value={5}>5 dias</option>
+                <option value={7}>7 dias</option>
+              </select>
+            </div>
+            <div className="w-full h-[80%]">
+              <BarChart
+                xAxis={[{ data: mostSpentDaysChartDates, scaleType: "band" }]}
+                yAxis={[
+                  {
+                    valueFormatter: (value: number): string =>
+                      `R$${value.toFixed(2).replace(".", ",")}`
+                  }
+                ]}
+                series={[
+                  {
+                    valueFormatter: (value: number | null): string =>
+                      value === null
+                        ? "R$0,00"
+                        : `R$${value.toFixed(2).replace(".", ",")}`,
+                    data: mostSpentDaysChartData,
+                    color: "#1d1e22"
+                  }
+                ]}
+                margin={{ left: 100 }}
+              />
+            </div>
+          </div>
         </div>
-      </main>
+      </div>
     </div>
   );
-}
-{
-  /* 
-        <div className="w-fit max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
-          <PieChart
-            series={[
-              {
-                data: [
-                  { id: 0, value: 10, label: `${varA}` },
-                  { id: 1, value: 15, label: "series B" },
-                  { id: 2, value: 20, label: "series C" }
-                ]
-              }
-            ]}
-            width={400}
-            height={200}
-          />
-        </div>
-        <div className="w-fit max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
-          <BarChart
-            series={[
-              { data: [35, 44, 24, 34] },
-              { data: [51, 6, 49, 30] },
-              { data: [15, 25, 30, 50] },
-              { data: [60, 50, 15, 25] }
-            ]}
-            height={290}
-            width={400}
-            xAxis={[{ data: ["Q1", "Q2", "Q3", "Q4"], scaleType: "band" }]}
-            margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
-          />
-        </div>
-
-        */
 }

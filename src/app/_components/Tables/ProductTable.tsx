@@ -305,6 +305,18 @@ export default function TempProductTable() {
       <div className="flex h-screen font-raleway tracking-wide">
         <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
           <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
+            <div className="pb-4 flex items-center">
+              <Image
+              className="mr-2"
+                src={"./icons/info-black.svg"}
+                alt="info-icon"
+                width={20}
+                height={20}
+              />
+              <span className="text-lg">
+                Suas compras são filtradas por data, em ordem decrescente.
+              </span>
+            </div>
             {userId && (
               <table className="w-full border border-gray-300 text-sm text-left rounded-lg">
                 <thead className="bg-darkerCustomColor">
