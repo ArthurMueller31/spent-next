@@ -18,8 +18,7 @@ const navItems = [
     href: "/minhas-compras",
     label: "Minhas compras",
     icon: "/icons/sidebar-table.svg"
-  },
-  { href: "/graficos", label: "Gráficos", icon: "/icons/sidebar-graph.svg" }
+  }
 ];
 
 export default function Sidebar() {
@@ -98,20 +97,6 @@ export default function Sidebar() {
               </p>
             </span>
           </div>
-          <div className="flex flex-row m-2 font-medium justify-center items-center">
-            <span className="flex flex-row items-center justify-center w-auto bg-white dark:bg-gray-900 dark:text-gray-300 dark:border-gray-600 ">
-              <Image
-                className="mr-1"
-                src={"/icons/sidebar-add.svg"}
-                alt="home-icon"
-                width={30}
-                height={30}
-              />
-              <button onClick={handleModalToggle} className="ml-1">
-                Adicionar compra
-              </button>
-            </span>
-          </div>
 
           {isModalVisible && (
             <AddProductsModal
@@ -121,7 +106,27 @@ export default function Sidebar() {
           )}
         </div>
 
-        <div className="flex flex-col justify-between flex-1 mt-6">
+        <div className="">
+          <span className="flex items-center justify-center px-4 py-2 mt-5 text-gray-900 font-medium hover:bg-gray-100 transition-colors duration-300 transform rounded-md  ">
+            <button
+              onClick={handleModalToggle}
+              className="flex flex-row items-center "
+            >
+              <Image
+                className="mr-2"
+                src={"/icons/sidebar-add.svg"}
+                alt="home-icon"
+                width={30}
+                height={30}
+              />
+              Adicionar compra
+            </button>
+          </span>
+        </div>
+
+        <hr className="mt-4 border-gray-200 dark:border-gray-600" />
+
+        <div className="flex flex-col justify-between flex-1">
           <nav>
             {navItems.map(({ href, label, icon }) => (
               <Link
@@ -143,8 +148,6 @@ export default function Sidebar() {
               </Link>
             ))}
 
-            <hr className="my-6 border-gray-200 dark:border-gray-600" />
-
             <Link
               key={"/conta"}
               href={"conta"}
@@ -162,6 +165,8 @@ export default function Sidebar() {
               />
               <span className="mx-4 font-medium">Conta</span>
             </Link>
+
+            <hr className="mt-4 border-gray-200 dark:border-gray-600" />
 
             <button
               className="flex items-center px-4 py-2 mt-5 w-full text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-gray-200 hover:text-gray-700"
