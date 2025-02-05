@@ -6,6 +6,8 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Navbar from "../Navigation/Navbar/Navbar";
 import Sidebar from "../Navigation/Sidebar/Sidebar";
+import RecentPurchases from "../Tables/RecentPurchases";
+import Image from "next/image";
 
 interface PurchaseItem {
   name: string;
@@ -162,28 +164,41 @@ export default function Charts() {
         <div className="grid grid-cols-2 grid-rows-2 gap-8 h-full">
           {/* placeholder gráficos */}
           <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
-            <span>Gráfico 1</span>
+            <RecentPurchases />
           </div>
           <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
             <span>Gráfico 2</span>
           </div>
 
           {/* gráfico de linhas, compras nos últimos x dias */}
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-            <div className="mb-4">
-              <span>Gastos nos últimos </span>
-              <select
-                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100"
-                value={selectedPeriodLineChart}
-                onChange={(e) =>
-                  setSelectedPeriodLineChart(Number(e.target.value))
-                }
-              >
-                <option value="7">7 dias</option>
-                <option value="30">30 dias</option>
-                <option value="90">90 dias</option>
-                <option value="365">1 ano</option>
-              </select>
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span>Gastos nos últimos</span>
+                <select
+                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                  value={selectedPeriodLineChart}
+                  onChange={(e) =>
+                    setSelectedPeriodLineChart(Number(e.target.value))
+                  }
+                >
+                  <option value={7}>7 dias</option>
+                  <option value={30}>30 dias</option>
+                  <option value={90}>90 dias</option>
+                  <option value={365}>1 ano</option>
+                </select>
+              </div>
+
+              <span className="flex items-center font-medium">
+                <Image
+                  className="mr-1"
+                  src={"./icons/info-black.svg"}
+                  alt="info-icon"
+                  width={20}
+                  height={20}
+                />
+                Inclui o dia atual
+              </span>
             </div>
             <div className="w-full h-[80%]">
               <LineChart
@@ -210,22 +225,22 @@ export default function Charts() {
             </div>
           </div>
 
-          {/* gráfico de barras - dias c/ maior valor em compras */}
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-            <div className="mb-4">
-              <span>Dias com maiores gastos. Mostrando</span>
-
-              <select
-                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100 inline-block"
-                value={selectedMostSpentDays}
-                onChange={(e) =>
-                  setSelectedMostSpentDays(Number(e.target.value))
-                }
-              >
-                <option value={3}>3 dias</option>
-                <option value={5}>5 dias</option>
-                <option value={7}>7 dias</option>
-              </select>
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span>Gastos nos últimos</span>
+                <select
+                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                  value={selectedMostSpentDays}
+                  onChange={(e) =>
+                    setSelectedMostSpentDays(Number(e.target.value))
+                  }
+                >
+                  <option value={3}>3 dias</option>
+                  <option value={5}>5 dias</option>
+                  <option value={7}>7 dias</option>
+                </select>
+              </div>
             </div>
             <div className="w-full h-[80%]">
               <BarChart
@@ -250,6 +265,81 @@ export default function Charts() {
               />
             </div>
           </div>
+
+          {/*
+
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex items-center space-x-2">
+              <span>Gastos nos últimos</span>
+              <select
+                className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                value={selectedMostSpentDays}
+                onChange={(e) =>
+                  setSelectedMostSpentDays(Number(e.target.value))
+                }
+              >
+                <option value={3}>3 dias</option>
+                <option value={5}>5 dias</option>
+                <option value={7}>7 dias</option>
+              </select>
+            </div>
+
+            <span className="flex items-center font-medium">
+              <Image
+                className="mr-1"
+                src={"./icons/info-black.svg"}
+                alt="info-icon"
+                width={20}
+                height={20}
+              />
+              Inclui o dia atual
+            </span>
+          </div>
+
+          {/* gráfico de barras - dias c/ maior valor em compras 
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
+            <div className="mb-4">
+              <span className="flex items-center font-medium">
+                Dias com maiores gastos. Exibindo
+              </span>
+
+              <select
+                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100 inline-block"
+                value={selectedMostSpentDays}
+                onChange={(e) =>
+                  setSelectedMostSpentDays(Number(e.target.value))
+                }
+              >
+                <option value={3}>3 dias</option>
+                <option value={5}>5 dias</option>
+                <option value={7}>7 dias</option>
+              </select>
+            </div>
+          
+
+          <div className="w-full h-[80%]">
+            <BarChart
+              xAxis={[{ data: mostSpentDaysChartDates, scaleType: "band" }]}
+              yAxis={[
+                {
+                  valueFormatter: (value: number): string =>
+                    `R$${value.toFixed(2).replace(".", ",")}`
+                }
+              ]}
+              series={[
+                {
+                  valueFormatter: (value: number | null): string =>
+                    value === null
+                      ? "R$0,00"
+                      : `R$${value.toFixed(2).replace(".", ",")}`,
+                  data: mostSpentDaysChartData,
+                  color: "#1d1e22"
+                }
+              ]}
+              margin={{ left: 100 }}
+
+            />
+              */}
         </div>
       </div>
     </div>

@@ -73,7 +73,7 @@ function formatCurrencyToBRL(value: number): string {
   }).format(value);
 }
 
-export default function TempProductTable() {
+export default function AllPurchasesTable() {
   const [userId, setUserId] = useState<string | null>(null);
   const [purchases, setPurchases] = useState<Purchase[]>([]);
   const [expandedPurchase, setExpandedPurchase] = useState<string | null>(null);

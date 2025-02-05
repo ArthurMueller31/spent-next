@@ -81,7 +81,7 @@ export default function AddProductsModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
       <div
-        className={`bg-white p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-gray-200 ${
+        className={`bg-gray-100 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
         }`}
       >
@@ -106,7 +106,7 @@ export default function AddProductsModal({
                     purchaseDate: e.target.value
                   }))
                 }
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
                 required
               />
             </div>
@@ -128,8 +128,8 @@ export default function AddProductsModal({
                     establishment: e.target.value
                   }))
                 }
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
-                placeholder="Ex: Mercado X"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                placeholder="Ex: Mercado Y"
                 required
               />
             </div>
@@ -155,7 +155,7 @@ export default function AddProductsModal({
                     id={`name-${index}`}
                     value={item.name || ""}
                     onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
                     placeholder="Ex: Arroz"
                     required
                   />
@@ -174,7 +174,7 @@ export default function AddProductsModal({
                     id={`price-${index}`}
                     value={item.price || ""}
                     onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
                     placeholder="Ex: 19.90"
                     required
                   />
@@ -192,7 +192,7 @@ export default function AddProductsModal({
                     id={`quantity-${index}`}
                     value={item.quantity || ""}
                     onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
                     placeholder="Ex: 2"
                     required
                   />
@@ -210,7 +210,7 @@ export default function AddProductsModal({
                     id={`weight-${index}`}
                     value={item.weight || ""}
                     onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-gray-50 border text-sm rounded-lg block w-full p-2.5"
+                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
                     placeholder="Ex: 1000"
                     required
                   />
@@ -224,20 +224,20 @@ export default function AddProductsModal({
             <button
               type="button"
               onClick={handleAddItem}
-              className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-100 transition"
+              className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
             >
               Adicionar mais itens
             </button>
             <button
               type="button"
               onClick={handleModalToggle}
-              className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-100 transition"
+              className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
             >
               Cancelar
             </button>
             <button
               type="submit"
-              className="border border-gray-300 rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-100 transition"
+              className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
             >
               Salvar
             </button>
