@@ -16,6 +16,7 @@ export default function AddProductsModal({
   const [formData, setFormData] = useState({
     purchaseDate: "",
     establishment: "",
+    category: "Mercado",
     items: [{ name: "", price: "", quantity: "", weight: "" }]
   });
 
@@ -79,15 +80,14 @@ export default function AddProductsModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 z-10 font-workSans">
       <div
-        className={`bg-gray-100 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor ${
+        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
         }`}
       >
         <form onSubmit={handleSubmit}>
-          {/* Compra do dia e Local */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label
                 htmlFor="purchaseDate"
@@ -133,6 +133,42 @@ export default function AddProductsModal({
                 required
               />
             </div>
+            <div>
+              <label
+                htmlFor="category"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Categoria
+              </label>
+              <select
+                name="category"
+                value={formData.category || "Mercado"}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    category: e.target.value
+                  }))
+                }
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg py-3 placeholder-gray-500 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                required
+              >
+                <option value="Mercado" className="font-raleway">
+                  Mercado
+                </option>
+                <option value="Lazer/Entretenimento" className="font-raleway">
+                  Lazer/Entretenimento
+                </option>
+                <option value="Eletrônicos/Tecnologia" className="font-raleway">
+                  Eletrônicos/Tecnologia
+                </option>
+                <option value="Casa/decoração" className="font-raleway">
+                  Casa/decoração
+                </option>
+                <option value="Outro" className="font-raleway">
+                  Outro
+                </option>
+              </select>
+            </div>
           </div>
 
           {/* Itens da compra */}
@@ -140,7 +176,7 @@ export default function AddProductsModal({
             {formData.items.map((item, index) => (
               <div
                 key={index}
-                className="grid grid-cols-4 gap-4 items-center mb-4"
+                className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-4"
               >
                 <div>
                   <label

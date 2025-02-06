@@ -4,6 +4,8 @@ import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import { firestore, auth } from "../../../../firebase/firebase";
+import Link from "next/link";
+import Image from "next/image";
 
 type Purchase = {
   id?: string;
@@ -97,44 +99,61 @@ export default function RecentPurchasesTable() {
   }, [userId]);
 
   return (
-    <div className="w-full">
-      {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
-      <div className="flex flex-row items-center justify-between mb-10">
-        <div className="flex items-center space-x-2">
-          <span>Minhas últimas compras</span>
+    <>
+      <div className="w-full max-w-2xl">
+        {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
+        <div className="flex flex-row items-center justify-between mb-8">
+          <div className="flex items-center space-x-2">
+            <span>Minhas últimas compras</span>
+          </div>
+
+          <Link href={"/minhas-compras"}>
+            <button className="flex items-center font-medium bg-darkerCustomColor border border-darkerCustomColor text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300">
+              Ver todas
+              <Image
+                className="ml-2"
+                src={"./icons/arrow-forward.svg"}
+                alt="forward-arrow"
+                width={15}
+                height={15}
+              />
+            </button>
+          </Link>
         </div>
-      </div>
-      <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
-        <thead className="bg-darkerCustomColor">
-          <tr className="flex justify-around text-white text-base">
-            <th className="flex-1 p-3 border-b text-center">Local</th>
-            <th className="flex-1 p-3 border-b text-center">Total de Itens</th>
-            <th className="flex-1 p-3 border-b text-center">Preço Total</th>
-            <th className="flex-1 p-3 border-b text-center">Data</th>
-          </tr>
-        </thead>
-        <tbody>
-          {purchases.map((purchase) => (
-            <tr
-              key={purchase.id}
-              className="flex justify-around hover:bg-gray-50 cursor-pointer"
-            >
-              <td className="flex-1 p-3 border-b text-center font-bold">
-                {purchase.establishment}
-              </td>
-              <td className="flex-1 p-3 border-b text-center font-bold">
-                {calculateTotalItems(purchase.items)}
-              </td>
-              <td className="flex-1 p-3 border-b text-center font-bold">
-                {formatCurrencyToBRL(calculateTotalPrice(purchase.items))}
-              </td>
-              <td className="flex-1 p-3 border-b text-center font-bold">
-                {formatDate(purchase.purchaseDate)}
-              </td>
+        <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
+          <thead className="bg-darkerCustomColor">
+            <tr className="flex justify-around text-white text-base">
+              <th className="flex-1 p-3 border-b text-center">Local</th>
+              <th className="flex-1 p-3 border-b text-center">
+                Total de Itens
+              </th>
+              <th className="flex-1 p-3 border-b text-center">Preço Total</th>
+              <th className="flex-1 p-3 border-b text-center">Data</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {purchases.map((purchase) => (
+              <tr
+                key={purchase.id}
+                className="flex justify-around hover:bg-gray-50 cursor-pointer"
+              >
+                <td className="flex-1 p-3 border-b text-center font-bold">
+                  {purchase.establishment}
+                </td>
+                <td className="flex-1 p-3 border-b text-center font-bold">
+                  {calculateTotalItems(purchase.items)}
+                </td>
+                <td className="flex-1 p-3 border-b text-center font-bold">
+                  {formatCurrencyToBRL(calculateTotalPrice(purchase.items))}
+                </td>
+                <td className="flex-1 p-3 border-b text-center font-bold">
+                  {formatDate(purchase.purchaseDate)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }
