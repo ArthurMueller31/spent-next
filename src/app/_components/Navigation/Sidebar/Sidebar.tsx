@@ -26,6 +26,7 @@ export default function Sidebar() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
+  const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const totalSpent = useSidebarStore((state) => state.totalSpent);
 
   const handleModalToggle = () => {
@@ -55,6 +56,7 @@ export default function Sidebar() {
     const getUserID = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setUserId(user.uid);
+        setUserPhoto(user.photoURL);
 
         const userDocRef = doc(firestore, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
@@ -184,13 +186,23 @@ export default function Sidebar() {
           </nav>
 
           <a href="#" className="flex items-center px-4 -mx-2">
-            <Image
-              width={100}
-              height={100}
-              className="object-cover mx-2 rounded-full h-9 w-9"
-              src="/icons/sidebar-account.svg"
-              alt="account-icon"
-            />
+            {userPhoto ? (
+              <Image
+                width={100}
+                height={100}
+                className="object-cover mx-2 rounded-full h-9 w-9"
+                src={userPhoto}
+                alt="account-photo"
+              />
+            ) : (
+              <Image
+                width={100}
+                height={100}
+                className="object-cover mx-2 rounded-full h-9 w-9"
+                src="/icons/sidebar-account.svg"
+                alt="account-icon"
+              />
+            )}
             <span className="font-medium text-gray-800 dark:text-gray-200">
               {userName ? userName : ""}
             </span>

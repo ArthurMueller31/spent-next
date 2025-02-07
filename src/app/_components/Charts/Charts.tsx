@@ -1,5 +1,5 @@
 "use client";
-import { BarChart, LineChart } from "@mui/x-charts";
+import { BarChart, LineChart, PieChart } from "@mui/x-charts";
 import { useState, useEffect } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
@@ -38,6 +38,9 @@ export default function Charts() {
   >([]);
   const [mostSpentDaysChartDates, setMostSpentDaysChartDates] = useState<
     string[]
+  >([]);
+  const [pieChartData, setPieChartData] = useState<
+    { id: string; value: number; label: string }[]
   >([]);
 
   const [userId, setUserId] = useState<string | null>(null);
@@ -156,18 +159,86 @@ export default function Charts() {
     );
   }, [barTotalsByDate, selectedMostSpentDays]);
 
+  useEffect(() => {
+    async function fetchPieChartData() {
+      if (!userId) return;
+
+      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
+      const querySnapshot = await getDocs(purchasesRef);
+
+      const counts: { [key: string]: number } = {
+        Mercado: 0,
+        "Lazer/Entretenimento": 0,
+        "Eletrônicos/Tecnologia": 0,
+        "Casa/decoração": 0,
+        Outro: 0
+      };
+
+      querySnapshot.forEach((doc) => {
+        const purchase = doc.data() as { category?: string };
+        const category =
+          purchase.category && purchase.category.trim() !== ""
+            ? purchase.category
+            : "Mercado"; // ou "Outro", conforme sua lógica
+
+        if (counts.hasOwnProperty(category)) {
+          counts[category] += 1;
+        } else {
+          counts["Outro"] += 1;
+        }
+      });
+
+      const data = Object.entries(counts).map(([key, value]) => ({
+        id: key,
+        value,
+        label: key
+      }));
+
+      setPieChartData(data);
+    }
+    fetchPieChartData();
+  }, [userId]);
+
   return (
     <div className="relative">
       <Sidebar />
       <Navbar />
       <div className="ml-64 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50">
-        <div className="grid grid-cols-2 grid-rows-2 gap-8 h-full">
+        <div className="grid grid-cols-1 grid-rows-1 gap-8 h-full md:grid-cols-2 md:grid-rows-2">
           {/* placeholder gráficos */}
           <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
             <RecentPurchases />
           </div>
-          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
-            <span>Gráfico 2</span>
+
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-center">
+            <div className="flex flex-row items-center">
+              <div className="flex items-center">
+                <span>Categorias mais adicionadas</span>
+              </div>
+            </div>
+            <div className="flex flex-col items-center font-raleway">
+              <PieChart
+                series={[
+                  {
+                    data: pieChartData
+                  }
+                ]}
+                margin={{ top: 85, bottom: 85, left: 85, right: 85 }}
+                slotProps={{
+                  legend: {
+                    direction: "column",
+                    position: { vertical: "middle", horizontal: "left" },
+                    padding: { top: 10, left: 70, right: 70 },
+                    labelStyle: {
+                      padding: 10,
+                      fontFamily: "inherit"
+                    }
+                  }
+                }}
+                width={800}
+                height={400}
+              />
+            </div>
           </div>
 
           {/* gráfico de linhas, compras nos últimos x dias */}
@@ -265,81 +336,6 @@ export default function Charts() {
               />
             </div>
           </div>
-
-          {/*
-
-          <div className="flex flex-row items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <span>Gastos nos últimos</span>
-              <select
-                className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
-                value={selectedMostSpentDays}
-                onChange={(e) =>
-                  setSelectedMostSpentDays(Number(e.target.value))
-                }
-              >
-                <option value={3}>3 dias</option>
-                <option value={5}>5 dias</option>
-                <option value={7}>7 dias</option>
-              </select>
-            </div>
-
-            <span className="flex items-center font-medium">
-              <Image
-                className="mr-1"
-                src={"./icons/info-black.svg"}
-                alt="info-icon"
-                width={20}
-                height={20}
-              />
-              Inclui o dia atual
-            </span>
-          </div>
-
-          {/* gráfico de barras - dias c/ maior valor em compras 
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col">
-            <div className="mb-4">
-              <span className="flex items-center font-medium">
-                Dias com maiores gastos. Exibindo
-              </span>
-
-              <select
-                className="m-2 p-2 rounded-lg font-hostGrotesk border bg-gray-100 inline-block"
-                value={selectedMostSpentDays}
-                onChange={(e) =>
-                  setSelectedMostSpentDays(Number(e.target.value))
-                }
-              >
-                <option value={3}>3 dias</option>
-                <option value={5}>5 dias</option>
-                <option value={7}>7 dias</option>
-              </select>
-            </div>
-          
-
-          <div className="w-full h-[80%]">
-            <BarChart
-              xAxis={[{ data: mostSpentDaysChartDates, scaleType: "band" }]}
-              yAxis={[
-                {
-                  valueFormatter: (value: number): string =>
-                    `R$${value.toFixed(2).replace(".", ",")}`
-                }
-              ]}
-              series={[
-                {
-                  valueFormatter: (value: number | null): string =>
-                    value === null
-                      ? "R$0,00"
-                      : `R$${value.toFixed(2).replace(".", ",")}`,
-                  data: mostSpentDaysChartData,
-                  color: "#1d1e22"
-                }
-              ]}
-              margin={{ left: 100 }}
-
-            />
-              */}
         </div>
       </div>
     </div>

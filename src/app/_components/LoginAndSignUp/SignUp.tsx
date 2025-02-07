@@ -60,7 +60,6 @@ export default function SignUp() {
         name: formInputData.name,
         email: formInputData.email,
         createdAt: formattedDate,
-        pictures: [] // armazenar no futuro
       };
 
       await setDoc(doc(firestore, "users", user.uid), userDoc);
