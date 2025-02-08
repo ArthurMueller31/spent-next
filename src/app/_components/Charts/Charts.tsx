@@ -203,17 +203,24 @@ export default function Charts() {
     <div className="relative">
       <Sidebar />
       <Navbar />
-      <div className="ml-64 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50">
+      <div className="ml-64 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50 dark:bg-darkerCustomColor">
         <div className="grid grid-cols-1 grid-rows-1 gap-8 h-full md:grid-cols-2 md:grid-rows-2">
           {/* placeholder gráficos */}
-          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center">
+          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center dark:bg-white">
             <RecentPurchases />
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-center">
-            <div className="flex flex-row items-center">
-              <div className="flex items-center">
-                <span>Categorias mais adicionadas</span>
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-center dark:bg-white">
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <span className="dark:text-black">
+                  Categorias com mais compras adicionadas
+                </span>
+              </div>
+              <div>
+                <button className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor">
+                  Ver detalhes
+                </button>
               </div>
             </div>
             <div className="flex flex-col items-center font-raleway">
@@ -236,18 +243,18 @@ export default function Charts() {
                   }
                 }}
                 width={800}
-                height={400}
+                height={330}
               />
             </div>
           </div>
 
           {/* gráfico de linhas, compras nos últimos x dias */}
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white">
             <div className="flex flex-row items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span>Gastos nos últimos</span>
+                <span className="dark:text-black">Gastos nos últimos</span>
                 <select
-                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor"
                   value={selectedPeriodLineChart}
                   onChange={(e) =>
                     setSelectedPeriodLineChart(Number(e.target.value))
@@ -260,7 +267,7 @@ export default function Charts() {
                 </select>
               </div>
 
-              <span className="flex items-center font-medium">
+              <span className="flex items-center font-medium dark:text-black">
                 <Image
                   className="mr-1"
                   src={"./icons/info-black.svg"}
@@ -271,9 +278,14 @@ export default function Charts() {
                 Inclui o dia atual
               </span>
             </div>
-            <div className="w-full h-[80%]">
+            <div className="w-full h-[80%] dark:text-white">
               <LineChart
-                xAxis={[{ data: lineChartDates, scaleType: "band" }]}
+                xAxis={[
+                  {
+                    data: lineChartDates,
+                    scaleType: "band"
+                  }
+                ]}
                 yAxis={[
                   {
                     valueFormatter: (value: number): string =>
@@ -296,12 +308,17 @@ export default function Charts() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between">
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white">
             <div className="flex flex-row items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span>Gastos nos últimos</span>
+                <span className="dark:text-black">Dias com mais gastos</span>
+              </div>
+              <div>
+                <span className="font-medium dark:text-black mr-2">
+                  Exibindo
+                </span>
                 <select
-                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100"
+                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor"
                   value={selectedMostSpentDays}
                   onChange={(e) =>
                     setSelectedMostSpentDays(Number(e.target.value))

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { firestore } from "../../../../firebase/firebase";
 import { getAuth } from "firebase/auth";
 import { collection, addDoc, doc } from "firebase/firestore";
@@ -80,11 +80,11 @@ export default function AddProductsModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 z-10 font-workSans">
+    <div className="fixed inset-0 flex items-center justify-center overflow-auto bg-black bg-opacity-50 transition-opacity duration-300 z-10 font-workSans">
       <div
-        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor ${
+        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor dark:bg-darkerCustomColor ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
-        }`}
+        } max-h-[80vh] overflow-auto`}
       >
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -105,15 +105,15 @@ export default function AddProductsModal({
                   const today = new Date().toISOString().split("T")[0];
 
                   if (selectedDate > today) {
-                    alert("Não é possível adicionar uma data futura!")
-                    return
+                    alert("Não é possível adicionar uma data futura!");
+                    return;
                   }
                   setFormData((prev) => ({
                     ...prev,
                     purchaseDate: e.target.value
                   }));
                 }}
-                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-600 dark:text-black dark:bg-white"
                 required
               />
             </div>
@@ -135,7 +135,7 @@ export default function AddProductsModal({
                     establishment: e.target.value
                   }))
                 }
-                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-600 dark:text-black"
                 placeholder="Ex: Mercado Y"
                 required
               />
@@ -156,7 +156,7 @@ export default function AddProductsModal({
                     category: e.target.value
                   }))
                 }
-                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg py-3 placeholder-gray-500 focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-600 dark:text-black"
                 required
               >
                 <option value="Mercado" className="font-raleway">
@@ -181,88 +181,91 @@ export default function AddProductsModal({
           {/* Itens da compra */}
           <div className="mt-4">
             {formData.items.map((item, index) => (
-              <div
-                key={index}
-                className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-4"
-              >
-                <div>
-                  <label
-                    htmlFor={`name-${index}`}
-                    className="block mb-2 text-sm font-medium"
-                  >
-                    Nome do Item
-                  </label>
-                  <input
-                    type="text"
-                    name="name"
-                    id={`name-${index}`}
-                    value={item.name || ""}
-                    onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
-                    placeholder="Ex: Arroz"
-                    required
-                  />
+              <React.Fragment key={index}>
+                <div
+                  key={index}
+                  className="grid grid-cols-1 md:grid-cols-4 gap-4 items-center mb-4"
+                >
+                  <div>
+                    <label
+                      htmlFor={`name-${index}`}
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Nome do Item
+                    </label>
+                    <input
+                      type="text"
+                      name="name"
+                      id={`name-${index}`}
+                      value={item.name || ""}
+                      onChange={(e) => handleChangeItem(index, e)}
+                      className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
+                      placeholder="Ex: Arroz"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`price-${index}`}
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Preço
+                    </label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      name="price"
+                      id={`price-${index}`}
+                      value={item.price || ""}
+                      onChange={(e) => handleChangeItem(index, e)}
+                      className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
+                      placeholder="Ex: 19.90"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`quantity-${index}`}
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Quantidade
+                    </label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      id={`quantity-${index}`}
+                      value={item.quantity || ""}
+                      onChange={(e) => handleChangeItem(index, e)}
+                      className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
+                      placeholder="Ex: 2"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label
+                      htmlFor={`weight-${index}`}
+                      className="block mb-2 text-sm font-medium"
+                    >
+                      Peso (g)
+                    </label>
+                    <input
+                      type="number"
+                      name="weight"
+                      id={`weight-${index}`}
+                      value={item.weight || ""}
+                      onChange={(e) => handleChangeItem(index, e)}
+                      className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
+                      placeholder="Ex: 1000"
+                      required
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label
-                    htmlFor={`price-${index}`}
-                    className="block mb-2 text-sm font-medium"
-                  >
-                    Preço
-                  </label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    name="price"
-                    id={`price-${index}`}
-                    value={item.price || ""}
-                    onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
-                    placeholder="Ex: 19.90"
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor={`quantity-${index}`}
-                    className="block mb-2 text-sm font-medium"
-                  >
-                    Quantidade
-                  </label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    id={`quantity-${index}`}
-                    value={item.quantity || ""}
-                    onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
-                    placeholder="Ex: 2"
-                    required
-                  />
-                </div>
-                <div>
-                  <label
-                    htmlFor={`weight-${index}`}
-                    className="block mb-2 text-sm font-medium"
-                  >
-                    Peso (g)
-                  </label>
-                  <input
-                    type="number"
-                    name="weight"
-                    id={`weight-${index}`}
-                    value={item.weight || ""}
-                    onChange={(e) => handleChangeItem(index, e)}
-                    className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500"
-                    placeholder="Ex: 1000"
-                    required
-                  />
-                </div>
-              </div>
+
+                <hr className="mt-5 mb-3 border-gray-300 dark:border-gray-500" />
+              </React.Fragment>
             ))}
           </div>
 
-          {/* Botões */}
           <div className="flex justify-end gap-4 mt-6">
             <button
               type="button"

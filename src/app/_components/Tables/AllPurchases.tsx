@@ -304,8 +304,8 @@ export default function AllPurchasesTable() {
   return (
     <>
       <div className="flex h-screen overflow-auto font-raleway tracking-wide">
-        <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4">
-          <div className="w-full max-w-7xl bg-white rounded-lg shadow-lg p-6 overflow-auto">
+        <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4 dark:bg-darkerCustomColor">
+          <div className="w-full max-w-7xl bg- rounded-lg shadow-lg p-6 overflow-auto dark:border dark:border-white dark:bg-white">
             <div className="pb-4 flex items-center">
               <Image
                 className="mr-2"
@@ -314,15 +314,16 @@ export default function AllPurchasesTable() {
                 width={20}
                 height={20}
               />
-              <span className="text-lg">
+
+              <span className="text-lg dark:text-black">
                 Suas compras são filtradas por data, em ordem decrescente.
               </span>
             </div>
             {userId && (
               <div className="overflow-y-auto max-h-[42rem]">
                 <table className="w-full border border-gray-300 text-sm text-left rounded-lg overflow-auto">
-                  <thead className="bg-darkerCustomColor sticky top-0 z-0">
-                    <tr className="flex justify-around text-white text-base items-center">
+                  <thead className="bg-darkerCustomColor top-0 z-0">
+                    <tr className="flex justify-around text-white text-base items-center dark:border">
                       <th className="flex-1 p-3 text-center">
                         Local da Compra
                       </th>
@@ -341,8 +342,10 @@ export default function AllPurchasesTable() {
                     {purchases.map((purchase) => (
                       <React.Fragment key={purchase.id}>
                         <tr
-                          className={`flex justify-around hover:bg-gray-50 cursor-pointer ${
-                            expandedPurchase === purchase.id ? "bg-gray-50" : ""
+                          className={`flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray100 dark:text-black ${
+                            expandedPurchase === purchase.id
+                              ? "bg-gray-100 dark:bg-gray-100"
+                              : ""
                           }`}
                         >
                           <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
@@ -406,7 +409,10 @@ export default function AllPurchasesTable() {
                         {/* Tabela expandida da compra */}
                         {expandedPurchase === purchase.id && (
                           <tr className="w-full">
-                            <td colSpan={4} className="p-3 bg-gray-50 border-b">
+                            <td
+                              colSpan={4}
+                              className="p-3 bg-gray-100 border-b dark:bg-gray-100"
+                            >
                               <table className="w-full text-sm border border-gray-300 mt-2 rounded-lg">
                                 <thead className="bg-darkerCustomColor text-white">
                                   <tr className="text-base">
@@ -441,9 +447,9 @@ export default function AllPurchasesTable() {
                                     .map(({ item, originalIndex }) => (
                                       <tr
                                         key={`${purchase.id}-${originalIndex}`}
-                                        className="text-center text-base font-medium font-hostGrotesk"
+                                        className="text-center text-base font-medium font-hostGrotesk dark:text-black"
                                       >
-                                        <td className="p-2 border-b">
+                                        <td className="p-2 border-b ">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -455,14 +461,14 @@ export default function AllPurchasesTable() {
                                                   name: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
                                             />
                                           ) : (
                                             item.name
                                           )}
                                         </td>
 
-                                        <td className="p-2 border-b ">
+                                        <td className="p-2 border-b">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -474,7 +480,7 @@ export default function AllPurchasesTable() {
                                                   quantity: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
                                             />
                                           ) : (
                                             item.quantity
@@ -493,7 +499,7 @@ export default function AllPurchasesTable() {
                                                   price: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
                                             />
                                           ) : (
                                             formatCurrencyToBRL(
@@ -514,7 +520,7 @@ export default function AllPurchasesTable() {
                                                   weight: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
                                             />
                                           ) : (
                                             item.weight
@@ -609,7 +615,7 @@ export default function AllPurchasesTable() {
                                                 name: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
                                         <td className="p-2 border-b">
@@ -623,7 +629,7 @@ export default function AllPurchasesTable() {
                                                 quantity: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
                                         <td className="p-2 border-b">
@@ -637,7 +643,7 @@ export default function AllPurchasesTable() {
                                                 price: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
                                         <td className="p-2 border-b">
@@ -651,7 +657,7 @@ export default function AllPurchasesTable() {
                                                 weight: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
                                         <td className="p-2 border-b self-center">
@@ -690,7 +696,7 @@ export default function AllPurchasesTable() {
                                     <tr>
                                       <td className="p-2 flex justify-center">
                                         <button
-                                          className="bg-white border border-black rounded p-1.5 flex flex-row justify-center items-center font-medium hover:bg-gray-200 transtition duration-200"
+                                          className="bg-white border border-black rounded p-1.5 flex flex-row justify-center items-center font-medium hover:bg-gray-200 transtition duration-200 dark:bg-darkerCustomColor dark:hover:bg-gray-800"
                                           onClick={() =>
                                             handleOpenAddItem(purchase.id!)
                                           }
@@ -700,7 +706,14 @@ export default function AllPurchasesTable() {
                                             alt="add-icon"
                                             width={25}
                                             height={25}
-                                            className="mr-1"
+                                            className="block dark:hidden"
+                                          />
+                                          <Image
+                                            src={"./icons/add-white.svg"}
+                                            alt="add-icon"
+                                            width={25}
+                                            height={25}
+                                            className="mr-1 hidden dark:block"
                                           />
                                           Adicionar item
                                         </button>

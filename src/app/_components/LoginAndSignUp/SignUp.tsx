@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
 import {
   createUserWithEmailAndPassword,
   GoogleAuthProvider,
+  onAuthStateChanged,
   signInWithPopup
 } from "firebase/auth";
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
@@ -24,6 +25,16 @@ export default function SignUp() {
   );
 
   const router = useRouter();
+
+  useEffect(() => {
+    const logged = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/home");
+      }
+    });
+
+    return () => logged();
+  }, [router]);
 
   // states
 
@@ -59,7 +70,7 @@ export default function SignUp() {
         uid: user.uid,
         name: formInputData.name,
         email: formInputData.email,
-        createdAt: formattedDate,
+        createdAt: formattedDate
       };
 
       await setDoc(doc(firestore, "users", user.uid), userDoc);
@@ -119,18 +130,18 @@ export default function SignUp() {
 
   return (
     <>
-      <div className="font-raleway flex justify-center">
+      <div className="font-raleway flex justify-center bg-darkerCustomColor pb-[31px]">
         <div className="min-h-[90vh] flex flex-col  justify-center py-6 px-4">
           <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full">
             <div>
-              <h2 className="lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor">
+              <h2 className="lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor dark:text-white">
                 Faça seu cadastro para acessar nosso serviço
               </h2>
-              <p className="text-md mt-6 text-darkerCustomColor">
+              <p className="text-md mt-6 text-darkerCustomColor  dark:text-white">
                 Começe a gerenciar seus gastos com o nosso site e tenha um
                 controle maior sobre seu dinheiro.
               </p>
-              <p className="text-md mt-12 text-darkerCustomColor">
+              <p className="text-md mt-12 text-darkerCustomColor dark:text-white">
                 Já tem uma conta?
                 <Link
                   href="/login"
@@ -145,7 +156,7 @@ export default function SignUp() {
               className="max-w-md md:ml-auto w-full"
               onSubmit={handleSubmit}
             >
-              <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8">
+              <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8 dark:text-white">
                 Cadastre-se
               </h3>
 
@@ -157,7 +168,7 @@ export default function SignUp() {
                     value={formInputData.name}
                     onChange={handleChange}
                     required
-                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    className="bg-gray-100 w-full text-sm text-black px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
                     placeholder="Nome"
                   />
                 </div>
@@ -168,7 +179,7 @@ export default function SignUp() {
                     value={formInputData.email}
                     onChange={handleChange}
                     required
-                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
                     placeholder="E-mail"
                   />
                 </div>
@@ -179,15 +190,17 @@ export default function SignUp() {
                     value={formInputData.password}
                     onChange={handleChange}
                     required
-                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
                     placeholder="Senha"
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center">
-                    <label className="block text-sm text-darkerCustomColor">
-                      Vou ver ainda o que colocar
-                    </label>
+                  <div>
+                    {error && (
+                      <p className="block text-red-500 text-sm dark:text-red-500 ">
+                        {error}
+                      </p>
+                    )}
                   </div>
                   <div className="text-sm">
                     <Link
@@ -198,14 +211,12 @@ export default function SignUp() {
                     </Link>
                   </div>
                 </div>
-
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
               </div>
 
               <div className="mt-8">
                 <button
                   type="submit"
-                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-darkerCustomColor hover:bg-gray-700 focus:outline-none"
+                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-darkerCustomColor hover:bg-gray-700 focus:outline-none dark:bg-white dark:hover:bg-gray-200 dark:text-black"
                   disabled={isLoading}
                 >
                   {isLoading ? "Cadastrando..." : "Cadastrar-se"}
@@ -214,7 +225,9 @@ export default function SignUp() {
 
               <div className="my-4 flex items-center gap-4">
                 <hr className="w-full border-gray-300" />
-                <p className="text-sm text-darkerCustomColor text-center">ou</p>
+                <p className="text-sm text-darkerCustomColor text-center dark:text-white">
+                  ou
+                </p>
                 <hr className="w-full border-gray-300" />
               </div>
 

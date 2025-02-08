@@ -1,9 +1,14 @@
 "use client";
 
-import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup} from "firebase/auth";
+import {
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged
+} from "firebase/auth";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "../../../../firebase/firebase";
 
 export default function Login() {
@@ -15,6 +20,16 @@ export default function Login() {
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    const logged = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        router.push("/home");
+      }
+    });
+
+    return () => logged();
+  }, [router]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -65,7 +80,7 @@ export default function Login() {
   };
   return (
     <>
-      <div className="font-raleway flex justify-center">
+      <div className="font-raleway flex justify-center dark:bg-darkerCustomColor pb-[31px]">
         <div className="min-h-[90vh] flex flex-col justify-center py-6 px-4">
           <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full">
             {/* Form agora está à esquerda */}
@@ -73,7 +88,7 @@ export default function Login() {
               className="max-w-md md:mr-auto w-full"
               onSubmit={handleSubmit}
             >
-              <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8">
+              <h3 className="text-darkerCustomColor text-3xl font-extrabold mb-8 dark:text-white">
                 Acessar minha conta
               </h3>
 
@@ -85,7 +100,7 @@ export default function Login() {
                     value={formInputData.email}
                     onChange={handleChange}
                     required
-                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
                     placeholder="Endereço de e-mail"
                   />
                 </div>
@@ -96,51 +111,42 @@ export default function Login() {
                     value={formInputData.password}
                     onChange={handleChange}
                     required
-                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent"
+                    className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
                     placeholder="Senha"
                   />
                 </div>
+              </div>
 
-                {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-                <div className="flex flex-wrap items-center justify-between gap-4">
-                  <div className="flex items-center">
-                    <input
-                      id="remember-me"
-                      name="remember-me"
-                      type="checkbox"
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <label
-                      htmlFor="remember-me"
-                      className="ml-3 block text-sm text-darkerCustomColor"
-                    >
-                      Salvar para próximo login?
-                    </label>
-                  </div>
-                  <div className="text-sm">
-                    <a
-                      href="jajvascript:void(0);"
-                      className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 font-semibold"
-                    >
-                      Dúvidas?
-                    </a>
-                  </div>
+              <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
+                <div className="text-sm">
+                  <button className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 h-4 font-semibold">
+                    Esqueceu a senha?
+                  </button>
+                </div>
+                <div>
+                  {error && (
+                    <p className="block text-red-500 text-sm  dark:text-red-500 ">
+                      {error}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div className="mt-8">
                 <button
                   type="submit"
-                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-darkerCustomColor hover:bg-gray-700 focus:outline-none"
+                  className="w-full shadow-xl py-2.5 px-4 text-sm font-semibold rounded text-white transition ease-in-out duration-200 bg-darkerCustomColor hover:bg-gray-700 focus:outline-none dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   disabled={isLoading}
                 >
-                  {isLoading ? "Entrando" : "Entrar"}
+                  {isLoading ? "Entrando..." : "Entrar"}
                 </button>
               </div>
 
               <div className="my-4 flex items-center gap-4">
                 <hr className="w-full border-gray-300" />
-                <p className="text-sm text-darkerCustomColor text-center">ou</p>
+                <p className="text-sm text-darkerCustomColor text-center dark:text-white">
+                  ou
+                </p>
                 <hr className="w-full border-gray-300" />
               </div>
 
@@ -187,38 +193,20 @@ export default function Login() {
                     />
                   </svg>
                 </button>
-                <button type="button" className="border-none outline-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32px"
-                    viewBox="0 0 512 512"
-                  >
-                    <path
-                      fill="#1877f2"
-                      d="M512 256c0 127.78-93.62 233.69-216 252.89V330h59.65L367 256h-71v-48.02c0-20.25 9.92-39.98 41.72-39.98H370v-63s-29.3-5-57.31-5c-58.47 0-96.69 35.44-96.69 99.6V256h-65v74h65v178.89C93.62 489.69 0 383.78 0 256 0 114.62 114.62 0 256 0s256 114.62 256 256z"
-                      data-original="#1877f2"
-                    />
-                    <path
-                      fill="#fff"
-                      d="M355.65 330 367 256h-71v-48.021c0-20.245 9.918-39.979 41.719-39.979H370v-63s-29.296-5-57.305-5C254.219 100 216 135.44 216 199.6V256h-65v74h65v178.889c13.034 2.045 26.392 3.111 40 3.111s26.966-1.066 40-3.111V330z"
-                      data-original="#ffffff"
-                    />
-                  </svg>
-                </button>
               </div>
             </form>
 
-            {/* Texto agora está à direita */}
+            {/* Texto direita */}
             <div>
-              <h2 className="hidden md:flex lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor">
+              <h2 className="hidden md:flex lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor dark:text-white">
                 Faça login para acessar sua conta novamente
               </h2>
 
-              <p className="text-md mt-12 text-darkerCustomColor">
+              <p className="text-md mt-12 text-darkerCustomColor dark:text-white">
                 Ainda não tem uma conta?
                 <Link
                   href="/cadastro"
-                  className="text-blue-600 font-semibold hover:underline ml-1"
+                  className="text-blue-600 font-semibold hover:underline ml-1 dark:text-blue-600"
                 >
                   Cadastre-se
                 </Link>

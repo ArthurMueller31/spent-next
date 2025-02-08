@@ -103,12 +103,12 @@ export default function RecentPurchasesTable() {
       <div className="w-full max-w-2xl">
         {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
         <div className="flex flex-row items-center justify-between mb-8">
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 dark:text-black">
             <span>Minhas últimas compras</span>
           </div>
 
           <Link href={"/minhas-compras"}>
-            <button className="flex items-center font-medium bg-darkerCustomColor border border-darkerCustomColor text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300">
+            <button className="flex items-center font-medium bg-darkerCustomColor border border-darkerCustomColor text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300 dark:text-white dark:bg-darkerCustomColor dark:hover:bg-gray-800">
               Ver todas
               <Image
                 className="ml-2"
@@ -135,7 +135,7 @@ export default function RecentPurchasesTable() {
             {purchases.map((purchase) => (
               <tr
                 key={purchase.id}
-                className="flex justify-around hover:bg-gray-50 cursor-pointer"
+                className="flex justify-around hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-100 dark:text-black"
               >
                 <td className="flex-1 p-3 border-b text-center font-bold">
                   {purchase.establishment}

@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-      <nav className="bg-darkerCustomColor w-screen h-16 flex items-center justify-between font-raleway overflow-hidden fixed">
+      <nav className="bg-darkerCustomColor w-screen h-16 flex items-center justify-between font-raleway overflow-hidden fixed dark:border-b dark:border-white">
         <div>
           <Link href={"/"} className="p-10 px-14 flex flex-row items-center">
             <Image
