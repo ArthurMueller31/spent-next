@@ -528,12 +528,12 @@ export default function AllPurchasesTable() {
                                             item.weight
                                           )}
                                         </td>
-                                        <td className="p-2 border-b self-center">
+                                        <td className="p-2 border-b self-center md:whitespace-nowrap">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <>
                                               <button
-                                                className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded"
+                                                className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded md:inline-flex md:m-[-10px]"
                                                 onClick={() =>
                                                   handleSaveEdit(purchase.id!)
                                                 }
@@ -547,7 +547,7 @@ export default function AllPurchasesTable() {
                                                 />
                                               </button>
                                               <button
-                                                className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded"
+                                                className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded md:inline-flex md:ml-[10px]"
                                                 onClick={handleCancelEdit}
                                                 title="Cancelar"
                                               >
