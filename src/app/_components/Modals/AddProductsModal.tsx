@@ -42,8 +42,10 @@ export default function AddProductsModal({
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
     const { name, value } = e.target;
+
     setFormData((prev) => {
       const updatedItems = [...prev.items];
+
       // updatedItems é array, cada el tem o tipo string; updatedItems[number] refere à um item da lista, keyof pega as chaves; name as keyof... garante pro ts que valor de name será uma das chaves válidas
       updatedItems[index][name as keyof (typeof updatedItems)[number]] = value;
       return { ...prev, items: updatedItems };
@@ -82,7 +84,7 @@ export default function AddProductsModal({
   return (
     <div className="fixed inset-0 flex items-center justify-center overflow-auto bg-black bg-opacity-50 transition-opacity duration-300 z-10 font-workSans">
       <div
-        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor dark:bg-darkerCustomColor ${
+        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor dark:bg-darkerCustomColor w-[80%] ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
         } max-h-[80vh] overflow-auto`}
       >
@@ -266,11 +268,11 @@ export default function AddProductsModal({
             ))}
           </div>
 
-          <div className="flex justify-end gap-4 mt-6">
+          <div className="grid justify-center md:flex md:justify-end gap-4 mt-6 grid-columns-3">
             <button
               type="button"
               onClick={handleAddItem}
-              className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
+              className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition "
             >
               Adicionar mais itens
             </button>

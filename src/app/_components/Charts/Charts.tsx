@@ -8,6 +8,7 @@ import Navbar from "../Navigation/Navbar/Navbar";
 import Sidebar from "../Navigation/Sidebar/Sidebar";
 import RecentPurchases from "../Tables/RecentPurchases";
 import Image from "next/image";
+import Link from "next/link";
 
 interface PurchaseItem {
   name: string;
@@ -218,9 +219,11 @@ export default function Charts() {
                 </span>
               </div>
               <div>
-                <button className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor">
-                  Ver detalhes
-                </button>
+                <Link href={"/minhas-compras"}>
+                  <button className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+                    Ver detalhes
+                  </button>
+                </Link>
               </div>
             </div>
             <div className="flex flex-col items-center font-raleway">
@@ -254,7 +257,7 @@ export default function Charts() {
               <div className="flex items-center space-x-2">
                 <span className="dark:text-black">Gastos nos últimos</span>
                 <select
-                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor"
+                  className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:hover:bg-gray-800 cursor-pointer"
                   value={selectedPeriodLineChart}
                   onChange={(e) =>
                     setSelectedPeriodLineChart(Number(e.target.value))
@@ -318,7 +321,7 @@ export default function Charts() {
                   Exibindo
                 </span>
                 <select
-                  className="p-2 rounded-lg font-hostGrotesk border bg-gray-100 dark:bg-darkerCustomColor"
+                  className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:hover:bg-gray-800 cursor-pointer"
                   value={selectedMostSpentDays}
                   onChange={(e) =>
                     setSelectedMostSpentDays(Number(e.target.value))

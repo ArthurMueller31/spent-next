@@ -108,7 +108,7 @@ export default function RecentPurchasesTable() {
           </div>
 
           <Link href={"/minhas-compras"}>
-            <button className="flex items-center font-medium bg-darkerCustomColor border border-darkerCustomColor text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300 dark:text-white dark:bg-darkerCustomColor dark:hover:bg-gray-800">
+            <button className="flex items-center font-medium bg-darkerCustomColor border-black text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300 dark:text-white dark:bg-darkerCustomColor dark:hover:bg-gray-800">
               Ver todas
               <Image
                 className="ml-2"

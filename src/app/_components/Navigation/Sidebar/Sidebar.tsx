@@ -15,6 +15,7 @@ import useTotalSpent from "@/hooks/useTotalSpent";
 export default function Sidebar() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
   const [userName, setUserName] = useState<string | null>(null);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
@@ -69,10 +70,75 @@ export default function Sidebar() {
 
   useTotalSpent(userId);
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    handleResize(); // verificar tamanho inicial
+
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <>
-      <aside className="flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-darkerCustomColor font-raleway">
-        <div className="relative mt-16 flex flex-col items-center justify-center font-workSans border rounded-md">
+      {isModalVisible && (
+        <AddProductsModal
+          isModalOpen={isModalOpen}
+          handleModalToggle={handleModalToggle}
+        />
+      )}
+      {!isMenuOpen && (
+        <button
+          className="fixed top-20 left-4 z-50 md:hidden"
+          onClick={() => setIsMenuOpen(true)}
+        >
+          <Image
+            className="block dark:hidden"
+            src={"./icons/hamburger-menu-black.svg"}
+            alt="menu-icon"
+            width={30}
+            height={30}
+          />
+          <Image
+            className="hidden dark:block"
+            src={"./icons/hamburger-menu-white.svg"}
+            alt="menu-icon"
+            width={30}
+            height={30}
+          />
+        </button>
+      )}
+      <aside
+        className={`mr-64 flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-darkerCustomColor font-raleway transition-transform duration-300 ease-in-out ${
+          isMenuOpen
+            ? "translate-x-0 w-full"
+            : "-translate-x-full md:translate-x-0 md:w-64"
+        }`}
+      >
+        <div className="relative mt-12 mb-6 flex flex-col items-start font-workSans md:hidden">
+          <button className="" onClick={() => setIsMenuOpen(false)}>
+            <Image
+              className="block dark:hidden"
+              src={"./icons/cancel.svg"}
+              alt="cancel-icon"
+              width={30}
+              height={30}
+            />
+            <Image
+              className="hidden dark:block"
+              src={"./icons/cancel-white.svg"}
+              alt="cancel-icon"
+              width={30}
+              height={30}
+            />
+          </button>
+        </div>
+
+        <div className="relative flex flex-col items-center justify-center font-workSans border rounded-md md:mt-12">
           <div className="flex flex-row items-center m-2 font-medium">
             <Image
               className="block dark:hidden"
@@ -100,13 +166,6 @@ export default function Sidebar() {
               </p>
             </span>
           </div>
-
-          {isModalVisible && (
-            <AddProductsModal
-              isModalOpen={isModalOpen}
-              handleModalToggle={handleModalToggle}
-            />
-          )}
         </div>
 
         <div>

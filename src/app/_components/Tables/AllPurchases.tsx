@@ -301,11 +301,13 @@ export default function AllPurchasesTable() {
     }
   };
 
+  // ml-64 no main
+
   return (
     <>
       <div className="flex h-screen overflow-auto font-raleway tracking-wide">
-        <main className="flex-1 ml-64 md:ml-0 flex items-center justify-center bg-gray-50 p-4 dark:bg-darkerCustomColor">
-          <div className="w-full max-w-7xl bg- rounded-lg shadow-lg p-6 overflow-auto dark:border dark:border-white dark:bg-white">
+        <main className="flex-1 md:ml-0 flex items-center justify-center bg-gray-50 p-4 dark:bg-darkerCustomColor">
+          <div className="max-w-lg max-h-[80%] md:max-h-full md:max-w-7xl md:w-full rounded-lg shadow-lg mt-14 p-3 md:p-6 dark:border dark:border-white dark:bg-white overflow-auto">
             <div className="pb-4 flex items-center">
               <Image
                 className="mr-2"
@@ -321,19 +323,19 @@ export default function AllPurchasesTable() {
             </div>
             {userId && (
               <div className="overflow-y-auto max-h-[42rem]">
-                <table className="w-full border border-gray-300 text-sm text-left rounded-lg overflow-auto">
+                <table className="w-full min-w-[600px] border border-gray-300 text-left rounded-lg overflow-auto">
                   <thead className="bg-darkerCustomColor top-0 z-0">
-                    <tr className="flex justify-around text-white text-base items-center dark:border">
-                      <th className="flex-1 p-3 text-center">
+                    <tr className="flex justify-around text-white md:text-base items-center dark:border">
+                      <th className="flex-1 text-center p-3">
                         Local da Compra
                       </th>
-                      <th className="flex-1 p-3 text-center">
+                      <th className="flex-1 text-center p-3">
                         Quantidade Total de Itens
                       </th>
-                      <th className="flex-1 p-3 text-center ">Preço Total</th>
-                      <th className="flex-1 p-3 text-center">Dia da Compra</th>
-                      <th className="flex-1 p-3 text-center">Categoria</th>
-                      <th className="flex-1 p-3 text-center">
+                      <th className="flex-1 text-center p-3">Preço Total</th>
+                      <th className="flex-1 text-center p-3">Dia da Compra</th>
+                      <th className="flex-1 text-center p-3">Categoria</th>
+                      <th className="flex-1 text-center p-3">
                         Expandir/Excluir compra
                       </th>
                     </tr>
@@ -342,30 +344,30 @@ export default function AllPurchasesTable() {
                     {purchases.map((purchase) => (
                       <React.Fragment key={purchase.id}>
                         <tr
-                          className={`flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray100 dark:text-black ${
+                          className={`flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray100 dark:text-black max-w-full ${
                             expandedPurchase === purchase.id
                               ? "bg-gray-100 dark:bg-gray-100"
                               : ""
                           }`}
                         >
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             {purchase.establishment}
                           </td>
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             {calculateTotalItems(purchase.items)}
                           </td>
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             {formatCurrencyToBRL(
                               calculateTotalPrice(purchase.items)
                             )}
                           </td>
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             {formatDate(purchase.purchaseDate)}
                           </td>
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             {purchase.category}
                           </td>
-                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg">
+                          <td className="flex-1 p-3 border-b text-center font-hostGrotesk font-bold flex items-center justify-center text-lg w-48">
                             <button
                               className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-xl"
                               title="Expandir"
@@ -449,7 +451,7 @@ export default function AllPurchasesTable() {
                                         key={`${purchase.id}-${originalIndex}`}
                                         className="text-center text-base font-medium font-hostGrotesk dark:text-black"
                                       >
-                                        <td className="p-2 border-b ">
+                                        <td className="p-3 border-b">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -461,7 +463,7 @@ export default function AllPurchasesTable() {
                                                   name: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
                                             />
                                           ) : (
                                             item.name
@@ -480,7 +482,7 @@ export default function AllPurchasesTable() {
                                                   quantity: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
                                             />
                                           ) : (
                                             item.quantity
@@ -499,7 +501,7 @@ export default function AllPurchasesTable() {
                                                   price: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
                                             />
                                           ) : (
                                             formatCurrencyToBRL(
@@ -520,7 +522,7 @@ export default function AllPurchasesTable() {
                                                   weight: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
                                             />
                                           ) : (
                                             item.weight
