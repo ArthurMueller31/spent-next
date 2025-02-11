@@ -306,8 +306,8 @@ export default function AllPurchasesTable() {
   return (
     <>
       <div className="flex h-screen overflow-auto font-raleway tracking-wide">
-        <main className="flex-1 md:ml-0 flex items-center justify-center bg-gray-50 p-4 dark:bg-darkerCustomColor">
-          <div className="max-w-lg max-h-[80%] md:max-h-full md:max-w-7xl md:w-full rounded-lg shadow-lg mt-14 p-3 md:p-6 dark:border dark:border-white dark:bg-white overflow-auto">
+        <main className="flex-1 md:pl-64 flex items-center justify-center bg-gray-50 p-4 dark:bg-darkerCustomColor">
+          <div className="max-w-lg max-h-[80%] md:max-h-full md:max-w-7xl md:w-full rounded-lg shadow-xl mt-14 p-3 md:p-6 dark:border dark:border-white dark:bg-white overflow-auto">
             <div className="pb-4 flex items-center">
               <Image
                 className="mr-2"

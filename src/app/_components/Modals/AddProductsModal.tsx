@@ -82,9 +82,9 @@ export default function AddProductsModal({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center overflow-auto bg-black bg-opacity-50 transition-opacity duration-300 z-10 font-workSans">
+    <div className="fixed inset-0 flex items-center justify-center overflow-auto bg-black bg-opacity-50 transition-opacity duration-300 z-40 font-workSans">
       <div
-        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor dark:bg-darkerCustomColor w-[80%] ${
+        className={`bg-gray-50 p-8 rounded-lg shadow-lg relative transition-transform duration-300 border-2 border-darkerCustomColor dark:bg-darkerCustomColor w-[80%] md:w-fit ${
           isModalOpen ? "opacity-100 scale-100" : "opacity-0 scale-90"
         } max-h-[80vh] overflow-auto`}
       >

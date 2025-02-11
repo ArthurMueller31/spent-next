@@ -43,6 +43,7 @@ export default function Charts() {
   const [pieChartData, setPieChartData] = useState<
     { id: string; value: number; label: string }[]
   >([]);
+  const [hideLegend, setHideLegend] = useState(false);
 
   const [userId, setUserId] = useState<string | null>(null);
 
@@ -200,19 +201,42 @@ export default function Charts() {
     fetchPieChartData();
   }, [userId]);
 
+  useEffect(() => {
+    const handleResize = () => {
+      const width = window.innerWidth;
+
+      if (width > 1545) {
+        setHideLegend(false);
+      } else if (width <= 1545 && width > 1280) {
+        setHideLegend(true);
+      } else if (width <= 1280 && width > 945) {
+        setHideLegend(false);
+      } else if (width <= 945 && width > 765) {
+        setHideLegend(true);
+      } else if (width <= 765 && width > 705) {
+        setHideLegend(false);
+      } else {
+        setHideLegend(true); // 705px para baixo some definitivamente
+      }
+    };
+
+    handleResize(); // Define o estado inicial baseado no tamanho atual da tela
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   return (
     <div className="relative">
       <Sidebar />
       <Navbar />
-      <div className="ml-64 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50 dark:bg-darkerCustomColor">
-        <div className="grid grid-cols-1 grid-rows-1 gap-8 h-full md:grid-cols-2 md:grid-rows-2">
-          {/* placeholder gráficos */}
-          <div className="bg-white rounded-lg shadow-lg p-6 flex items-center justify-center dark:bg-white">
+      <div className="md:pl-64 md:ml-12 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
+        <div className="grid grid-cols-1 gap-8 h-full xl:grid-cols-2 xl:grid-rows-2">
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center dark:bg-white ">
             <RecentPurchases />
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-center dark:bg-white">
-            <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center justify-between mt-[-10px]">
               <div className="flex items-center space-x-2">
                 <span className="dark:text-black">
                   Categorias com mais compras adicionadas
@@ -226,36 +250,44 @@ export default function Charts() {
                 </Link>
               </div>
             </div>
-            <div className="flex flex-col items-center font-raleway">
-              <PieChart
-                series={[
-                  {
-                    data: pieChartData
-                  }
-                ]}
-                margin={{ top: 85, bottom: 85, left: 85, right: 85 }}
-                slotProps={{
-                  legend: {
-                    direction: "column",
-                    position: { vertical: "middle", horizontal: "left" },
-                    padding: { top: 10, left: 70, right: 70 },
-                    labelStyle: {
-                      padding: 10,
-                      fontFamily: "inherit"
+
+            <div className="font-raleway w-full h-80 flex items-center justify-center">
+              <div className="dark:text-white z-10">
+                <PieChart
+                  series={[
+                    {
+                      data: pieChartData,
+                      arcLabel: (item) =>
+                        `${item.value !== 0 ? item.value : ""} `
                     }
-                  }
-                }}
-                width={800}
-                height={330}
-              />
+                  ]}
+                  margin={{ top: 50, bottom: 110, left: 50, right: 50 }}
+                  slotProps={{
+                    legend: {
+                      hidden: hideLegend,
+                      direction: "row",
+                      position: { vertical: "bottom", horizontal: "middle" },
+                      padding: 15,
+                      labelStyle: {
+                        padding: 10,
+                        fontFamily: "inherit"
+                      }
+                    }
+                  }}
+                  height={380}
+                  width={600}
+                />
+              </div>
             </div>
           </div>
 
           {/* gráfico de linhas, compras nos últimos x dias */}
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white">
-            <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="dark:text-black">Gastos nos últimos</span>
+                <span className="dark:text-black text-center md:text-start">
+                  Gastos nos últimos
+                </span>
                 <select
                   className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:hover:bg-gray-800 cursor-pointer"
                   value={selectedPeriodLineChart}
@@ -270,7 +302,7 @@ export default function Charts() {
                 </select>
               </div>
 
-              <span className="flex items-center font-medium dark:text-black">
+              <span className="flex items-center font-medium dark:text-black pt-3 md:pt-0">
                 <Image
                   className="mr-1"
                   src={"./icons/info-black.svg"}
@@ -281,7 +313,7 @@ export default function Charts() {
                 Inclui o dia atual
               </span>
             </div>
-            <div className="w-full h-[80%] dark:text-white">
+            <div className="w-full h-80 dark:text-white">
               <LineChart
                 xAxis={[
                   {
@@ -311,10 +343,12 @@ export default function Charts() {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white">
-            <div className="flex flex-row items-center justify-between">
+          <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white h-max">
+            <div className="flex flex-col md:flex-row items-center justify-between">
               <div className="flex items-center space-x-2">
-                <span className="dark:text-black">Dias com mais gastos</span>
+                <span className="dark:text-black pb-3 md:p-0">
+                  Dias com mais gastos
+                </span>
               </div>
               <div>
                 <span className="font-medium dark:text-black mr-2">
@@ -333,7 +367,7 @@ export default function Charts() {
                 </select>
               </div>
             </div>
-            <div className="w-full h-[80%]">
+            <div className="w-full h-80">
               <BarChart
                 xAxis={[{ data: mostSpentDaysChartDates, scaleType: "band" }]}
                 yAxis={[

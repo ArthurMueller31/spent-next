@@ -100,59 +100,57 @@ export default function RecentPurchasesTable() {
 
   return (
     <>
-      <div className="w-full max-w-2xl">
-        {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
-        <div className="flex flex-row items-center justify-between mb-8">
-          <div className="flex items-center space-x-2 dark:text-black">
-            <span>Minhas últimas compras</span>
+      <div className="flex flex-col items-center justify-center w-full">
+        <div className="flex flex-row w-full justify-between">
+          <div className="flex items-center space-x-2">
+            <span className="dark:text-black">Minhas últimas compras</span>
           </div>
-
-          <Link href={"/minhas-compras"}>
-            <button className="flex items-center font-medium bg-darkerCustomColor border-black text-white px-5 py-1.5 rounded-lg hover:bg-gray-800 transition duration-300 dark:text-white dark:bg-darkerCustomColor dark:hover:bg-gray-800">
-              Ver todas
-              <Image
-                className="ml-2"
-                src={"./icons/arrow-forward.svg"}
-                alt="forward-arrow"
-                width={15}
-                height={15}
-              />
-            </button>
-          </Link>
+          <div>
+            <Link href={"/minhas-compras"}>
+              <button className="flex text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+                Ver todas 
+                <Image src={"./icons/arrow-forward.svg"} alt="forward-arrow-icon" width={15} height={15} className="ml-2"/>
+              </button>
+            </Link>
+          </div>
         </div>
-        <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
-          <thead className="bg-darkerCustomColor">
-            <tr className="flex justify-around text-white text-base">
-              <th className="flex-1 p-3 border-b text-center">Local</th>
-              <th className="flex-1 p-3 border-b text-center">
-                Total de Itens
-              </th>
-              <th className="flex-1 p-3 border-b text-center">Preço Total</th>
-              <th className="flex-1 p-3 border-b text-center">Data</th>
-            </tr>
-          </thead>
-          <tbody>
-            {purchases.map((purchase) => (
-              <tr
-                key={purchase.id}
-                className="flex justify-around hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-100 dark:text-black"
-              >
-                <td className="flex-1 p-3 border-b text-center font-bold">
-                  {purchase.establishment}
-                </td>
-                <td className="flex-1 p-3 border-b text-center font-bold">
-                  {calculateTotalItems(purchase.items)}
-                </td>
-                <td className="flex-1 p-3 border-b text-center font-bold">
-                  {formatCurrencyToBRL(calculateTotalPrice(purchase.items))}
-                </td>
-                <td className="flex-1 p-3 border-b text-center font-bold">
-                  {formatDate(purchase.purchaseDate)}
-                </td>
+
+        <div className="w-full overflow-x-auto m-5">
+          {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
+          <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
+            <thead className="bg-darkerCustomColor">
+              <tr className="flex justify-around text-white text-base">
+                <th className="flex-1 p-3 border-b text-center">Local</th>
+                <th className="flex-1 p-3 border-b text-center">
+                  Total de Itens
+                </th>
+                <th className="flex-1 p-3 border-b text-center">Preço Total</th>
+                <th className="flex-1 p-3 border-b text-center">Data</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {purchases.map((purchase) => (
+                <tr
+                  key={purchase.id}
+                  className="flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-100 dark:text-black"
+                >
+                  <td className="flex-1 p-3 border-b text-center font-bold w-32">
+                    {purchase.establishment}
+                  </td>
+                  <td className="flex-1 p-3 border-b text-center font-bold w-32">
+                    {calculateTotalItems(purchase.items)}
+                  </td>
+                  <td className="flex-1 p-3 border-b text-center font-bold w-32">
+                    {formatCurrencyToBRL(calculateTotalPrice(purchase.items))}
+                  </td>
+                  <td className="flex-1 p-3 border-b text-center font-bold w-32">
+                    {formatDate(purchase.purchaseDate)}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
   );

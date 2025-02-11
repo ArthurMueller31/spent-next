@@ -6,7 +6,7 @@ import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth, firestore } from "../../../../../firebase/firebase";
 import { useRouter } from "next/navigation";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import AddProductsModal from "../../Modals/AddProductsModal";
 import { doc, getDoc } from "firebase/firestore";
 import useSidebarStore from "./sidebarStore";
@@ -113,7 +113,7 @@ export default function Sidebar() {
         </button>
       )}
       <aside
-        className={`mr-64 flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-darkerCustomColor font-raleway transition-transform duration-300 ease-in-out ${
+        className={`mr-64 flex flex-col fixed w-64 h-screen px-4 py-8 overflow-y-auto bg-white border-r rtl:border-r-0 rtl:border-l dark:bg-darkerCustomColor font-raleway transition-transform duration-300 ease-in-out z-30 ${
           isMenuOpen
             ? "translate-x-0 w-full"
             : "-translate-x-full md:translate-x-0 md:w-64"
