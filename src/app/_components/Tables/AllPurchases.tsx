@@ -258,6 +258,7 @@ export default function AllPurchasesTable() {
     setAddingItem(false);
     setNewItem(null);
     setEditedItem(null);
+    setEditingItem(null);
   };
 
   const handleSaveNewItem = async (purchaseId: string) => {
@@ -419,21 +420,23 @@ export default function AllPurchasesTable() {
                             >
                               <table className="w-full text-sm border border-gray-300 mt-2 rounded-lg">
                                 <thead className="bg-darkerCustomColor text-white">
-                                  <tr className="text-base">
-                                    <th className="p-2 border-b text-center">
+                                  <tr className="text-base border-b">
+                                    <th className="p-2 text-center">
                                       Nome do Item
                                     </th>
-                                    <th className="p-2 border-b text-center">
+                                    <th className="p-2 text-center">
                                       Quantidade
                                     </th>
-                                    <th className="p-2 border-b text-center">
+                                    <th className="p-2 text-center">
                                       Preço Unitário
                                     </th>
-                                    <th className="p-2 border-b text-center">
+                                    <th className="p-2 text-center">
                                       Peso (gramas)
                                     </th>
-                                    <th className="p-2 border-b text-center">
-                                      Editar/Excluir
+                                    <th className="p-2 text-center">
+                                      {editingItem || addingItem
+                                        ? "Salvar"
+                                        : "Editar/Excluir"}
                                     </th>
                                   </tr>
                                 </thead>
@@ -451,9 +454,9 @@ export default function AllPurchasesTable() {
                                     .map(({ item, originalIndex }) => (
                                       <tr
                                         key={`${purchase.id}-${originalIndex}`}
-                                        className="text-center text-base font-medium font-hostGrotesk dark:text-black"
+                                        className="text-center text-base font-medium font-hostGrotesk dark:text-black border border-gray-300"
                                       >
-                                        <td className="p-3 border-b">
+                                        <td className="p-3">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -472,7 +475,7 @@ export default function AllPurchasesTable() {
                                           )}
                                         </td>
 
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -491,7 +494,7 @@ export default function AllPurchasesTable() {
                                           )}
                                         </td>
 
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -512,7 +515,7 @@ export default function AllPurchasesTable() {
                                           )}
                                         </td>
 
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
@@ -530,17 +533,18 @@ export default function AllPurchasesTable() {
                                             item.weight
                                           )}
                                         </td>
-                                        <td className="p-2 border-b self-center md:whitespace-nowrap">
+                                        <td className="p-2">
                                           {editingItem ===
                                           `${purchase.id}-${originalIndex}` ? (
-                                            <>
+                                            <div className="flex items-center justify-center gap-2">
                                               <button
-                                                className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded md:inline-flex md:m-[-10px]"
+                                                className="m-1 p-2 hover:bg-green-600 transition duration-200 rounded"
                                                 onClick={() =>
                                                   handleSaveEdit(purchase.id!)
                                                 }
                                               >
                                                 <Image
+                                                  className="min-w-[25px] min-h-[25px]"
                                                   src={"./icons/check.svg"}
                                                   alt="save-icon"
                                                   width={25}
@@ -549,22 +553,23 @@ export default function AllPurchasesTable() {
                                                 />
                                               </button>
                                               <button
-                                                className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded md:inline-flex md:ml-[10px]"
+                                                className="m-1 p-2 hover:bg-red-600 transition duration-200 rounded"
                                                 onClick={handleCancelEdit}
                                                 title="Cancelar"
                                               >
                                                 <Image
+                                                  className="min-w-[25px] min-h-[25px]"
                                                   src={"./icons/cancel.svg"}
                                                   alt="cancel-icon"
                                                   width={25}
                                                   height={25}
                                                 />
                                               </button>
-                                            </>
+                                            </div>
                                           ) : (
-                                            <>
+                                            <div className="flex items-center justify-center gap-2">
                                               <button
-                                                className="mx-1 px-2 hover:bg-gray-300 transition duration-200 rounded-lg"
+                                                className="m-1 p-2 hover:bg-gray-300 transition duration-200 rounded-lg"
                                                 onClick={() =>
                                                   handleEditItem(
                                                     item,
@@ -575,7 +580,7 @@ export default function AllPurchasesTable() {
                                                 title="Editar"
                                               >
                                                 <Image
-                                                  className="m-1"
+                                                  className="min-w-[25px] min-h-[25px]"
                                                   src={"./icons/edit.svg"}
                                                   alt="edit-icon"
                                                   width={25}
@@ -583,7 +588,7 @@ export default function AllPurchasesTable() {
                                                 />
                                               </button>
                                               <button
-                                                className="mx-1 px-2 hover:bg-red-600 transition duration-200 rounded-lg"
+                                                className="m-1 p-2 hover:bg-red-600 transition duration-200 rounded-lg"
                                                 onClick={() =>
                                                   handleItemDelete(
                                                     purchase.id!,
@@ -592,14 +597,14 @@ export default function AllPurchasesTable() {
                                                 }
                                               >
                                                 <Image
-                                                  className="m-1"
+                                                  className="min-w-[25px] min-h-[25px]"
                                                   src={"./icons/delete.svg"}
                                                   alt="delete-bin-icon"
                                                   width={25}
                                                   height={25}
                                                 />
                                               </button>
-                                            </>
+                                            </div>
                                           )}
                                         </td>
                                       </tr>
@@ -608,7 +613,7 @@ export default function AllPurchasesTable() {
                                   {addingItem &&
                                     editingItem === `add-${purchase.id}` && (
                                       <tr className="text-center text-base font-medium">
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           <input
                                             type="text"
                                             placeholder="Nome do item"
@@ -622,7 +627,7 @@ export default function AllPurchasesTable() {
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           <input
                                             type="text"
                                             placeholder="Quantidade"
@@ -636,7 +641,7 @@ export default function AllPurchasesTable() {
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           <input
                                             type="text"
                                             placeholder="Preço Unitário"
@@ -650,7 +655,7 @@ export default function AllPurchasesTable() {
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
-                                        <td className="p-2 border-b">
+                                        <td className="p-2">
                                           <input
                                             type="text"
                                             placeholder="Peso (gramas)"
@@ -664,33 +669,37 @@ export default function AllPurchasesTable() {
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
                                           />
                                         </td>
-                                        <td className="p-2 border-b self-center">
-                                          <button
-                                            className="m-1 px-3 py-1 hover:bg-green-600 transition duration-200 rounded"
-                                            onClick={() =>
-                                              handleSaveNewItem(purchase.id!)
-                                            }
-                                          >
-                                            <Image
-                                              src={"./icons/check.svg"}
-                                              alt="Salvar"
-                                              width={25}
-                                              height={25}
-                                              title="Salvar"
-                                            />
-                                          </button>
-                                          <button
-                                            className="m-1 px-3 py-1 hover:bg-red-600 transition duration-200 rounded"
-                                            onClick={handleCancelAddItem}
-                                            title="Cancelar"
-                                          >
-                                            <Image
-                                              src={"./icons/cancel.svg"}
-                                              alt="Cancelar"
-                                              width={25}
-                                              height={25}
-                                            />
-                                          </button>
+                                        <td className="p-2">
+                                          <div className="flex items-center justify-center gap-2">
+                                            <button
+                                              className="m-1 p-2 hover:bg-green-600 transition duration-200 rounded"
+                                              onClick={() =>
+                                                handleSaveNewItem(purchase.id!)
+                                              }
+                                            >
+                                              <Image
+                                                className="min-w-[25px] min-h-[25px]"
+                                                src={"./icons/check.svg"}
+                                                alt="Salvar"
+                                                width={25}
+                                                height={25}
+                                                title="Salvar"
+                                              />
+                                            </button>
+                                            <button
+                                              className="m-1 p-2 hover:bg-red-600 transition duration-200 rounded"
+                                              onClick={handleCancelAddItem}
+                                              title="Cancelar"
+                                            >
+                                              <Image
+                                                className="min-w-[25px] min-h-[25px]"
+                                                src={"./icons/cancel.svg"}
+                                                alt="Cancelar"
+                                                width={25}
+                                                height={25}
+                                              />
+                                            </button>
+                                          </div>
                                         </td>
                                       </tr>
                                     )}
