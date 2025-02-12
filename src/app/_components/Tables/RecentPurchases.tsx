@@ -100,23 +100,25 @@ export default function RecentPurchasesTable() {
 
   return (
     <>
-      <div className="flex flex-col items-center justify-center w-full">
-        <div className="flex flex-row w-full justify-between">
-          <div className="flex items-center space-x-2">
-            <span className="dark:text-black">Minhas últimas compras</span>
-          </div>
-          <div>
-            <Link href={"/minhas-compras"}>
-              <button className="flex text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
-                Ver todas 
-                <Image src={"./icons/arrow-forward.svg"} alt="forward-arrow-icon" width={15} height={15} className="ml-2"/>
-              </button>
-            </Link>
-          </div>
-        </div>
+      <div className="flex flex-row justify-between w-full items-center pb-20 relative">
+        <span className="dark:text-black">Minhas últimas compras</span>
+        <Link href={"/minhas-compras"}>
+          <button className="flex text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+            Ver todas
+            <Image
+              src={"./icons/arrow-forward.svg"}
+              alt="forward-arrow-icon"
+              width={15}
+              height={15}
+              className="ml-2 self-center"
+            />
+          </button>
+        </Link>
+      </div>
 
-        <div className="w-full overflow-x-auto m-5">
-          {/*max-w-4xl bg-white rounded-lg shadow-lg p-6 overflow-auto */}
+      <div className="flex flex-col w-full">
+        {/* Área da Tabela */}
+        <div className="w-full min-h-[250px] overflow-x-auto">
           <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
             <thead className="bg-darkerCustomColor">
               <tr className="flex justify-around text-white text-base">
