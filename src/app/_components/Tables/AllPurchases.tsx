@@ -12,6 +12,7 @@ import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import useSidebarStore from "../Navigation/Sidebar/sidebarStore";
 import Image from "next/image";
+import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
 
 type Purchase = {
   id?: string;
@@ -83,6 +84,9 @@ export default function AllPurchasesTable() {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [addingItem, setAddingItem] = useState(false);
   const [newItem, setNewItem] = useState<Item | null>(null);
+  const [selectedPurchase, setSelectedPurchase] = useState<string | null>(null);
+  const [isDeletePurchaseModalOpen, setIsDeletePurchaseModalOpen] =
+    useState(false);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -129,33 +133,28 @@ export default function AllPurchasesTable() {
     fetchData();
   }, [userId, setTotalSpent]);
 
-  const handlePurchaseDelete = async (purchaseId: string) => {
-    if (!userId) return;
-
-    const confirmDelete = window.confirm(
-      "Tem certeza de que deseja excluir esta compra?"
-    );
-    if (!confirmDelete) return;
+  const handlePurchaseDelete = async () => {
+    if (!userId || !selectedPurchase) return;
 
     try {
       const purchaseRef = doc(
         firestore,
-        `users/${userId}/purchases/${purchaseId}`
+        `users/${userId}/purchases/${selectedPurchase}`
       );
 
       await deleteDoc(purchaseRef);
 
       setPurchases((prevPurchases) =>
-        prevPurchases.filter((p) => p.id !== purchaseId)
+        prevPurchases.filter((p) => p.id !== selectedPurchase)
       );
-
-      alert("Compra excluída com sucesso.");
     } catch (error) {
       console.log("erro ao excluir", error);
       alert("Erro ao excluir a compra, tente novamente.");
     } finally {
+      setIsDeletePurchaseModalOpen(false);
+      setSelectedPurchase(null);
       setPurchases((prevPurchases) =>
-        prevPurchases.filter((p) => p.id !== purchaseId)
+        prevPurchases.filter((p) => p.id !== selectedPurchase)
       );
     }
   };
@@ -395,7 +394,10 @@ export default function AllPurchasesTable() {
                             <button
                               className="mx-1 px-2 hover:bg-red-600 transition duration-200 rounded-xl"
                               title="Excluir"
-                              onClick={() => handlePurchaseDelete(purchase.id!)}
+                              onClick={() => {
+                                setSelectedPurchase(purchase.id!);
+                                setIsDeletePurchaseModalOpen(true);
+                              }}
                             >
                               <Image
                                 className="m-1"
@@ -736,6 +738,12 @@ export default function AllPurchasesTable() {
           </div>
         </main>
       </div>
+
+      <ConfirmDeleteModal
+        isOpen={isDeletePurchaseModalOpen}
+        onClose={() => setIsDeletePurchaseModalOpen(false)}
+        onConfirm={handlePurchaseDelete}
+      />
     </>
   );
 }
