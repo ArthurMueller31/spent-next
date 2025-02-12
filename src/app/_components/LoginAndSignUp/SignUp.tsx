@@ -108,7 +108,7 @@ export default function SignUp() {
           uid: user.uid,
           name: user.displayName || "Usuário sem nome",
           email: user.email,
-          photoULR: user.photoURL || null,
+          photoURL: user.photoURL || null,
           createdAt: formattedDate
         };
 
@@ -130,8 +130,8 @@ export default function SignUp() {
 
   return (
     <>
-      <div className="font-raleway flex justify-center bg-darkerCustomColor pb-[31px]">
-        <div className="min-h-[90vh] flex flex-col  justify-center py-6 px-4">
+      <div className="font-raleway flex justify-center dark:bg-darkerCustomColor pb-[31px]">
+        <div className="min-h-[90vh] flex flex-col justify-center py-6 px-4">
           <div className="grid md:grid-cols-2 items-center gap-10 max-w-6xl max-md:max-w-md w-full">
             <div>
               <h2 className="lg:text-5xl text-3xl font-extrabold lg:leading-[55px] text-darkerCustomColor dark:text-white">

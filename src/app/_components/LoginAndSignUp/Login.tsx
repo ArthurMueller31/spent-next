@@ -78,6 +78,7 @@ export default function Login() {
       setIsLoading(false);
     }
   };
+
   return (
     <>
       <div className="font-raleway flex justify-center dark:bg-darkerCustomColor pb-[31px]">
@@ -119,9 +120,12 @@ export default function Login() {
 
               <div className="flex flex-wrap items-center justify-between gap-4 mt-4">
                 <div className="text-sm">
-                  <button className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 h-4 font-semibold">
+                  <Link
+                    href={"/recuperar-senha"}
+                    className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 h-4 font-semibold"
+                  >
                     Esqueceu a senha?
-                  </button>
+                  </Link>
                 </div>
                 <div>
                   {error && (
