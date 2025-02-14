@@ -99,26 +99,25 @@ export default function RecentPurchasesTable() {
   }, [userId]);
 
   return (
-    <>
-      <div className="flex flex-row justify-between w-full items-center pb-20 relative">
+    <div className="relative w-full">
+      <div className="flex justify-between items-center relative pt-0 xl:pt-10">
         <span className="dark:text-black">Minhas últimas compras</span>
         <Link href={"/minhas-compras"}>
-          <button className="flex text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+          <button className="flex items-center text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
             Ver todas
             <Image
               src={"./icons/arrow-forward.svg"}
               alt="forward-arrow-icon"
               width={15}
               height={15}
-              className="ml-2 self-center"
+              className="ml-2 self-center hidden sm:block"
             />
           </button>
         </Link>
       </div>
 
-      <div className="flex flex-col w-full">
-        {/* Área da Tabela */}
-        <div className="w-full min-h-[250px] overflow-x-auto">
+      <div className="flex flex-col w-full mt-4 xl:mt-10">
+        <div className="w-full min-h-[330px] overflow-x-auto">
           <table className="w-full border border-gray-300 text-md text-left rounded-lg font-hostGrotesk">
             <thead className="bg-darkerCustomColor">
               <tr className="flex justify-around text-white text-base">
@@ -154,6 +153,6 @@ export default function RecentPurchasesTable() {
           </table>
         </div>
       </div>
-    </>
+    </div>
   );
 }

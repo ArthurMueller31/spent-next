@@ -107,22 +107,31 @@ export default function AccountPage() {
         <Link href={"/home"}>
           <button
             className="px-4 py-2 bg-darkerCustomColor border border-darkerCustomColor rounded-xl flex text-white
-          hover:bg-slate-800 transition duration-200 font-raleway"
+          hover:bg-slate-800 transition duration-200 font-raleway dark:border dark:border-white dark:text-black dark:bg-white font-medium dark:hover:bg-gray-200"
           >
             <Image
               src={"./icons/arrow-forward.svg"}
               alt="arrow-backwards-icon"
               width={15}
               height={15}
-              className="transform scale-x-[-1] mr-2"
+              className="transform scale-x-[-1] mr-2 block dark:hidden"
+            />
+            <Image
+              src={"./icons/arrow-forward-black.svg"}
+              alt="arrow-backwards-icon"
+              width={15}
+              height={15}
+              className="transform scale-x-[-1] mr-2 hidden dark:block"
             />
             Voltar
           </button>
         </Link>
       </div>
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 pt-[64px] font-hostGrotesk">
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-darkerCustomColor pt-[64px] font-hostGrotesk p-10">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-          <h2 className="text-xl font-semibold mb-4">Minha Conta</h2>
+          <h2 className="text-xl font-semibold mb-4 dark:text-black">
+            Minha Conta
+          </h2>
           <div className="flex flex-col items-center">
             <Image
               src={userPhoto || "/icons/sidebar-account.svg"}
@@ -137,7 +146,7 @@ export default function AccountPage() {
                 <input
                   type="text"
                   placeholder="Insira o novo nome"
-                  className="m-2 border border-black rounded px-2 py-2"
+                  className="m-5 border border-black rounded px-2 py-2 dark:text-black dark:placeholder:text-gray-500"
                   onChange={(e) => setNewUserName(e.target.value)}
                 />
               ) : (
@@ -148,6 +157,7 @@ export default function AccountPage() {
               {editingName && (
                 <div>
                   <button
+                    title="Editar nome"
                     onClick={() => setEditingName(false)}
                     className="hover:bg-red-500 transition duration-200 rounded m-1"
                   >
@@ -188,13 +198,15 @@ export default function AccountPage() {
             </div>
 
             <div className="flex flex-col items-center">
-              <p className="mt-5 mb-[-15px]">E-mail cadastrado:</p>
-              <div className="m-7 px-10 py-2 w-fit border border-darkerCustomColor rounded bg-gray-50 text-center">
+              <p className="mt-5 mb-[-15px] dark:text-black">
+                E-mail cadastrado:
+              </p>
+              <div className="m-7 px-10 py-2 w-fit border border-darkerCustomColor rounded bg-gray-50 text-center dark:text-gray-700">
                 <p>{userEmail}</p>
               </div>
             </div>
             <div>
-              <p className="font-hostGrotesk">
+              <p className="font-hostGrotesk dark:text-black">
                 Data de criação da conta: {userAccCreation?.createdAt}
               </p>
             </div>

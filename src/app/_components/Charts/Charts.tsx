@@ -24,12 +24,12 @@ interface Purchase {
 
 export default function Charts() {
   // Gráfico de linhas (gastos totais)
-  const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(7);
+  const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(365);
+  const [userHasPurchasesInPeriod, setUserHasPurchasesInPeriod] = useState<
+    Record<number, boolean>
+  >({ 7: true, 30: true, 90: true, 365: true });
   const [lineChartData, setLineChartData] = useState<number[]>([]);
   const [lineChartDates, setLineChartDates] = useState<string[]>([]);
-
-  // Gráfico de barras (dias com maiores gastos - all time)
-  // Não usamos um estado para o período, pois buscamos todas as compras
   const [selectedMostSpentDays, setSelectedMostSpentDays] = useState(3);
   const [barTotalsByDate, setBarTotalsByDate] = useState<{
     [date: string]: number;
@@ -55,6 +55,34 @@ export default function Charts() {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    async function checkPurchasesInPeriods() {
+      if (!userId) return;
+
+      const periods = [7, 30, 90, 365];
+      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
+      const endDate = new Date();
+      const purchasesInPeriod: Record<number, boolean> = {};
+
+      for (const days of periods) {
+        const startDate = new Date();
+        startDate.setDate(endDate.getDate() - days);
+
+        const q = query(
+          purchasesRef,
+          where("purchaseDate", ">=", startDate.toISOString()),
+          where("purchaseDate", "<=", endDate.toISOString())
+        );
+
+        const querySnapshot = await getDocs(q);
+        purchasesInPeriod[days] = !querySnapshot.empty;
+      }
+
+      setUserHasPurchasesInPeriod(purchasesInPeriod);
+    }
+    checkPurchasesInPeriods();
+  }, [userId]);
+
   // Query para o gráfico de linhas (gastos totais dos últimos N dias)
   useEffect(() => {
     async function fetchLineChartPurchases() {
@@ -72,6 +100,7 @@ export default function Charts() {
       );
 
       const querySnapshot = await getDocs(q);
+
       const totals: { [date: string]: number } = {};
 
       querySnapshot.forEach((doc) => {
@@ -295,10 +324,18 @@ export default function Charts() {
                     setSelectedPeriodLineChart(Number(e.target.value))
                   }
                 >
-                  <option value={7}>7 dias</option>
-                  <option value={30}>30 dias</option>
-                  <option value={90}>90 dias</option>
-                  <option value={365}>1 ano</option>
+                  <option value={365} disabled={!userHasPurchasesInPeriod[365]}>
+                    1 ano
+                  </option>
+                  <option value={90} disabled={!userHasPurchasesInPeriod[90]}>
+                    90 dias
+                  </option>
+                  <option value={30} disabled={!userHasPurchasesInPeriod[30]}>
+                    30 dias
+                  </option>
+                  <option value={7} disabled={!userHasPurchasesInPeriod[7]}>
+                    7 dias
+                  </option>
                 </select>
               </div>
 

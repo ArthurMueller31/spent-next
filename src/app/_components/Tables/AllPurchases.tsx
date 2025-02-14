@@ -468,7 +468,7 @@ export default function AllPurchasesTable() {
                                                   name: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%] "
                                             />
                                           ) : (
                                             item.name
@@ -487,7 +487,7 @@ export default function AllPurchasesTable() {
                                                   quantity: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
                                             item.quantity
@@ -506,7 +506,7 @@ export default function AllPurchasesTable() {
                                                   price: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
                                             formatCurrencyToBRL(
@@ -527,7 +527,7 @@ export default function AllPurchasesTable() {
                                                   weight: e.target.value
                                                 })
                                               }
-                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-gray-600 max-w-[90%]"
+                                              className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
                                             item.weight
@@ -612,7 +612,7 @@ export default function AllPurchasesTable() {
 
                                   {addingItem &&
                                     editingItem === `add-${purchase.id}` && (
-                                      <tr className="text-center text-base font-medium">
+                                      <tr className="text-center text-base font-medium font-hostGrotesk">
                                         <td className="p-2">
                                           <input
                                             type="text"
@@ -624,7 +624,7 @@ export default function AllPurchasesTable() {
                                                 name: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
                                         <td className="p-2">
@@ -638,7 +638,7 @@ export default function AllPurchasesTable() {
                                                 quantity: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
                                         <td className="p-2">
@@ -652,7 +652,7 @@ export default function AllPurchasesTable() {
                                                 price: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
                                         <td className="p-2">
@@ -666,7 +666,7 @@ export default function AllPurchasesTable() {
                                                 weight: e.target.value
                                               })
                                             }
-                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600"
+                                            className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
                                         <td className="p-2">
