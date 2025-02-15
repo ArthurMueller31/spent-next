@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { firestore } from "../../firebase/firebase"; // Certifique-se de ajustar a importação
+import { firestore } from "../../firebase/firebase"; 
 import useSidebarStore from "@/app/_components/Navigation/Sidebar/sidebarStore"; // O hook Zustand
 
 interface Item {
   name: string;
-  price: string; // Ou `number`, se o preço for um número
+  price: string;
   quantity: number;
-  weight: string; // Ou `number`, dependendo de como você armazena o peso
+  weight: string; 
 }
 
 interface PurchaseData {
@@ -20,7 +20,7 @@ const useTotalSpent = (userId: string | null) => {
   useEffect(() => {
     if (!userId) return;
 
-    // Refere-se à coleção de compras do usuário
+    
     const purchasesRef = collection(firestore, "users", userId, "purchases");
 
     // Configura o listener para obter dados em tempo real

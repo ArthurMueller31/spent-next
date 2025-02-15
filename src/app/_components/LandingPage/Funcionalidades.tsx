@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Funcionalidades() {
   return (
-    <section className="font-raleway">
+    <section className="font-raleway dark:bg-black">
       <div className="m-16">
         <h1 className="text-4xl font-bold text-center lg:text-start lg:text-6xl lg:pl-12">
           Funcionalidades
@@ -12,9 +12,17 @@ export default function Funcionalidades() {
           <div className="flex flex-col items-center max-w-xl">
             <Image
               src={"/icons/dollar-sign-w-circle.svg"}
-              alt="dollar sign with circle"
+              alt="dollar-circle-icon"
               width={150}
               height={150}
+              className="block dark:hidden"
+            />
+            <Image
+              src={"/icons/dollar-sign-w-circle-white.svg"}
+              alt="dollar-circle-icon"
+              width={150}
+              height={150}
+              className="hidden dark:block"
             />
             <p className="text-4xl text-center p-5 leading-tight">
               Veja suas notas fiscais adicionadas e gastos gerais
@@ -26,7 +34,15 @@ export default function Funcionalidades() {
               src={"/icons/graphic.svg"}
               width={150}
               height={150}
-              alt="graphic svg"
+              alt="graphic-icon"
+              className="block dark:hidden"
+            />
+            <Image
+              src={"/icons/graphic-white.svg"}
+              width={150}
+              height={150}
+              alt="graphic-icon"
+              className="hidden dark:block"
             />
 
             <p className="text-4xl text-center p-5 leading-tight">
@@ -35,7 +51,20 @@ export default function Funcionalidades() {
           </div>
 
           <div className="flex flex-col items-center max-w-xl">
-            <Image src={"/icons/table.svg"} width={150} height={150} alt="table svg" />
+            <Image
+              src={"/icons/table.svg"}
+              width={150}
+              height={150}
+              alt="table-icon"
+              className="block dark:hidden"
+            />
+            <Image
+              src={"/icons/table-white.svg"}
+              width={150}
+              height={150}
+              alt="table-icon"
+              className="hidden dark:block"
+            />
             <p className="text-4xl text-center p-5 leading-tight">
               Tabelas para fácil e rápida visualização das compras
             </p>
@@ -51,12 +80,13 @@ export default function Funcionalidades() {
               text-white
               rounded-xl 
               transition ease-in-out duration-250
-            bg-customBlueColor  hover:bg-customBlueLighterColor
+            bg-darkerCustomColor  hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700
             
             "
             >
               Saiba mais
-              <Image className="ml-2"
+              <Image
+                className="ml-2"
                 src={"/icons/arrow-forward.svg"}
                 width={30}
                 height={30}

@@ -1,14 +1,13 @@
 import AuthGuard from "../_components/Auth/AuthGuard";
 import Charts from "../_components/Charts/Charts";
-import Navbar from "../_components/Navigation/Navbar/Navbar";
-import Sidebar from "../_components/Navigation/Sidebar/Sidebar";
+import EmptyPurchasesScreen from "../_components/EmptyPurchases/EmptyPurchasesScreen";
 
 export default function page() {
   return (
     <AuthGuard>
-      <Sidebar />
-      <Navbar />
-      <Charts />
+      <EmptyPurchasesScreen>
+        <Charts />
+      </EmptyPurchasesScreen>
     </AuthGuard>
   );
 }
