@@ -20,10 +20,10 @@ export default function Navbar() {
         </div>
         <span className="text-white">
           <Link
-            href={"/ajuda"}
+            href={"/duvidas"}
             className="hover:text-gray-300 transition ease-in-out duration-250 text-2xl"
           >
-            Ajuda
+            Dúvidas
           </Link>
         </span>
       </nav>

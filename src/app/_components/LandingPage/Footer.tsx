@@ -13,7 +13,11 @@ export default function Footer() {
       </h1>
 
       <h1 className="p-2">
-        <a href="#" className="underline">
+        <a
+          href="https://mail.google.com/mail/u/0/?fs=1&tf=cm&to=arthurmueller31@gmail.com&su=Assunto&body=Mensagem"
+          className="underline"
+          target="_blank"
+        >
           Feedback/Suporte
         </a>
       </h1>
@@ -29,7 +33,7 @@ export default function Footer() {
         Imagens geradas com IA
       </span>
 
-      <h1 className="text-xl p-2">$PENT, 2025.</h1>
+      <h1 className="text-xl p-2">SPENT, 2025.</h1>
     </footer>
   );
 }
