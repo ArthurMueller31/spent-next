@@ -271,9 +271,9 @@ export default function Charts() {
                   Categorias com mais compras adicionadas
                 </span>
               </div>
-              <div>
+              <div className="z-50">
                 <Link href={"/minhas-compras"}>
-                  <button className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+                  <button className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800 ">
                     Ver detalhes
                   </button>
                 </Link>

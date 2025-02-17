@@ -4,7 +4,7 @@ export default {
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}"
   ],
   theme: {
     extend: {
@@ -17,11 +17,14 @@ export default {
         darkBlue: "#243948"
       },
       fontFamily: {
-        "raleway": ["Raleway", "sans-serif"],
-        "workSans": ["Work Sans", "serif"],
-        "hostGrotesk": ["Host Grotesk", "sans-serif"]
+        raleway: ["Raleway", "sans-serif"],
+        workSans: ["Work Sans", "serif"],
+        hostGrotesk: ["Host Grotesk", "sans-serif"]
+      },
+      screens: {
+        "mobile-height": { raw: "(max-height: 600px)" }
       }
-    },
+    }
   },
-  plugins: [],
+  plugins: []
 } satisfies Config;

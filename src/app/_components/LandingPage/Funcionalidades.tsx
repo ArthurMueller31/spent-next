@@ -8,7 +8,7 @@ export default function Funcionalidades() {
         <h1 className="text-4xl font-bold text-center lg:text-start lg:text-6xl lg:pl-12">
           Funcionalidades
         </h1>
-        <div className="flex flex-col m-20 md:flex-row justify-around items-center space-y-10 md:space-y-0">
+        <div className="flex flex-col mobile-height:flex-col m-20 md:flex-row justify-around items-center space-y-10 md:space-y-0">
           <div className="flex flex-col items-center max-w-xl">
             <Image
               src={"/icons/dollar-sign-w-circle.svg"}
@@ -80,9 +80,7 @@ export default function Funcionalidades() {
               text-white
               rounded-xl 
               transition ease-in-out duration-250
-            bg-darkerCustomColor  hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700
-            
-            "
+            bg-darkerCustomColor  hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
               Saiba mais
               <Image

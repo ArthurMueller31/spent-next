@@ -28,6 +28,9 @@ export default function LastPage() {
           </div>
 
           <div className="flex flex-col items-center md:items-start space-y-4 order-3 md:order-4">
+            <div className="w-full md:hidden">
+              <hr className="border-gray-300 dark:border-gray-300" />
+            </div>
             <p className="text-2xl leading-8 text-center md:text-justify">
               Se você é uma pessoa que controla seus gastos, nosso site é
               perfeito para seu propósito.
