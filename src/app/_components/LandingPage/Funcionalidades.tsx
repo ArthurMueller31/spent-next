@@ -3,12 +3,12 @@ import Link from "next/link";
 
 export default function Funcionalidades() {
   return (
-    <section className="font-raleway dark:bg-black">
-      <div className="m-16">
-        <h1 className="text-4xl font-bold text-center lg:text-start lg:text-6xl lg:pl-12">
+    <section className="font-raleway dark:bg-darkModeCustomBg">
+      <div className="m-16 mobile-width:mt-10">
+        <h1 className="text-5xl font-bold text-center lg:text-start lg:text-6xl lg:pl-12 mobile-width:text-[36px]">
           Funcionalidades
         </h1>
-        <div className="flex flex-col mobile-height:flex-col m-20 md:flex-row justify-around items-center space-y-10 md:space-y-0">
+        <div className="flex flex-col my-20 lg:flex-row items-center lg:items-start w-full justify-evenly">
           <div className="flex flex-col items-center max-w-xl">
             <Image
               src={"/icons/dollar-sign-w-circle.svg"}
@@ -24,8 +24,11 @@ export default function Funcionalidades() {
               height={150}
               className="hidden dark:block"
             />
-            <p className="text-4xl text-center p-5 leading-tight">
-              Veja suas notas fiscais adicionadas e gastos gerais
+
+            <p className="text-4xl text-center p-7 leading-tight mobile-width:text-3xl">
+              Exibição <strong>clara e direta</strong> de todas as compras
+              registradas, com a opção de editar qualquer item conforme sua
+              necessidade
             </p>
           </div>
 
@@ -45,8 +48,9 @@ export default function Funcionalidades() {
               className="hidden dark:block"
             />
 
-            <p className="text-4xl text-center p-5 leading-tight">
-              Gráficos para você acompanhar despesas ao longo do tempo
+            <p className="text-4xl text-center p-7 leading-tight mobile-width:text-3xl">
+              Gráficos que possibilitam <strong>monitorar suas despesas</strong>{" "}
+              ao longo do tempo e manter o controle dos seus gastos
             </p>
           </div>
 
@@ -65,8 +69,10 @@ export default function Funcionalidades() {
               alt="table-icon"
               className="hidden dark:block"
             />
-            <p className="text-4xl text-center p-5 leading-tight">
-              Tabelas para fácil e rápida visualização das compras
+            <p className="text-4xl text-center p-7 leading-tight mobile-width:text-3xl">
+              Tabelas organizadas que <strong>facilitam a consulta</strong> das
+              suas aquisições, permitindo identificar detalhadamente cada item
+              adquirido
             </p>
           </div>
         </div>
@@ -76,7 +82,8 @@ export default function Funcionalidades() {
             <button
               className="flex flex-row items-center
               px-6 py-3 w-30 h-16 font-medium
-              text-3xl
+              text-xl
+              md:text-3xl
               text-white
               rounded-xl 
               transition ease-in-out duration-250
