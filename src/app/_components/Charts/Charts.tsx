@@ -1,39 +1,17 @@
 "use client";
-import { BarChart, PieChart } from "@mui/x-charts";
+import { PieChart } from "@mui/x-charts";
 import { useState, useEffect } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
-import { collection, query, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Navbar from "../Navigation/Navbar/Navbar";
 import Sidebar from "../Navigation/Sidebar/Sidebar";
 import RecentPurchases from "../Tables/RecentPurchases";
 import Link from "next/link";
 import { LineChartComponent } from "./LineChartComponent";
-
-interface PurchaseItem {
-  name: string;
-  price: string;
-  quantity: string;
-  weight?: string;
-}
-
-interface Purchase {
-  purchaseDate: string;
-  items: PurchaseItem[];
-}
+import BarChartComponent from "./BarChartComponent";
 
 export default function Charts() {
-  // Gráfico de linhas (gastos totais)
-  const [selectedMostSpentDays, setSelectedMostSpentDays] = useState(3);
-  const [barTotalsByDate, setBarTotalsByDate] = useState<{
-    [date: string]: number;
-  }>({});
-  const [mostSpentDaysChartData, setMostSpentDaysChartData] = useState<
-    number[]
-  >([]);
-  const [mostSpentDaysChartDates, setMostSpentDaysChartDates] = useState<
-    string[]
-  >([]);
   const [pieChartData, setPieChartData] = useState<
     { id: string; value: number; label: string }[]
   >([]);
@@ -50,56 +28,6 @@ export default function Charts() {
   }, []);
 
   // Query para o gráfico de barras (todas as compras - all time)
-  useEffect(() => {
-    async function fetchBarChartPurchases() {
-      if (!userId) return;
-
-      // Aqui não aplicamos filtro de data, pegamos todas as compras do usuário
-      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
-      const q = query(purchasesRef);
-
-      const querySnapshot = await getDocs(q);
-      const totals: { [date: string]: number } = {};
-
-      querySnapshot.forEach((doc) => {
-        const purchase = doc.data() as Purchase;
-        const dateParts = purchase.purchaseDate.split("-");
-        const dateObj = new Date(
-          parseInt(dateParts[0]),
-          parseInt(dateParts[1]) - 1,
-          parseInt(dateParts[2])
-        );
-        const formattedDate = Intl.DateTimeFormat("pt-BR").format(dateObj);
-
-        const totalSpent = purchase.items.reduce<number>(
-          (sum, item) =>
-            sum + parseFloat(item.price) * parseFloat(item.quantity),
-          0
-        );
-
-        totals[formattedDate] = (totals[formattedDate] || 0) + totalSpent;
-      });
-
-      setBarTotalsByDate(totals);
-    }
-    fetchBarChartPurchases();
-  }, [userId]); // Não depende de período
-
-  // Atualiza o gráfico de barras (top dias) sempre que os dados do bar chart ou o número de dias a mostrar mudarem
-  useEffect(() => {
-    const entries = Object.entries(barTotalsByDate);
-    // Ordena decrescentemente para identificar os dias com maiores gastos
-    entries.sort((a, b) => b[1] - a[1]);
-    // Seleciona os top dias e, em seguida, ordena em ordem crescente (para exibição)
-    const topEntries = entries
-      .slice(0, selectedMostSpentDays)
-      .sort((a, b) => a[1] - b[1]);
-    setMostSpentDaysChartDates(topEntries.map(([date]) => date));
-    setMostSpentDaysChartData(
-      topEntries.map(([, value]) => parseFloat(value.toFixed(2)))
-    );
-  }, [barTotalsByDate, selectedMostSpentDays]);
-
   useEffect(() => {
     async function fetchPieChartData() {
       if (!userId) return;
@@ -178,7 +106,7 @@ export default function Charts() {
             <div className="flex flex-row items-center justify-between mt-[-10px]">
               <div className="flex items-center space-x-2">
                 <span className="dark:text-black">
-                  Categorias com mais compras adicionadas
+                  Gastos por categoria
                 </span>
               </div>
               <div className="z-20">
@@ -226,51 +154,7 @@ export default function Charts() {
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white h-max">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="dark:text-black pb-3 md:p-0">
-                  Dias com mais gastos
-                </span>
-              </div>
-              <div>
-                <span className="font-medium dark:text-black mr-2">
-                  Exibindo
-                </span>
-                <select
-                  className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:hover:bg-gray-800 cursor-pointer"
-                  value={selectedMostSpentDays}
-                  onChange={(e) =>
-                    setSelectedMostSpentDays(Number(e.target.value))
-                  }
-                >
-                  <option value={3}>3 dias</option>
-                  <option value={5}>5 dias</option>
-                  <option value={7}>7 dias</option>
-                </select>
-              </div>
-            </div>
-            <div className="w-full h-80">
-              <BarChart
-                xAxis={[{ data: mostSpentDaysChartDates, scaleType: "band" }]}
-                yAxis={[
-                  {
-                    valueFormatter: (value: number): string =>
-                      `R$${value.toFixed(2).replace(".", ",")}`
-                  }
-                ]}
-                series={[
-                  {
-                    valueFormatter: (value: number | null): string =>
-                      value === null
-                        ? "R$0,00"
-                        : `R$${value.toFixed(2).replace(".", ",")}`,
-                    data: mostSpentDaysChartData,
-                    color: "#1d1e22"
-                  }
-                ]}
-                margin={{ left: 100 }}
-              />
-            </div>
+            <BarChartComponent />
           </div>
         </div>
       </div>

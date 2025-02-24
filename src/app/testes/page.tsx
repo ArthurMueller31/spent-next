@@ -1,5 +1,5 @@
-import { LineChartComponent } from "../_components/Charts/LineChartComponent";
+import BarChartComponent from "../_components/Charts/BarChartComponent";
 
 export default function page() {
-  return <LineChartComponent />;
+  return <BarChartComponent />;
 }

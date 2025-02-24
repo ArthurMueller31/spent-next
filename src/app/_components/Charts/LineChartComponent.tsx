@@ -95,9 +95,9 @@ export function LineChartComponent() {
       const startDate = new Date();
       startDate.setDate(endDate.getDate() - days);
 
-      // Verifica se há alguma compra dentro do intervalo
+      // Verificar se tem compra dentro do intervalo
       const exists = purchases.some((purchase) => {
-        // Converte a string da data (ex: "2023-08-23") para Date
+        // Converte a string da data (ex: "2023-08-23") para date
         const dateParts = purchase.purchaseDate.split("-");
         const purchaseDateObj = new Date(
           parseInt(dateParts[0], 10),
