@@ -1,14 +1,14 @@
 "use client";
-import { BarChart, LineChart, PieChart } from "@mui/x-charts";
+import { BarChart, PieChart } from "@mui/x-charts";
 import { useState, useEffect } from "react";
 import { auth, firestore } from "../../../../firebase/firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, getDocs } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 import Navbar from "../Navigation/Navbar/Navbar";
 import Sidebar from "../Navigation/Sidebar/Sidebar";
 import RecentPurchases from "../Tables/RecentPurchases";
-import Image from "next/image";
 import Link from "next/link";
+import { LineChartComponent } from "./LineChartComponent";
 
 interface PurchaseItem {
   name: string;
@@ -24,12 +24,6 @@ interface Purchase {
 
 export default function Charts() {
   // Gráfico de linhas (gastos totais)
-  const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(365);
-  const [userHasPurchasesInPeriod, setUserHasPurchasesInPeriod] = useState<
-    Record<number, boolean>
-  >({ 7: true, 30: true, 90: true, 365: true });
-  const [lineChartData, setLineChartData] = useState<number[]>([]);
-  const [lineChartDates, setLineChartDates] = useState<string[]>([]);
   const [selectedMostSpentDays, setSelectedMostSpentDays] = useState(3);
   const [barTotalsByDate, setBarTotalsByDate] = useState<{
     [date: string]: number;
@@ -54,90 +48,6 @@ export default function Charts() {
     });
     return () => unsubscribe();
   }, []);
-
-  useEffect(() => {
-    async function checkPurchasesInPeriods() {
-      if (!userId) return;
-
-      const periods = [7, 30, 90, 365];
-      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
-      const endDate = new Date();
-      const purchasesInPeriod: Record<number, boolean> = {};
-
-      for (const days of periods) {
-        const startDate = new Date();
-        startDate.setDate(endDate.getDate() - days);
-
-        const q = query(
-          purchasesRef,
-          where("purchaseDate", ">=", startDate.toISOString()),
-          where("purchaseDate", "<=", endDate.toISOString())
-        );
-
-        const querySnapshot = await getDocs(q);
-        purchasesInPeriod[days] = !querySnapshot.empty;
-      }
-
-      setUserHasPurchasesInPeriod(purchasesInPeriod);
-    }
-    checkPurchasesInPeriods();
-  }, [userId]);
-
-  // Query para o gráfico de linhas (gastos totais dos últimos N dias)
-  useEffect(() => {
-    async function fetchLineChartPurchases() {
-      if (!userId) return;
-
-      const endDate = new Date();
-      const startDate = new Date();
-      startDate.setDate(endDate.getDate() - selectedPeriodLineChart);
-
-      const purchasesRef = collection(firestore, `/users/${userId}/purchases`);
-      const q = query(
-        purchasesRef,
-        where("purchaseDate", ">=", startDate.toISOString()),
-        where("purchaseDate", "<=", endDate.toISOString())
-      );
-
-      const querySnapshot = await getDocs(q);
-
-      const totals: { [date: string]: number } = {};
-
-      querySnapshot.forEach((doc) => {
-        const purchase = doc.data() as Purchase;
-        const dateParts = purchase.purchaseDate.split("-");
-        const dateObj = new Date(
-          parseInt(dateParts[0]),
-          parseInt(dateParts[1]) - 1,
-          parseInt(dateParts[2])
-        );
-        const formattedDate = Intl.DateTimeFormat("pt-BR").format(dateObj);
-
-        const totalSpent = purchase.items.reduce<number>(
-          (sum, item) =>
-            sum + parseFloat(item.price) * parseFloat(item.quantity),
-          0
-        );
-
-        totals[formattedDate] = (totals[formattedDate] || 0) + totalSpent;
-      });
-
-      // Organizar dados cronologicamente
-      const sortedDates = Object.keys(totals).sort((a, b) => {
-        const [dayA, monthA, yearA] = a.split("/").map(Number);
-        const [dayB, monthB, yearB] = b.split("/").map(Number);
-        return (
-          new Date(yearA, monthA - 1, dayA).getTime() -
-          new Date(yearB, monthB - 1, dayB).getTime()
-        );
-      });
-      setLineChartDates(sortedDates);
-      setLineChartData(
-        sortedDates.map((date) => parseFloat(totals[date].toFixed(2)))
-      );
-    }
-    fetchLineChartPurchases();
-  }, [selectedPeriodLineChart, userId]);
 
   // Query para o gráfico de barras (todas as compras - all time)
   useEffect(() => {
@@ -210,7 +120,7 @@ export default function Charts() {
         const category =
           purchase.category && purchase.category.trim() !== ""
             ? purchase.category
-            : "Mercado"; // ou "Outro", conforme sua lógica
+            : "Mercado";
 
         if (counts.hasOwnProperty(category)) {
           counts[category] += 1;
@@ -271,7 +181,7 @@ export default function Charts() {
                   Categorias com mais compras adicionadas
                 </span>
               </div>
-              <div className="z-50">
+              <div className="z-20">
                 <Link href={"/minhas-compras"}>
                   <button className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800 ">
                     Ver detalhes
@@ -281,7 +191,7 @@ export default function Charts() {
             </div>
 
             <div className="font-raleway w-full h-80 flex items-center justify-center">
-              <div className="dark:text-white z-10">
+              <div className="dark:text-white z-10 h-[380px] w-[600px]">
                 <PieChart
                   series={[
                     {
@@ -312,72 +222,7 @@ export default function Charts() {
 
           {/* gráfico de linhas, compras nos últimos x dias */}
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white">
-            <div className="flex flex-col md:flex-row items-center justify-between">
-              <div className="flex items-center space-x-2">
-                <span className="dark:text-black text-center md:text-start">
-                  Gastos nos últimos
-                </span>
-                <select
-                  className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:hover:bg-gray-800 cursor-pointer"
-                  value={selectedPeriodLineChart}
-                  onChange={(e) =>
-                    setSelectedPeriodLineChart(Number(e.target.value))
-                  }
-                >
-                  <option value={365} disabled={!userHasPurchasesInPeriod[365]}>
-                    1 ano
-                  </option>
-                  <option value={90} disabled={!userHasPurchasesInPeriod[90]}>
-                    90 dias
-                  </option>
-                  <option value={30} disabled={!userHasPurchasesInPeriod[30]}>
-                    30 dias
-                  </option>
-                  <option value={7} disabled={!userHasPurchasesInPeriod[7]}>
-                    7 dias
-                  </option>
-                </select>
-              </div>
-
-              <span className="flex items-center font-medium dark:text-black pt-3 md:pt-0">
-                <Image
-                  className="mr-1"
-                  src={"./icons/info-black.svg"}
-                  alt="info-icon"
-                  width={20}
-                  height={20}
-                />
-                Inclui o dia atual
-              </span>
-            </div>
-            <div className="w-full h-80 dark:text-white">
-              <LineChart
-                xAxis={[
-                  {
-                    data: lineChartDates,
-                    scaleType: "band"
-                  }
-                ]}
-                yAxis={[
-                  {
-                    valueFormatter: (value: number): string =>
-                      `R$${value.toFixed(2).replace(".", ",")}`
-                  }
-                ]}
-                series={[
-                  {
-                    valueFormatter: (value: number | null): string =>
-                      value === null
-                        ? "R$0,00"
-                        : `R$${value.toFixed(2).replace(".", ",")}`,
-                    data: lineChartData,
-                    area: true,
-                    color: "#1d1e22"
-                  }
-                ]}
-                margin={{ left: 100 }}
-              />
-            </div>
+            <LineChartComponent />
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-between dark:bg-white h-max">
