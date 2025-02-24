@@ -138,26 +138,29 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <div className="relative flex flex-col items-center justify-center font-workSans border rounded-md md:mt-12">
-          <div className="flex flex-row items-center m-2 font-medium">
-            <Image
-              className="block dark:hidden"
-              src={"/icons/sidebar-moneybag.svg"}
-              alt="home-icon"
-              width={40}
-              height={40}
-            />
-            <Image
-              className="hidden dark:block"
-              src={"/icons/sidebar-moneybag-white.svg"}
-              alt="home-icon"
-              width={40}
-              height={40}
-            />
-            <span title="Seus gastos até hoje" className="dark:text-white">
-              Gastos:
-            </span>
-            <span className="flex flex-row items-center w-auto p-2 bg-white dark:bg-darkerCustomColor dark:text-white ">
+        <div className="relative flex flex-col m-2 font-workSans border rounded-md md:mt-12">
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex items-start justify-center mt-1">
+              <Image
+                className="block dark:hidden"
+                src={"/icons/sidebar-moneybag-black.svg"}
+                alt="home-icon"
+                width={40}
+                height={40}
+              />
+              <Image
+                className="hidden dark:block"
+                src={"/icons/sidebar-moneybag-white.svg"}
+                alt="home-icon"
+                width={40}
+                height={40}
+              />
+            </div>
+            <div className="flex flex-row items-center m-1 font-medium">
+              <span className="dark:text-white">Gastos até hoje:</span>
+            </div>
+
+            <span className="flex flex-row items-center mb-2 w-auto bg-white dark:bg-darkerCustomColor dark:text-white">
               <p className="font-medium">
                 {totalSpent.toLocaleString("pt-BR", {
                   style: "currency",
