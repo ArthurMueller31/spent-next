@@ -284,6 +284,44 @@ export default function Sidebar() {
             </Link>
 
             <Link
+              key={"/periodo"}
+              href={"periodo"}
+              className={`group flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 dark:hover:bg-white dark:hover:text-black ${
+                pathname === "/periodo"
+                  ? "bg-gray-100 text-gray-900 dark:bg-gray-100 dark:text-black"
+                  : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
+              }`}
+            >
+              <Image
+                className={`group-hover:hidden ${
+                  pathname === "/periodo" ? "dark:hidden" : "dark:block"
+                }`}
+                src={"/icons/sidebar-date-range.svg"}
+                alt="table-icon"
+                width={30}
+                height={30}
+              />
+
+              <Image
+                className={`hidden group-hover:block ${
+                  pathname === "/periodo" ? "dark:block" : "dark:hidden"
+                }`}
+                src={"/icons/sidebar-date-range-black.svg"}
+                alt="table-icon"
+                width={30}
+                height={30}
+              />
+
+              <span
+                className={`mx-4 font-medium ${
+                  pathname === "/periodo" ? "dark:text-black" : ""
+                }`}
+              >
+                Ver por Período
+              </span>
+            </Link>
+
+            <Link
               key={"/conta"}
               href={"conta"}
               className={`group flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 dark:hover:bg-white dark:hover:text-black ${
