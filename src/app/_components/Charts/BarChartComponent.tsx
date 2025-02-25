@@ -1,14 +1,15 @@
-"use client"
+"use client";
 
 import { usePurchases } from "@/hooks/usePurchases";
 import { BarChart } from "@mui/x-charts";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../../../firebase/firebase";
 import { useEffect, useState } from "react";
 import { Purchase } from "@/hooks/usePurchases";
 
-export default function BarChartComponent() {
-  const [userId, setUserId] = useState<string | null>(null);
+interface UserCredential {
+  userId: string | null;
+}
+
+export default function BarChartComponent({ userId }: UserCredential) {
   const { purchases } = usePurchases(userId);
   const [selectedMostSpentDays, setSelectedMostSpentDays] = useState(3);
   const [mostSpentDaysChartData, setMostSpentDaysChartData] = useState<
@@ -21,13 +22,6 @@ export default function BarChartComponent() {
   const [barTotalsByDate, setBarTotalsByDate] = useState<
     Record<string, number>
   >({});
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUserId(user ? user.uid : null);
-    });
-    return () => unsubscribe();
-  }, []);
 
   useEffect(() => {
     if (!userId) return;

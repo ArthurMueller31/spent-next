@@ -3,25 +3,19 @@
 import { useEffect, useState } from "react";
 import { usePurchases } from "@/hooks/usePurchases";
 import Image from "next/image";
-import { onAuthStateChanged } from "firebase/auth";
-import { auth } from "../../../../firebase/firebase";
 import { LineChart } from "@mui/x-charts";
 
-export function LineChartComponent() {
-  const [userId, setUserId] = useState<string | null>(null);
+interface UserCredential {
+  userId: string | null;
+}
+
+export function LineChartComponent({ userId }: UserCredential) {
   const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(365);
   const [userHasPurchasesInPeriod, setUserHasPurchasesInPeriod] = useState<
     Record<number, boolean>
   >({ 7: true, 30: true, 90: true, 365: true });
   const [lineChartData, setLineChartData] = useState<number[]>([]);
   const [lineChartDates, setLineChartDates] = useState<string[]>([]);
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUserId(user ? user.uid : null);
-    });
-    return () => unsubscribe();
-  }, []);
 
   const { purchases } = usePurchases(userId);
 

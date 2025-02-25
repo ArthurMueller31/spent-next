@@ -1,5 +1,5 @@
-import BarChartComponent from "../_components/Charts/BarChartComponent";
+import PieChartComponent from "../_components/Charts/PieChartComponent";
 
 export default function page() {
-  return <BarChartComponent />;
+  return <PieChartComponent />;
 }
