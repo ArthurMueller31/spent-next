@@ -301,8 +301,6 @@ export default function AllPurchasesTable() {
     }
   };
 
-  // ml-64 no main
-
   return (
     <>
       <div className="flex h-screen overflow-auto font-raleway tracking-wide">
@@ -480,13 +478,20 @@ export default function AllPurchasesTable() {
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
                                               type="text"
-                                              value={editedItem?.quantity || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              value={editedItem?.quantity || ""}
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  quantity: e.target.value
-                                                })
-                                              }
+                                                  quantity: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -499,13 +504,20 @@ export default function AllPurchasesTable() {
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
                                               type="text"
-                                              value={editedItem?.price || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              value={editedItem?.price || ""}
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9,.]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  price: e.target.value
-                                                })
-                                              }
+                                                  price: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -521,12 +533,19 @@ export default function AllPurchasesTable() {
                                             <input
                                               type="text"
                                               value={editedItem?.weight || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  weight: e.target.value
-                                                })
-                                              }
+                                                  weight: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -632,12 +651,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Quantidade"
                                             value={newItem?.quantity || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                quantity: e.target.value
-                                              })
-                                            }
+                                                quantity: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
@@ -646,12 +672,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Preço Unitário"
                                             value={newItem?.price || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9,.]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                price: e.target.value
-                                              })
-                                            }
+                                                price: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
@@ -660,12 +693,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Peso (gramas)"
                                             value={newItem?.weight || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                weight: e.target.value
-                                              })
-                                            }
+                                                weight: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>

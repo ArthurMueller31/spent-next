@@ -25,14 +25,19 @@ export default function AddProductsModal({
   const [formData, setFormData] = useState({
     purchaseDate: "",
     establishment: "",
-    category: "Mercado",
+    category: "Não especificado",
     items: [{ name: "", price: "", quantity: "", weight: "" }]
   });
+  const [dateInputFocus, setDateInputFocus] = useState(false);
 
   const [previousItems, setPreviousItems] = useState<PurchaseItem[]>([]);
   const [previousEstablishments, setPreviousEstablishments] = useState<
     string[]
   >([]);
+
+  const [establishmentCategories, setEstablishmentCategories] = useState<{
+    [key: string]: string;
+  }>({});
   const [filteredSuggestions, setFilteredSuggestions] = useState<
     PurchaseItem[][]
   >([]);
@@ -67,20 +72,16 @@ export default function AddProductsModal({
 
       const querySnapshot = await getDocs(purchasesRef);
       const itemsSet = new Set<string>(); // garante que item só aparece 1 vez
-      const itemsArray: {
-        name: string;
-        price: string;
-        quantity: string;
-        weight: string;
-        establishment: string;
-      }[] = [];
+      const itemsArray: PurchaseItem[] = [];
       const establishmentSet = new Set<string>();
+      const establishmentMap = new Map<string, string>();
 
       querySnapshot.forEach((doc) => {
         const data = doc.data();
 
-        if (data.establishment) {
+        if (data.establishment && data.category) {
           establishmentSet.add(data.establishment);
+          establishmentMap.set(data.establishment, data.category);
         }
 
         if (data.items) {
@@ -95,6 +96,7 @@ export default function AddProductsModal({
 
       setPreviousItems(itemsArray);
       setPreviousEstablishments(Array.from(establishmentSet));
+      setEstablishmentCategories(Object.fromEntries(establishmentMap));
     };
 
     if (isModalOpen) {
@@ -237,9 +239,16 @@ export default function AddProductsModal({
                 Compra do dia
               </label>
               <input
-                type="date"
+                type={dateInputFocus ? "date" : "text"}
+                onFocus={() => setDateInputFocus(true)}
+                onBlur={(e) =>
+                  e.target.value === ""
+                    ? setDateInputFocus(false)
+                    : setDateInputFocus(true)
+                }
                 name="purchaseDate"
                 id="purchaseDate"
+                placeholder="Informe a data (Dia/Mês/Ano)"
                 value={formData.purchaseDate}
                 onChange={(e) => {
                   const selectedDate = e.target.value;
@@ -254,7 +263,7 @@ export default function AddProductsModal({
                     purchaseDate: e.target.value
                   }));
                 }}
-                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:border-gray-600 dark:placeholder-gray-600 dark:text-black dark:bg-white"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-600 dark:text-black dark:bg-white"
                 required
               />
             </div>
@@ -313,7 +322,7 @@ export default function AddProductsModal({
                   }
                 }}
                 className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 block w-full p-2.5 dark:bg-white dark:border-gray-600 dark:placeholder-gray-600 dark:text-black"
-                placeholder="Ex: Mercado Y"
+                placeholder="Onde foi efetuada a compra?"
                 required
               />
 
@@ -324,6 +333,15 @@ export default function AddProductsModal({
                       <li
                         key={i}
                         className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onMouseEnter={() => {
+                          const categ = establishmentCategories[est];
+                          if (categ) {
+                            setFormData((prev) => ({
+                              ...prev,
+                              category: categ
+                            }));
+                          }
+                        }}
                         onMouseDown={(e) => {
                           e.preventDefault();
                           setFormData((prev) => ({
@@ -350,16 +368,19 @@ export default function AddProductsModal({
               </label>
               <select
                 name="category"
-                value={formData.category || "Mercado"}
+                value={formData.category || "Não especificado"}
                 onChange={(e) =>
                   setFormData((prev) => ({
                     ...prev,
                     category: e.target.value
                   }))
                 }
-                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg placeholder-gray-500 block w-full p-3 dark:bg-white dark:border-gray-600 dark:placeholder-gray-600 dark:text-black"
+                className="bg-white border border-darkerCustomColor text-gray-900 text-sm rounded-lg block w-full p-3 dark:bg-white dark:border-gray-600 dark:text-black"
                 required
               >
+                <option value="Não especificado" className="font-raleway">
+                  Selecione uma categoria
+                </option>
                 <option value="Mercado" className="font-raleway">
                   Mercado
                 </option>
@@ -398,12 +419,12 @@ export default function AddProductsModal({
                       onBlur={() => handleBlur(index)}
                       autoComplete="off"
                       type="text"
+                      placeholder="Pode conter espaços"
                       name="name"
                       id={`name-${index}`}
                       value={item.name}
                       onChange={(e) => handleChangeItem(index, e)}
                       className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
-                      placeholder="Ex: Arroz"
                       required
                     />
 
@@ -452,12 +473,13 @@ export default function AddProductsModal({
                       autoComplete="off"
                       type="number"
                       step="0.01"
+                      min={0}
                       name="price"
                       id={`price-${index}`}
                       value={item.price || ""}
                       onChange={(e) => handleChangeItem(index, e)}
                       className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
-                      placeholder={hoveredItems[index]?.price || "Ex: 19.90"}
+                      placeholder={hoveredItems[index]?.price || "R$0,00"}
                       required
                     />
                   </div>
@@ -472,11 +494,12 @@ export default function AddProductsModal({
                       autoComplete="off"
                       type="number"
                       name="quantity"
+                      min={0}
                       id={`quantity-${index}`}
                       value={item.quantity}
                       onChange={(e) => handleChangeItem(index, e)}
                       className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
-                      placeholder={hoveredItems[index]?.quantity || "Ex: 2"}
+                      placeholder={hoveredItems[index]?.quantity || "0"}
                       required
                     />
                   </div>
@@ -486,17 +509,18 @@ export default function AddProductsModal({
                       htmlFor={`weight-${index}`}
                       className="block mb-2 text-sm font-medium"
                     >
-                      Peso (g)
+                      Peso (em gramas)
                     </label>
                     <input
                       autoComplete="off"
                       type="number"
+                      min={0}
                       name="weight"
                       id={`weight-${index}`}
                       value={item.weight || ""}
                       onChange={(e) => handleChangeItem(index, e)}
                       className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
-                      placeholder={hoveredItems[index]?.weight || "Ex: 1000"}
+                      placeholder={hoveredItems[index]?.weight || "0"}
                       required
                     />
                   </div>
