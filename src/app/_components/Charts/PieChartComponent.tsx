@@ -97,17 +97,26 @@ export default function PieChartComponent({ userId }: UserCredential) {
       <div className="font-raleway w-full h-80 flex items-center justify-center">
         <div className="dark:text-white z-10 h-[380px] w-[600px]">
           <PieChart
+            colors={["#0081cf", "#00c9a7", "#e09f1f", "#98e288", "#f9f871"]}
             series={[
               {
                 data: pieChartData,
                 arcLabel: (item) =>
                   `${
                     item.value !== 0
-                      ? `R$${Number(item.value).toFixed(2).replace(".", ",")}`
+                      ? `${new Intl.NumberFormat("pt-BR", {
+                          style: "currency",
+                          currency: "BRL"
+                        }).format(item.value)}`
                       : ""
                   } `,
                 valueFormatter: (item) =>
-                  `R$${Number(item.value).toFixed(2).replace(".", ",")}`
+                  `${new Intl.NumberFormat("pt-BR", {
+                    style: "currency",
+                    currency: "BRL"
+                  }).format(item.value)}`,
+                innerRadius: 30,
+                outerRadius: 115
               }
             ]}
             margin={{ top: 50, bottom: 110, left: 50, right: 50 }}

@@ -96,7 +96,10 @@ export default function BarChartComponent({ userId }: UserCredential) {
           yAxis={[
             {
               valueFormatter: (value: number): string =>
-                `R$${value.toFixed(2).replace(".", ",")}`
+                `${new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL"
+                }).format(value)}`
             }
           ]}
           series={[
@@ -104,7 +107,10 @@ export default function BarChartComponent({ userId }: UserCredential) {
               valueFormatter: (value: number | null): string =>
                 value === null
                   ? "R$0,00"
-                  : `R$${value.toFixed(2).replace(".", ",")}`,
+                  : `${new Intl.NumberFormat("pt-BR", {
+                      style: "currency",
+                      currency: "BRL"
+                    }).format(value)}`,
               data: mostSpentDaysChartData,
               color: "#1d1e22"
             }
