@@ -1,17 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
-import { onAuthStateChanged } from "firebase/auth";
-import { firestore, auth } from "../../../../firebase/firebase";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePurchases } from "@/hooks/usePurchases";
 
-type Purchase = {
-  id?: string;
-  establishment: string;
-  purchaseDate: string;
-  items: Item[];
+type UserCredential = {
+  userId: string | null;
 };
 
 type Item = {
@@ -20,15 +15,6 @@ type Item = {
   quantity: string;
   weight?: string;
 };
-
-async function fetchPurchases(userId: string): Promise<Purchase[]> {
-  const purchasesRef = collection(firestore, `users/${userId}/purchases`);
-  const querySnapshot = await getDocs(purchasesRef);
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data()
-  })) as Purchase[];
-}
 
 function formatDate(dateString: string): string {
   const dateParts = dateString.split("-");
@@ -65,43 +51,25 @@ function formatCurrencyToBRL(value: number): string {
   }).format(value);
 }
 
-export default function RecentPurchasesTable() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+export default function RecentPurchasesTable({ userId }: UserCredential) {
+  // const [purchases, setPurchases] = useState<Purchase[]>([]);
 
-  useEffect(() => {
-    // Observa a autenticação do usuário
-    const userData = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-      }
-    });
-    return () => userData();
-  }, []);
+  const { purchases } = usePurchases(userId);
 
-  useEffect(() => {
-    const loadPurchases = async () => {
-      if (userId) {
-        const data = await fetchPurchases(userId);
-        // Ordena as compras por data decrescente
-        const sortedPurchases = data.sort((a, b) => {
-          const dateA = new Date(a.purchaseDate).getTime();
-          const dateB = new Date(b.purchaseDate).getTime();
-          return dateB - dateA;
-        });
-        // Seleciona somente as 5 primeiras compras
-        setPurchases(sortedPurchases.slice(0, 5));
-      }
-    };
-    loadPurchases();
-  }, [userId]);
+  const sortedPurchases = [...purchases].sort((a, b) => {
+    const dateA = new Date(a.purchaseDate).getTime();
+    const dateB = new Date(b.purchaseDate).getTime();
+    return dateB - dateA;
+  });
+
+  const recentPurchases = sortedPurchases.slice(0, 5);
 
   return (
     <div className="relative w-full">
       <div className="flex justify-between items-center relative pt-0 xl:pt-10">
-        <span className="dark:text-black">Minhas últimas compras</span>
+        <span className="dark:text-black">
+          Minhas últimas compras (até cinco)
+        </span>
         <Link href={"/minhas-compras"}>
           <button className="flex items-center text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
             Ver todas
@@ -130,7 +98,7 @@ export default function RecentPurchasesTable() {
               </tr>
             </thead>
             <tbody>
-              {purchases.map((purchase) => (
+              {recentPurchases.map((purchase) => (
                 <tr
                   key={purchase.id}
                   className="flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray-100 dark:text-black"

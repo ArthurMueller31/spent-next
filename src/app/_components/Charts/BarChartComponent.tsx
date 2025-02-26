@@ -5,9 +5,9 @@ import { BarChart } from "@mui/x-charts";
 import { useEffect, useState } from "react";
 import { Purchase } from "@/hooks/usePurchases";
 
-interface UserCredential {
+type UserCredential = {
   userId: string | null;
-}
+};
 
 export default function BarChartComponent({ userId }: UserCredential) {
   const { purchases } = usePurchases(userId);
@@ -74,7 +74,7 @@ export default function BarChartComponent({ userId }: UserCredential) {
       <div className="flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center space-x-2">
           <span className="dark:text-black pb-3 md:p-0">
-            Dias com mais gastos
+            Dias com valores em gastos mais altos
           </span>
         </div>
         <div>

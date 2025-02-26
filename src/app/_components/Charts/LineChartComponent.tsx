@@ -5,9 +5,9 @@ import { usePurchases } from "@/hooks/usePurchases";
 import Image from "next/image";
 import { LineChart } from "@mui/x-charts";
 
-interface UserCredential {
+type UserCredential = {
   userId: string | null;
-}
+};
 
 export function LineChartComponent({ userId }: UserCredential) {
   const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(365);

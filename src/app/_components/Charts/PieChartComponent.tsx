@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { usePurchases } from "@/hooks/usePurchases";
 import { Purchase } from "@/hooks/usePurchases";
 
-interface UserCredential {
+type UserCredential = {
   userId: string | null;
-}
+};
 
 export default function PieChartComponent({ userId }: UserCredential) {
   const { purchases } = usePurchases(userId);
@@ -29,7 +29,7 @@ export default function PieChartComponent({ userId }: UserCredential) {
       "Lazer/Entretenimento": 0,
       "Eletrônicos/Tecnologia": 0,
       "Casa/decoração": 0,
-      Outro: 0
+      Outros: 0
     };
 
     purchases.forEach((purchase: Purchase) => {
@@ -42,7 +42,7 @@ export default function PieChartComponent({ userId }: UserCredential) {
       if (totals.hasOwnProperty(category)) {
         totals[category] += totalValue;
       } else {
-        totals["Outro"] += totalValue;
+        totals["Outros"] += totalValue;
       }
     });
 
@@ -115,7 +115,6 @@ export default function PieChartComponent({ userId }: UserCredential) {
                     style: "currency",
                     currency: "BRL"
                   }).format(item.value)}`,
-                innerRadius: 30,
                 outerRadius: 115
               }
             ]}

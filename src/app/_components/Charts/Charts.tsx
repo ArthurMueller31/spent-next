@@ -26,7 +26,7 @@ export default function Charts() {
       <div className="md:pl-64 md:ml-12 px-14 pb-4 pt-20 h-screen overflow-auto font-raleway tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
         <div className="grid grid-cols-1 gap-8 h-full xl:grid-cols-2 xl:grid-rows-2">
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col items-center justify-center dark:bg-white ">
-            <RecentPurchases />
+            <RecentPurchases userId={userId} />
           </div>
 
           <div className="bg-white rounded-lg shadow-lg p-6 flex flex-col justify-center dark:bg-white">
