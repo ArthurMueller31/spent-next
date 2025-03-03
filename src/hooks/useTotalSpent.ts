@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { collection, onSnapshot } from "firebase/firestore";
-import { firestore } from "../../firebase/firebase"; 
+import { firestore } from "../../firebase/firebase";
 import useSidebarStore from "@/app/_components/Navigation/Sidebar/sidebarStore"; // O hook Zustand
 
 interface Item {
   name: string;
   price: string;
   quantity: number;
-  weight: string; 
+  weight: string;
 }
 
 interface PurchaseData {
@@ -20,11 +20,10 @@ const useTotalSpent = (userId: string | null) => {
   useEffect(() => {
     if (!userId) return;
 
-    
     const purchasesRef = collection(firestore, "users", userId, "purchases");
 
     // Configura o listener para obter dados em tempo real
-    const unsubscribe = onSnapshot(purchasesRef, (snapshot) => {
+    const getRealTimeData = onSnapshot(purchasesRef, (snapshot) => {
       let total = 0;
 
       snapshot.forEach((doc) => {
@@ -40,7 +39,7 @@ const useTotalSpent = (userId: string | null) => {
     });
 
     // Limpa o listener quando o componente for desmontado ou o userId mudar
-    return () => unsubscribe();
+    return () => getRealTimeData();
   }, [userId, setTotalSpent]); // Re-rodar sempre que o userId mudar
 };
 

@@ -231,17 +231,17 @@ export default function CustomDateBarChart() {
 
   return (
     <>
-      <div className="md:pl-64 md:ml-12 px-14 pb-4 pt-[92px] h-screen overflow-auto font-hostGrotesk tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
+      <div className="md:pl-64 md:ml-12 px-14 pb-2 pt-[70px] h-screen overflow-auto font-hostGrotesk tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-white">
-          <div className="2xl:flex 2xl:justify-between grid grid-rows-2 mb-4">
-            <div className="text-center 2xl:text-left mb-[-50px]">
-              <span className="pr-2">
+          <div className="grid grid-rows-2 2xl:flex 2xl:justify-between mb-20 h-fit sm:mb-10 sm:h-44 xl:mb-0">
+            <div className="text-center xl:text-left h-12 mt-5 xl:mt-2">
+              <span className="pr-2 dark:text-black">
                 {selectedPeriodBarChart === "all"
                   ? "Exibindo"
                   : "Exibindo compras de"}
               </span>
               <select
-                className="text-center bg-darkerCustomColor border border-darkerCustomColor rounded p-2 cursor-pointer text-white"
+                className="text-center bg-darkerCustomColor border border-darkerCustomColor rounded p-2 cursor-pointer text-white dark:text-white"
                 onChange={handlePeriodChange}
                 value={selectedPeriodBarChart}
               >
@@ -277,36 +277,43 @@ export default function CustomDateBarChart() {
                   3 anos
                 </option>
               </select>
-              <span className="pl-2">
+              <span className="pl-2 dark:text-black">
                 {selectedPeriodBarChart === "all"
                   ? "as compras"
                   : "atrás até hoje"}
               </span>
             </div>
-            <div className="2xl:block grid grid-rows-3 mb-[-50px]">
-              <span className="pr-2">Selecionar data personalizada - de</span>
-              <input
-                type="date"
-                className="text-center px-2 border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white"
-                onChange={handleCustomStartDateChange}
-                value={customStartDate}
-              />
-              <span className="px-2">até</span>
-              <input
-                type="date"
-                className="text-center r-2 border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white"
-                onChange={handleCustomEndDateChange}
-                value={customEndDate}
-              />
+            <div className="2xl:block grid grid-rows-3 mb-[-30px] justify-center xl:justify-normal ">
+              <div className="mt-1 xl:mt-0 max-h-12 w-full text-center xl:text-left">
+                <span className="pr-2 dark:text-black">
+                  Selecionar data personalizada -
+                </span>
+                <span className="pr-2 dark:text-black">de</span>
+                <input
+                  type="date"
+                  className="text-center px-2 border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white dark:text-white w-full sm:w-fit mb-3"
+                  onChange={handleCustomStartDateChange}
+                  value={customStartDate}
+                />
+                <span className="px-2 dark:text-black text-center md:text-left">
+                  até
+                </span>
+                <input
+                  type="date"
+                  className="text-center border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white dark:text-white w-full sm:w-fit mt-3"
+                  onChange={handleCustomEndDateChange}
+                  value={customEndDate}
+                />
+              </div>
             </div>
           </div>
           <div className="w-full">
-            <div className="mt-20 text-center 2xl:text-left">
+            <div className="text-center xl:text-left dark:text-black 2xl:mt-[-80px]">
               <span className="pr-2">Mostrar por categoria:</span>
               <select
                 onChange={handleCategoryChange}
                 value={selectedCategory}
-                className="text-center bg-darkerCustomColor border border-darkerCustomColor rounded p-2 cursor-pointer text-white"
+                className="text-center bg-darkerCustomColor border border-darkerCustomColor rounded p-2 cursor-pointer text-white w-full sm:w-fit dark:text-white"
               >
                 <option value={"all"}>Todas</option>
                 <option
@@ -390,7 +397,7 @@ export default function CustomDateBarChart() {
               height={20}
               alt="info-icon"
             />
-            <p>Datas ordenadas da menor à maior</p>
+            <p className="dark:text-black">Datas ordenadas da menor à maior</p>
           </div>
         </div>
       </div>
