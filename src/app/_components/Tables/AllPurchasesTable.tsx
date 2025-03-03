@@ -8,6 +8,8 @@ import useSidebarStore from "../Navigation/Sidebar/sidebarStore";
 import Image from "next/image";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
 import { usePurchases } from "@/hooks/usePurchases";
+import SingleItemDelete from "../Modals/SingleItemDelete";
+import EmptyEditOrNewItems from "../Modals/EmptyEditOrNewItems";
 
 type Item = {
   name: string;
@@ -60,8 +62,11 @@ export default function AllPurchasesTable() {
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [addingItem, setAddingItem] = useState(false);
   const [newItem, setNewItem] = useState<Item | null>(null);
+  const [isOnlyItemInList, setIsOnlyItemInList] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState<string | null>(null);
   const [isDeletePurchaseModalOpen, setIsDeletePurchaseModalOpen] =
+    useState(false);
+  const [isEditOrNewItemEmptyModalOpen, setIsEditOrNewItemEmptyModalOpen] =
     useState(false);
 
   useEffect(() => {
@@ -108,7 +113,6 @@ export default function AllPurchasesTable() {
       await deleteDoc(purchaseRef);
     } catch (error) {
       console.log("erro ao excluir", error);
-      alert("Erro ao excluir a compra, tente novamente.");
     } finally {
       setIsDeletePurchaseModalOpen(false);
       setSelectedPurchase(null);
@@ -132,7 +136,7 @@ export default function AllPurchasesTable() {
       !editedItem.price.trim() ||
       !editedItem.weight.trim()
     ) {
-      alert("Não é possível adicionar itens vazios!");
+      setIsEditOrNewItemEmptyModalOpen(true);
       return;
     }
 
@@ -171,6 +175,12 @@ export default function AllPurchasesTable() {
     try {
       const purchaseIndex = purchases.findIndex((p) => p.id === purchaseId);
       if (purchaseIndex === -1) return;
+
+      const currentItem = purchases[purchaseIndex].items;
+      if (currentItem.length <= 1) {
+        setIsOnlyItemInList(true);
+        return;
+      }
 
       const updatedItems = [...purchases[purchaseIndex].items];
       updatedItems.splice(itemIndex, 1);
@@ -214,7 +224,7 @@ export default function AllPurchasesTable() {
       !newItem.price.trim() ||
       !newItem.weight.trim()
     ) {
-      alert("Não é possível adicionar itens vazios!");
+      setIsEditOrNewItemEmptyModalOpen(true);
       return;
     }
 
@@ -731,6 +741,16 @@ export default function AllPurchasesTable() {
         isOpen={isDeletePurchaseModalOpen}
         onClose={() => setIsDeletePurchaseModalOpen(false)}
         onConfirm={handlePurchaseDelete}
+      />
+
+      <SingleItemDelete
+        isOpen={isOnlyItemInList}
+        onClose={() => setIsOnlyItemInList(false)}
+      />
+
+      <EmptyEditOrNewItems
+        isOpen={isEditOrNewItemEmptyModalOpen}
+        onClose={() => setIsEditOrNewItemEmptyModalOpen(false)}
       />
     </>
   );

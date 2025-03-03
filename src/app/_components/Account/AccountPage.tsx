@@ -6,6 +6,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import { onAuthStateChanged } from "firebase/auth";
 import Link from "next/link";
+import EmptyUsernameModal from "../Modals/EmptyUsernameModal";
 
 export default function AccountPage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -17,6 +18,7 @@ export default function AccountPage() {
   const [editingName, setEditingName] = useState(false);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [usernameIsEmpty, setUsernameIsEmpty] = useState(false);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -86,7 +88,7 @@ export default function AccountPage() {
     if (!auth.currentUser) return;
 
     if (newUserName === "") {
-      alert("O campo não pode estar vazio.");
+      setUsernameIsEmpty(true);
       return;
     }
 
@@ -138,7 +140,7 @@ export default function AccountPage() {
               alt="Foto de perfil"
               width={100}
               height={100}
-              className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-400"
             />
 
             <div className="flex flex-col justify-center items-center">
@@ -213,6 +215,11 @@ export default function AccountPage() {
           </div>
         </div>
       </div>
+
+      <EmptyUsernameModal
+        isOpen={usernameIsEmpty}
+        onClose={() => setUsernameIsEmpty(false)}
+      />
     </>
   );
 }

@@ -1,9 +1,3 @@
-// import { useState } from "react";
-
-// type OpenSucessModal = {
-//   sucessModal: boolean;
-// };
-
 export default function ProductAddedModal() {
   const handleGoBack = () => {
     location.reload();
@@ -31,7 +25,7 @@ export default function ProductAddedModal() {
           </div>
         </div>
         <h2 className="text-xl font-semibold mb-2">
-          Compra adicionada com sucesso
+          Compra adicionada com sucesso!
         </h2>
         <p className="text-gray-600 mb-4">
           Sua compra foi adicionada. Você pode vê-la em &quot;Minhas

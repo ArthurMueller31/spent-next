@@ -573,20 +573,20 @@ export default function AddProductsModal({
               <button
                 type="button"
                 onClick={handleAddItem}
-                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition "
+                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition duration-200"
               >
                 Adicionar mais itens
               </button>
               <button
                 type="button"
                 onClick={handleModalToggle}
-                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
+                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition duration-200"
               >
                 Cancelar
               </button>
               <button
                 type="submit"
-                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-gray-200 transition"
+                className="border border-darkerCustomColor rounded-lg px-4 py-2 bg-white text-gray-700 hover:bg-darkerCustomColor hover:text-white transition duration-200"
               >
                 Salvar
               </button>
