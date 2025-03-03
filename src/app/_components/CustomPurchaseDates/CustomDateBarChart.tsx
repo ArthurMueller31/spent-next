@@ -232,9 +232,9 @@ export default function CustomDateBarChart() {
   return (
     <>
       <div className="md:pl-64 md:ml-12 px-14 pb-4 pt-[92px] h-screen overflow-auto font-hostGrotesk tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-white ">
-          <div className="flex justify-between mb-4">
-            <div>
+        <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-white">
+          <div className="2xl:flex 2xl:justify-between grid grid-rows-2 mb-4">
+            <div className="text-center 2xl:text-left mb-[-50px]">
               <span className="pr-2">
                 {selectedPeriodBarChart === "all"
                   ? "Exibindo"
@@ -283,7 +283,7 @@ export default function CustomDateBarChart() {
                   : "atrás até hoje"}
               </span>
             </div>
-            <div className="">
+            <div className="2xl:block grid grid-rows-3 mb-[-50px]">
               <span className="pr-2">Selecionar data personalizada - de</span>
               <input
                 type="date"
@@ -294,14 +294,14 @@ export default function CustomDateBarChart() {
               <span className="px-2">até</span>
               <input
                 type="date"
-                className="text-centep r-2 border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white"
+                className="text-center r-2 border border-darkerCustomColor bg-darkerCustomColor p-1 rounded-lg text-white"
                 onChange={handleCustomEndDateChange}
                 value={customEndDate}
               />
             </div>
           </div>
           <div className="w-full">
-            <div>
+            <div className="mt-20 text-center 2xl:text-left">
               <span className="pr-2">Mostrar por categoria:</span>
               <select
                 onChange={handleCategoryChange}
