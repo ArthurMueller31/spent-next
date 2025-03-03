@@ -29,7 +29,8 @@ export default function PieChartComponent({ userId }: UserCredential) {
       "Lazer/Entretenimento": 0,
       "Eletrônicos/Tecnologia": 0,
       "Casa/decoração": 0,
-      Outros: 0
+      Outros: 0,
+      "Não especificado": 0
     };
 
     purchases.forEach((purchase: Purchase) => {
@@ -86,7 +87,7 @@ export default function PieChartComponent({ userId }: UserCredential) {
           <span className="dark:text-black">Gastos por categoria</span>
         </div>
         <div className="z-20">
-          <Link href={"/minhas-compras"}>
+          <Link href={"/periodo"}>
             <button className="text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800 ">
               Ver detalhes
             </button>
@@ -97,7 +98,7 @@ export default function PieChartComponent({ userId }: UserCredential) {
       <div className="font-raleway w-full h-80 flex items-center justify-center">
         <div className="dark:text-white z-10 h-[380px] w-[600px]">
           <PieChart
-            colors={["#0081cf", "#00c9a7", "#e09f1f", "#98e288", "#f9f871"]}
+            colors={["#0081cf", "#00c9a7", "#e09f1f", "#98e288", "#f9f871", "#f08080"]}
             series={[
               {
                 data: pieChartData,
