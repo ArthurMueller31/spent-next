@@ -12,6 +12,13 @@ import {
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { format, toZonedTime } from "date-fns-tz";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+
+const errorMessages: Record<string, string> = {
+  "auth/invalid-email": "E-mail inválido. Por favor, insira um e-mail válido.",
+  "auth/weak-password": "A senha deve ter no mínimo 6 caracteres.",
+  "auth/email-already-exists": "Esse e-mail já está cadastrado em uma conta."
+};
 
 export default function SignUp() {
   // arruma a hora no firestore
@@ -78,12 +85,15 @@ export default function SignUp() {
       router.push("/home");
       setFormInputData({ name: "", email: "", password: "" }); // reset fields
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Erro: ", err);
+      if (err instanceof FirebaseError) {
+        setError(
+          errorMessages[err.code] ||
+            "Ocorreu um erro ao fazer login. Tente novamente."
+        );
+      } else if (err instanceof Error) {
         setError(err.message);
-      } else {
-        throw err;
       }
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
@@ -162,6 +172,7 @@ export default function SignUp() {
 
               <div className="space-y-4">
                 <div>
+                  <label>Nome</label>
                   <input
                     name="name"
                     type="text"
@@ -169,10 +180,10 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-black px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Nome"
                   />
                 </div>
                 <div>
+                  <label>E-mail</label>
                   <input
                     name="email"
                     type="email"
@@ -180,10 +191,10 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="E-mail"
                   />
                 </div>
                 <div>
+                  <label>Senha</label>
                   <input
                     name="password"
                     type="password"
@@ -191,7 +202,7 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Senha"
+                    placeholder="Deve ter mais de 6 caracteres"
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
@@ -204,7 +215,7 @@ export default function SignUp() {
                   </div>
                   <div className="text-sm">
                     <Link
-                      href="/sobre"
+                      href="/duvidas"
                       className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 font-semibold"
                     >
                       Dúvidas?

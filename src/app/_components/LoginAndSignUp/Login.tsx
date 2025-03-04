@@ -10,6 +10,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { auth } from "../../../../firebase/firebase";
+import { FirebaseError } from "firebase/app";
+
+const errorMessages: Record<string, string> = {
+  "auth/invalid-email": "E-mail inválido. Por favor, insira um e-mail válido.",
+  "auth/user-disabled": "Esta conta está desativada.",
+  "auth/user-not-found":
+    "Usuário não encontrado. Verifique se o e-mail está correto ou cadastre-se.",
+  "auth/wrong-password": "Senha incorreta. Tente novamente.",
+  "auth/invalid-credential": "Usuário/Senha incorretos."
+};
 
 export default function Login() {
   const [formInputData, setFormInputData] = useState({
@@ -50,8 +60,12 @@ export default function Login() {
 
       router.push("/home");
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Erro: ", err.message);
+      if (err instanceof FirebaseError) {
+        setError(
+          errorMessages[err.code] ||
+            "Ocorreu um erro ao fazer login. Tente novamente."
+        );
+      } else if (err instanceof Error) {
         setError(err.message);
       }
     } finally {
@@ -95,6 +109,7 @@ export default function Login() {
 
               <div className="space-y-4">
                 <div>
+                  <label>E-mail</label>
                   <input
                     name="email"
                     type="email"
@@ -102,10 +117,10 @@ export default function Login() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Endereço de e-mail"
                   />
                 </div>
                 <div>
+                  <label>Senha</label>
                   <input
                     name="password"
                     type="password"
@@ -113,7 +128,7 @@ export default function Login() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Senha"
+                    placeholder=""
                   />
                 </div>
               </div>

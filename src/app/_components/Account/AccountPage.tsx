@@ -5,8 +5,8 @@ import { auth, firestore } from "../../../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import { onAuthStateChanged } from "firebase/auth";
-import Link from "next/link";
 import EmptyUsernameModal from "../Modals/EmptyUsernameModal";
+import Sidebar from "../Navigation/Sidebar/Sidebar";
 
 export default function AccountPage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -105,30 +105,8 @@ export default function AccountPage() {
 
   return (
     <>
-      <div className="fixed top-24 left-14">
-        <Link href={"/home"}>
-          <button
-            className="px-4 py-2 bg-darkerCustomColor border border-darkerCustomColor rounded-xl flex text-white
-          hover:bg-slate-800 transition duration-200 font-raleway dark:border dark:border-white dark:text-black dark:bg-white font-medium dark:hover:bg-gray-200"
-          >
-            <Image
-              src={"./icons/arrow-forward.svg"}
-              alt="arrow-backwards-icon"
-              width={15}
-              height={15}
-              className="transform scale-x-[-1] mr-2 block dark:hidden"
-            />
-            <Image
-              src={"./icons/arrow-forward-black.svg"}
-              alt="arrow-backwards-icon"
-              width={15}
-              height={15}
-              className="transform scale-x-[-1] mr-2 hidden dark:block"
-            />
-            Voltar
-          </button>
-        </Link>
-      </div>
+      <Sidebar />
+
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-darkerCustomColor pt-[64px] font-hostGrotesk p-10">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
           <h2 className="text-xl font-semibold mb-4 dark:text-black">
@@ -159,7 +137,7 @@ export default function AccountPage() {
               {editingName && (
                 <div>
                   <button
-                    title="Editar nome"
+                    title="Cancelar"
                     onClick={() => setEditingName(false)}
                     className="hover:bg-red-500 transition duration-200 rounded m-1"
                   >
@@ -172,6 +150,7 @@ export default function AccountPage() {
                     />
                   </button>
                   <button
+                    title="Salvar"
                     onClick={() => handleNameUpdate()}
                     className="hover:bg-green-500 transition duration-200 rounded m-1"
                   >
