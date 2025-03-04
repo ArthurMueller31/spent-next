@@ -7,6 +7,7 @@ import Image from "next/image";
 import { onAuthStateChanged } from "firebase/auth";
 import EmptyUsernameModal from "../Modals/EmptyUsernameModal";
 import Sidebar from "../Navigation/Sidebar/Sidebar";
+import ConfirmAccountDeletionModal from "../Modals/ConfirmAccountDeletionModal";
 
 export default function AccountPage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -19,6 +20,11 @@ export default function AccountPage() {
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [usernameIsEmpty, setUsernameIsEmpty] = useState(false);
+
+  const [
+    confirmAccountDeletionModalIsOpen,
+    setConfirmAccountDeletionModalIsOpen
+  ] = useState(false);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -192,12 +198,31 @@ export default function AccountPage() {
               </p>
             </div>
           </div>
+          <div className="flex justify-center mt-4 p-2 text-black dark:text-black">
+            <button
+              className="flex items-center  p-1 border rounded border-red-600 hover:bg-red-600 transition duration-300"
+              onClick={() => setConfirmAccountDeletionModalIsOpen(true)}
+            >
+              <Image
+                src={"icons/delete.svg"}
+                alt="delete-bin-icon"
+                width={30}
+                height={30}
+              />
+              <p>Excluir conta</p>
+            </button>
+          </div>
         </div>
       </div>
 
       <EmptyUsernameModal
         isOpen={usernameIsEmpty}
         onClose={() => setUsernameIsEmpty(false)}
+      />
+
+      <ConfirmAccountDeletionModal
+        isOpen={confirmAccountDeletionModalIsOpen}
+        onClose={() => setConfirmAccountDeletionModalIsOpen(false)}
       />
     </>
   );
