@@ -138,26 +138,29 @@ export default function Sidebar() {
           </button>
         </div>
 
-        <div className="relative flex flex-col items-center justify-center font-workSans border rounded-md md:mt-12">
-          <div className="flex flex-row items-center m-2 font-medium">
-            <Image
-              className="block dark:hidden"
-              src={"/icons/sidebar-moneybag.svg"}
-              alt="home-icon"
-              width={40}
-              height={40}
-            />
-            <Image
-              className="hidden dark:block"
-              src={"/icons/sidebar-moneybag-white.svg"}
-              alt="home-icon"
-              width={40}
-              height={40}
-            />
-            <span title="Seus gastos até hoje" className="dark:text-white">
-              Gastos:
-            </span>
-            <span className="flex flex-row items-center w-auto p-2 bg-white dark:bg-darkerCustomColor dark:text-white ">
+        <div className="relative flex flex-col m-2 font-workSans border rounded-md md:mt-12">
+          <div className="flex flex-col items-center justify-center">
+            <div className="flex items-start justify-center mt-1">
+              <Image
+                className="block dark:hidden"
+                src={"/icons/sidebar-moneybag-black.svg"}
+                alt="home-icon"
+                width={40}
+                height={40}
+              />
+              <Image
+                className="hidden dark:block"
+                src={"/icons/sidebar-moneybag-white.svg"}
+                alt="home-icon"
+                width={40}
+                height={40}
+              />
+            </div>
+            <div className="flex flex-row items-center m-1 font-medium">
+              <span className="dark:text-white">Gastos até hoje:</span>
+            </div>
+
+            <span className="flex flex-row items-center mb-2 w-auto bg-white dark:bg-darkerCustomColor dark:text-white">
               <p className="font-medium">
                 {totalSpent.toLocaleString("pt-BR", {
                   style: "currency",
@@ -277,6 +280,44 @@ export default function Sidebar() {
                 }`}
               >
                 Minhas Compras
+              </span>
+            </Link>
+
+            <Link
+              key={"/periodo"}
+              href={"periodo"}
+              className={`group flex items-center px-4 py-2 mt-5 text-gray-600 transition-colors duration-300 transform rounded-md dark:text-gray-400 dark:hover:bg-white dark:hover:text-black ${
+                pathname === "/periodo"
+                  ? "bg-gray-100 text-gray-900 dark:bg-gray-100 dark:text-black"
+                  : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
+              }`}
+            >
+              <Image
+                className={`group-hover:hidden ${
+                  pathname === "/periodo" ? "dark:hidden" : "dark:block"
+                }`}
+                src={"/icons/sidebar-date-range.svg"}
+                alt="table-icon"
+                width={30}
+                height={30}
+              />
+
+              <Image
+                className={`hidden group-hover:block ${
+                  pathname === "/periodo" ? "dark:block" : "dark:hidden"
+                }`}
+                src={"/icons/sidebar-date-range-black.svg"}
+                alt="table-icon"
+                width={30}
+                height={30}
+              />
+
+              <span
+                className={`mx-4 font-medium ${
+                  pathname === "/periodo" ? "dark:text-black" : ""
+                }`}
+              >
+                Ver por Período
               </span>
             </Link>
 

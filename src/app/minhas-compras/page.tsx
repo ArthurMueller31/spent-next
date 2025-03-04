@@ -2,7 +2,7 @@ import AuthGuard from "../_components/Auth/AuthGuard";
 import EmptyPurchasesScreen from "../_components/EmptyPurchases/EmptyPurchasesScreen";
 import Navbar from "../_components/Navigation/Navbar/Navbar";
 import Sidebar from "../_components/Navigation/Sidebar/Sidebar";
-import AllPurchases from "../_components/Tables/AllPurchases";
+import AllPurchasesTable from "../_components/Tables/AllPurchasesTable";
 
 export default function page() {
   return (
@@ -12,7 +12,7 @@ export default function page() {
         <EmptyPurchasesScreen>
           <Sidebar />
           <Navbar />
-          <AllPurchases />
+          <AllPurchasesTable />
         </EmptyPurchasesScreen>
       </AuthGuard>
     </>

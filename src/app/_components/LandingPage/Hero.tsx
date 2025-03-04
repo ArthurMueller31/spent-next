@@ -6,7 +6,7 @@ export default function Hero() {
     <section className="relative w-full h-[80vh] text-white font-raleway">
       {/* Bg image */}
       <Image
-        className="bg-black bg-opacity-50 object-cover"
+        className="bg-black bg-opacity-50 object-cover w-full h-[80vh]"
         src={"/images/hero-img.jpeg"}
         alt="spent-hero"
         fill={true}
@@ -56,9 +56,9 @@ export default function Hero() {
 
         {/* Main text for hero */}
         <div className="absolute inset-0 flex flex-col justify-center items-center">
-          <div className="text-center px-6 space-y-6">
-            <h1 className="text-4xl leading-snug sm:text-5xl md:text-7xl font-bold text-center md:leading-snug">
-              Seus gastos organizados <br /> da melhor forma.
+          <div className="text-center px-6 md:space-y-2 ">
+            <h1 className="text-4xl leading-snug sm:text-5xl md:text-7xl font-bold text-center md:leading-snug max-w-6xl mobile-height:text-3xl mobile-height:max-w-md">
+              Seus gastos organizados da melhor forma.
             </h1>
             <div className="pt-5">
               <Link href="cadastro">
@@ -66,6 +66,9 @@ export default function Hero() {
                   className="
               px-6 py-3 w-60 h-20 font-medium
               text-3xl
+              mobile-height:text-xl
+              mobile-height:w-[170px]
+              mobile-height:h-12
               rounded-xl 
               transition ease-in-out duration-250
             bg-darkerCustomColor  hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700

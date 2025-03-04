@@ -5,7 +5,9 @@ import { auth, firestore } from "../../../../firebase/firebase";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import Image from "next/image";
 import { onAuthStateChanged } from "firebase/auth";
-import Link from "next/link";
+import EmptyUsernameModal from "../Modals/EmptyUsernameModal";
+import Sidebar from "../Navigation/Sidebar/Sidebar";
+import ConfirmAccountDeletionModal from "../Modals/ConfirmAccountDeletionModal";
 
 export default function AccountPage() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -17,6 +19,12 @@ export default function AccountPage() {
   const [editingName, setEditingName] = useState(false);
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [usernameIsEmpty, setUsernameIsEmpty] = useState(false);
+
+  const [
+    confirmAccountDeletionModalIsOpen,
+    setConfirmAccountDeletionModalIsOpen
+  ] = useState(false);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -86,7 +94,7 @@ export default function AccountPage() {
     if (!auth.currentUser) return;
 
     if (newUserName === "") {
-      alert("O campo não pode estar vazio.");
+      setUsernameIsEmpty(true);
       return;
     }
 
@@ -103,30 +111,8 @@ export default function AccountPage() {
 
   return (
     <>
-      <div className="fixed top-24 left-14">
-        <Link href={"/home"}>
-          <button
-            className="px-4 py-2 bg-darkerCustomColor border border-darkerCustomColor rounded-xl flex text-white
-          hover:bg-slate-800 transition duration-200 font-raleway dark:border dark:border-white dark:text-black dark:bg-white font-medium dark:hover:bg-gray-200"
-          >
-            <Image
-              src={"./icons/arrow-forward.svg"}
-              alt="arrow-backwards-icon"
-              width={15}
-              height={15}
-              className="transform scale-x-[-1] mr-2 block dark:hidden"
-            />
-            <Image
-              src={"./icons/arrow-forward-black.svg"}
-              alt="arrow-backwards-icon"
-              width={15}
-              height={15}
-              className="transform scale-x-[-1] mr-2 hidden dark:block"
-            />
-            Voltar
-          </button>
-        </Link>
-      </div>
+      <Sidebar />
+
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-darkerCustomColor pt-[64px] font-hostGrotesk p-10">
         <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
           <h2 className="text-xl font-semibold mb-4 dark:text-black">
@@ -138,7 +124,7 @@ export default function AccountPage() {
               alt="Foto de perfil"
               width={100}
               height={100}
-              className="w-24 h-24 rounded-full object-cover border-2 border-gray-300"
+              className="w-24 h-24 rounded-full object-cover border-2 border-gray-400"
             />
 
             <div className="flex flex-col justify-center items-center">
@@ -157,7 +143,7 @@ export default function AccountPage() {
               {editingName && (
                 <div>
                   <button
-                    title="Editar nome"
+                    title="Cancelar"
                     onClick={() => setEditingName(false)}
                     className="hover:bg-red-500 transition duration-200 rounded m-1"
                   >
@@ -170,6 +156,7 @@ export default function AccountPage() {
                     />
                   </button>
                   <button
+                    title="Salvar"
                     onClick={() => handleNameUpdate()}
                     className="hover:bg-green-500 transition duration-200 rounded m-1"
                   >
@@ -211,8 +198,32 @@ export default function AccountPage() {
               </p>
             </div>
           </div>
+          <div className="flex justify-center mt-4 p-2 text-black dark:text-black">
+            <button
+              className="flex items-center  p-1 border rounded border-red-600 hover:bg-red-600 transition duration-300"
+              onClick={() => setConfirmAccountDeletionModalIsOpen(true)}
+            >
+              <Image
+                src={"icons/delete.svg"}
+                alt="delete-bin-icon"
+                width={30}
+                height={30}
+              />
+              <p>Excluir conta</p>
+            </button>
+          </div>
         </div>
       </div>
+
+      <EmptyUsernameModal
+        isOpen={usernameIsEmpty}
+        onClose={() => setUsernameIsEmpty(false)}
+      />
+
+      <ConfirmAccountDeletionModal
+        isOpen={confirmAccountDeletionModalIsOpen}
+        onClose={() => setConfirmAccountDeletionModalIsOpen(false)}
+      />
     </>
   );
 }

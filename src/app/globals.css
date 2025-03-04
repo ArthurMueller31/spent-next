@@ -25,3 +25,8 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.MuiPieArcLabel-root {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 100;
+}

@@ -1,27 +1,15 @@
 "use client";
 
-import {
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  updateDoc
-} from "firebase/firestore";
+import { deleteDoc, doc, updateDoc } from "firebase/firestore";
 import { firestore, auth } from "../../../../firebase/firebase";
 import React, { useEffect, useState } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import useSidebarStore from "../Navigation/Sidebar/sidebarStore";
 import Image from "next/image";
 import ConfirmDeleteModal from "../Modals/ConfirmDeleteModal";
-
-type Purchase = {
-  id?: string;
-  establishment: string;
-  purchaseDate: string;
-  category: string;
-  createdAt: string;
-  items: Item[];
-};
+import { usePurchases } from "@/hooks/usePurchases";
+import SingleItemDelete from "../Modals/SingleItemDelete";
+import EmptyEditOrNewItems from "../Modals/EmptyEditOrNewItems";
 
 type Item = {
   name: string;
@@ -29,16 +17,6 @@ type Item = {
   quantity: string;
   weight: string;
 };
-
-async function fetchPurchases(userId: string): Promise<Purchase[]> {
-  const purchasesRef = collection(firestore, `users/${userId}/purchases`);
-  const querySnapshot = await getDocs(purchasesRef);
-
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data()
-  })) as Purchase[];
-}
 
 function formatDate(dateString: string): string {
   const dateParts = dateString.split("-"); // "2025-01-30" -> ["2025", "01", "30"]
@@ -77,15 +55,18 @@ function formatCurrencyToBRL(value: number): string {
 
 export default function AllPurchasesTable() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [purchases, setPurchases] = useState<Purchase[]>([]);
+  const { purchases } = usePurchases(userId);
   const [expandedPurchase, setExpandedPurchase] = useState<string | null>(null);
   const [editedItem, setEditedItem] = useState<Item | null>(null);
   const setTotalSpent = useSidebarStore((state) => state.setTotalSpent); // acessar zustand
   const [editingItem, setEditingItem] = useState<string | null>(null);
   const [addingItem, setAddingItem] = useState(false);
   const [newItem, setNewItem] = useState<Item | null>(null);
+  const [isOnlyItemInList, setIsOnlyItemInList] = useState(false);
   const [selectedPurchase, setSelectedPurchase] = useState<string | null>(null);
   const [isDeletePurchaseModalOpen, setIsDeletePurchaseModalOpen] =
+    useState(false);
+  const [isEditOrNewItemEmptyModalOpen, setIsEditOrNewItemEmptyModalOpen] =
     useState(false);
 
   useEffect(() => {
@@ -101,37 +82,24 @@ export default function AllPurchasesTable() {
   }, []);
 
   useEffect(() => {
-    // Busca as compras somente se o usuário estiver autenticado
-    const fetchData = async () => {
-      if (userId) {
-        const data = await fetchPurchases(userId);
+    if (purchases.length > 0) {
+      const total = purchases.reduce((sum, purchase) => {
+        return sum + calculateTotalPrice(purchase.items);
+      }, 0);
+      setTotalSpent(formatCurrencyToBRL(total));
+    }
+  }, [purchases, setTotalSpent]);
 
-        // ordenar compras de mais recente para mais antiga
-        // mais de uma compra no mesmo dia = ordenar por preço
-        const sortedData = data.sort((a, b) => {
-          const dateA = new Date(a.purchaseDate).getTime();
-          const dateB = new Date(b.purchaseDate).getTime();
-
-          if (dateB !== dateA) {
-            return dateB - dateA;
-          }
-
-          const totalPriceA = calculateTotalPrice(a.items);
-          const totalPriceB = calculateTotalPrice(b.items);
-          return totalPriceB - totalPriceA;
-        });
-
-        const total = sortedData.reduce((sum, purchase) => {
-          return sum + calculateTotalPrice(purchase.items);
-        }, 0);
-
-        setPurchases(sortedData);
-        setTotalSpent(formatCurrencyToBRL(total));
-      }
-    };
-
-    fetchData();
-  }, [userId, setTotalSpent]);
+  const sortedPurchases = [...purchases].sort((a, b) => {
+    const dateA = new Date(a.purchaseDate).getTime();
+    const dateB = new Date(b.purchaseDate).getTime();
+    if (dateB !== dateA) {
+      return dateB - dateA;
+    }
+    const totalPriceA = calculateTotalPrice(a.items);
+    const totalPriceB = calculateTotalPrice(b.items);
+    return totalPriceB - totalPriceA;
+  });
 
   const handlePurchaseDelete = async () => {
     if (!userId || !selectedPurchase) return;
@@ -143,19 +111,11 @@ export default function AllPurchasesTable() {
       );
 
       await deleteDoc(purchaseRef);
-
-      setPurchases((prevPurchases) =>
-        prevPurchases.filter((p) => p.id !== selectedPurchase)
-      );
     } catch (error) {
       console.log("erro ao excluir", error);
-      alert("Erro ao excluir a compra, tente novamente.");
     } finally {
       setIsDeletePurchaseModalOpen(false);
       setSelectedPurchase(null);
-      setPurchases((prevPurchases) =>
-        prevPurchases.filter((p) => p.id !== selectedPurchase)
-      );
     }
   };
 
@@ -176,7 +136,7 @@ export default function AllPurchasesTable() {
       !editedItem.price.trim() ||
       !editedItem.weight.trim()
     ) {
-      alert("Não é possível adicionar itens vazios!");
+      setIsEditOrNewItemEmptyModalOpen(true);
       return;
     }
 
@@ -196,12 +156,6 @@ export default function AllPurchasesTable() {
       );
 
       await updateDoc(purchaseRef, { items: updatedItems });
-
-      setPurchases((prev) =>
-        prev.map((p) =>
-          p.id === purchaseId ? { ...p, items: updatedItems } : p
-        )
-      );
     } catch (error) {
       console.error("Erro ao salvar edição:", error);
     } finally {
@@ -222,6 +176,12 @@ export default function AllPurchasesTable() {
       const purchaseIndex = purchases.findIndex((p) => p.id === purchaseId);
       if (purchaseIndex === -1) return;
 
+      const currentItem = purchases[purchaseIndex].items;
+      if (currentItem.length <= 1) {
+        setIsOnlyItemInList(true);
+        return;
+      }
+
       const updatedItems = [...purchases[purchaseIndex].items];
       updatedItems.splice(itemIndex, 1);
 
@@ -231,12 +191,6 @@ export default function AllPurchasesTable() {
       );
 
       await updateDoc(purchaseRef, { items: updatedItems });
-
-      setPurchases((prevPurchases) =>
-        prevPurchases.map((p) =>
-          p.id === purchaseId ? { ...p, items: updatedItems } : p
-        )
-      );
     } catch (error) {
       console.log("Erro:", error);
     }
@@ -270,7 +224,7 @@ export default function AllPurchasesTable() {
       !newItem.price.trim() ||
       !newItem.weight.trim()
     ) {
-      alert("Não é possível adicionar itens vazios!");
+      setIsEditOrNewItemEmptyModalOpen(true);
       return;
     }
 
@@ -287,11 +241,6 @@ export default function AllPurchasesTable() {
       );
 
       await updateDoc(purchaseRef, { items: updatedItems });
-      setPurchases((prevPurchases) =>
-        prevPurchases.map((p) =>
-          p.id === purchaseId ? { ...p, items: updatedItems } : p
-        )
-      );
     } catch (error) {
       console.log("Erro ao add", error);
     } finally {
@@ -300,8 +249,6 @@ export default function AllPurchasesTable() {
       setEditingItem(null);
     }
   };
-
-  // ml-64 no main
 
   return (
     <>
@@ -324,7 +271,7 @@ export default function AllPurchasesTable() {
             {userId && (
               <div className="overflow-y-auto max-h-[42rem]">
                 <table className="w-full min-w-[600px] border border-gray-300 text-left rounded-lg overflow-auto">
-                  <thead className="bg-darkerCustomColor top-0 z-0">
+                  <thead className="bg-darkerCustomColor top-0 z-0 sticky">
                     <tr className="flex justify-around text-white md:text-base items-center dark:border">
                       <th className="flex-1 text-center p-3">
                         Local da Compra
@@ -341,7 +288,7 @@ export default function AllPurchasesTable() {
                     </tr>
                   </thead>
                   <tbody>
-                    {purchases.map((purchase) => (
+                    {sortedPurchases.map((purchase) => (
                       <React.Fragment key={purchase.id}>
                         <tr
                           className={`flex justify-around hover:bg-gray-100 cursor-pointer dark:hover:bg-gray100 dark:text-black max-w-full ${
@@ -480,13 +427,20 @@ export default function AllPurchasesTable() {
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
                                               type="text"
-                                              value={editedItem?.quantity || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              value={editedItem?.quantity || ""}
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  quantity: e.target.value
-                                                })
-                                              }
+                                                  quantity: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -499,13 +453,20 @@ export default function AllPurchasesTable() {
                                           `${purchase.id}-${originalIndex}` ? (
                                             <input
                                               type="text"
-                                              value={editedItem?.price || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              value={editedItem?.price || ""}
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9,.]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  price: e.target.value
-                                                })
-                                              }
+                                                  price: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -521,12 +482,19 @@ export default function AllPurchasesTable() {
                                             <input
                                               type="text"
                                               value={editedItem?.weight || ""} // aqui só exibe nome
-                                              onChange={(e) =>
+                                              onChange={(e) => {
+                                                const inputValue =
+                                                  e.target.value;
+                                                const filteredValue =
+                                                  inputValue.replace(
+                                                    /[^0-9]/g,
+                                                    ""
+                                                  );
                                                 setEditedItem({
                                                   ...editedItem!,
-                                                  weight: e.target.value
-                                                })
-                                              }
+                                                  weight: filteredValue
+                                                });
+                                              }}
                                               className="text-center p-2 rounded-lg border border-darkerCustomColor dark:text-black max-w-[90%]"
                                             />
                                           ) : (
@@ -632,12 +600,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Quantidade"
                                             value={newItem?.quantity || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                quantity: e.target.value
-                                              })
-                                            }
+                                                quantity: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
@@ -646,12 +621,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Preço Unitário"
                                             value={newItem?.price || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9,.]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                price: e.target.value
-                                              })
-                                            }
+                                                price: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
@@ -660,12 +642,19 @@ export default function AllPurchasesTable() {
                                             type="text"
                                             placeholder="Peso (gramas)"
                                             value={newItem?.weight || ""}
-                                            onChange={(e) =>
+                                            onChange={(e) => {
+                                              const inputValue = e.target.value;
+                                              const filteredValue =
+                                                inputValue.replace(
+                                                  /[^0-9]/g,
+                                                  ""
+                                                );
+
                                               setNewItem({
                                                 ...newItem!,
-                                                weight: e.target.value
-                                              })
-                                            }
+                                                weight: filteredValue
+                                              });
+                                            }}
                                             className="text-center p-2 rounded-lg border border-darkerCustomColor dark:placeholder:text-gray-600 dark:text-black"
                                           />
                                         </td>
@@ -752,6 +741,16 @@ export default function AllPurchasesTable() {
         isOpen={isDeletePurchaseModalOpen}
         onClose={() => setIsDeletePurchaseModalOpen(false)}
         onConfirm={handlePurchaseDelete}
+      />
+
+      <SingleItemDelete
+        isOpen={isOnlyItemInList}
+        onClose={() => setIsOnlyItemInList(false)}
+      />
+
+      <EmptyEditOrNewItems
+        isOpen={isEditOrNewItemEmptyModalOpen}
+        onClose={() => setIsEditOrNewItemEmptyModalOpen(false)}
       />
     </>
   );

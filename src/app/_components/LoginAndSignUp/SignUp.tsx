@@ -12,6 +12,13 @@ import {
 import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
 import { format, toZonedTime } from "date-fns-tz";
 import { useRouter } from "next/navigation";
+import { FirebaseError } from "firebase/app";
+
+const errorMessages: Record<string, string> = {
+  "auth/invalid-email": "E-mail inválido. Por favor, insira um e-mail válido.",
+  "auth/weak-password": "A senha deve ter no mínimo 6 caracteres.",
+  "auth/email-already-exists": "Esse e-mail já está cadastrado em uma conta."
+};
 
 export default function SignUp() {
   // arruma a hora no firestore
@@ -78,12 +85,15 @@ export default function SignUp() {
       router.push("/home");
       setFormInputData({ name: "", email: "", password: "" }); // reset fields
     } catch (err) {
-      if (err instanceof Error) {
-        console.error("Erro: ", err);
+      if (err instanceof FirebaseError) {
+        setError(
+          errorMessages[err.code] ||
+            "Ocorreu um erro ao fazer login. Tente novamente."
+        );
+      } else if (err instanceof Error) {
         setError(err.message);
-      } else {
-        throw err;
       }
+      console.log(err);
     } finally {
       setIsLoading(false);
     }
@@ -162,6 +172,7 @@ export default function SignUp() {
 
               <div className="space-y-4">
                 <div>
+                  <label>Nome</label>
                   <input
                     name="name"
                     type="text"
@@ -169,10 +180,10 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-black px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Nome"
                   />
                 </div>
                 <div>
+                  <label>E-mail</label>
                   <input
                     name="email"
                     type="email"
@@ -180,10 +191,10 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="E-mail"
                   />
                 </div>
                 <div>
+                  <label>Senha</label>
                   <input
                     name="password"
                     type="password"
@@ -191,7 +202,7 @@ export default function SignUp() {
                     onChange={handleChange}
                     required
                     className="bg-gray-100 w-full text-sm text-darkerCustomColor px-4 py-3.5 rounded-md outline-customBlueColor focus:bg-transparent dark:text-black dark:focus:bg-gray-100 placeholder:text-gray-600"
-                    placeholder="Senha"
+                    placeholder="Deve ter mais de 6 caracteres"
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-between gap-4">
@@ -204,7 +215,7 @@ export default function SignUp() {
                   </div>
                   <div className="text-sm">
                     <Link
-                      href="/sobre"
+                      href="/duvidas"
                       className="transition ease-in-out duration-200 text-blue-600 hover:text-blue-500 font-semibold"
                     >
                       Dúvidas?
@@ -271,24 +282,6 @@ export default function SignUp() {
                       fill="#eb4132"
                       d="M256 120V0C187.62 0 123.333 26.629 74.98 74.98a259.849 259.849 0 0 0-22.158 25.235l86.308 86.308C162.883 146.72 206.376 120 256 120z"
                       data-original="#eb4132"
-                    />
-                  </svg>
-                </button>
-                <button type="button" className="border-none outline-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="32px"
-                    viewBox="0 0 512 512"
-                  >
-                    <path
-                      fill="#1877f2"
-                      d="M512 256c0 127.78-93.62 233.69-216 252.89V330h59.65L367 256h-71v-48.02c0-20.25 9.92-39.98 41.72-39.98H370v-63s-29.3-5-57.31-5c-58.47 0-96.69 35.44-96.69 99.6V256h-65v74h65v178.89C93.62 489.69 0 383.78 0 256 0 114.62 114.62 0 256 0s256 114.62 256 256z"
-                      data-original="#1877f2"
-                    />
-                    <path
-                      fill="#fff"
-                      d="M355.65 330 367 256h-71v-48.021c0-20.245 9.918-39.979 41.719-39.979H370v-63s-29.296-5-57.305-5C254.219 100 216 135.44 216 199.6V256h-65v74h65v178.889c13.034 2.045 26.392 3.111 40 3.111s26.966-1.066 40-3.111V330z"
-                      data-original="#ffffff"
                     />
                   </svg>
                 </button>

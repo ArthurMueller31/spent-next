@@ -3,19 +3,20 @@ import Link from "next/link";
 
 export default function LastPage() {
   return (
-    <section className="font-raleway px-6 py-8 dark:bg-black">
+    <section className="font-raleway px-6 py-8 dark:bg-darkModeCustomBg">
       <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           {/* Primeira linha */}
-          <div className="flex flex-col items-center  md:items-start space-y-5 order-2 md:order-1">
-            <p className="text-2xl leading-8 text-center md:text-justify">
-              Invés de anotar tudo manualmente, você pode adicionar notas
-              fiscais e armazená-las para fácil acesso, ver quanto gastou em
-              datas que deseja e várias outras funções.
+          <div className="flex flex-col items-center lg:items-start space-y-5 order-2 lg:order-1">
+            <p className="text-3xl leading-8 text-center lg:text-left hyphens-manual max-w-xl">
+              Registre suas compras e acesse-as a qualquer momento. Ao inserir
+              os dados, se a compra for realizada em um local já cadastrado, o
+              sistema oferece suges&shy;tões automáticas de itens, permitindo
+              que você complete o registro com apenas um clique!
             </p>
           </div>
 
-          <div className="flex justify-center order-1 md:order-2">
+          <div className="flex justify-center order-1 lg:order-2">
             <Image
               src="/images/last-page-img1.jpeg"
               alt="Homem com várias notas fiscais"
@@ -27,14 +28,18 @@ export default function LastPage() {
             />
           </div>
 
-          <div className="flex flex-col items-center md:items-start space-y-4 order-3 md:order-4">
-            <p className="text-2xl leading-8 text-center md:text-justify">
-              Se você é uma pessoa que controla seus gastos, nosso site é
-              perfeito para seu propósito.
+          <div className="flex flex-col items-center lg:items-start space-y-4 order-3 lg:order-4">
+            <div className="w-full lg:hidden">
+              <hr className="border-gray-300 dark:border-gray-300" />
+            </div>
+            <p className="text-3xl leading-8 text-center lg:text-left hyphens-auto max-w-xl">
+              Se você deseja gerenciar seus gastos de forma prática e obter
+              visualizações claras, nosso site é a solução ideal para
+              acompa&shy;nhar suas despesas com facilidade.
             </p>
           </div>
 
-          <div className="flex justify-center order-4 md:order-3">
+          <div className="flex justify-center order-4 lg:order-3">
             <Image
               src="/images/last-page-img2.jpeg"
               alt="Homem controlando dinheiro no notebook"
