@@ -61,7 +61,7 @@ export default function LastPage() {
               text-white
               rounded-xl 
               transition ease-in-out duration-250
-            bg-darkerCustomColor hover:bg-gray-800 dark:bg-gray-800 dark:hover:bg-gray-700
+            bg-darkerCustomColor hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-700
             "
             >
               Crie sua conta
