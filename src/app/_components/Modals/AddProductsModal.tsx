@@ -505,7 +505,7 @@ export default function AddProductsModal({
                         name="quantity"
                         min={0}
                         id={`quantity-${index}`}
-                        value={item.quantity}
+                        value={item.quantity.replace(/[^0-9]/g, "")}
                         onChange={(e) => handleChangeItem(index, e)}
                         className="bg-white border border-darkerCustomColor text-sm rounded-lg block w-full p-2.5 placeholder-gray-500 dark:bg-white dark:placeholder:text-gray-600 dark:text-black"
                         placeholder={hoveredItems[index]?.quantity || "0"}

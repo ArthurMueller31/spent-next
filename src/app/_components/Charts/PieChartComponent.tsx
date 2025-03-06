@@ -47,9 +47,14 @@ export default function PieChartComponent({ userId }: UserCredential) {
       }
     });
 
+    const totalAll = Object.values(totals).reduce(
+      (sum, value) => sum + value,
+      0
+    );
+
     const data = Object.entries(totals).map(([key, value]) => ({
       id: key,
-      value: value,
+      value: totalAll > 0 ? (value / totalAll) * 100 : 0,
       label: key
     }));
 
@@ -84,7 +89,9 @@ export default function PieChartComponent({ userId }: UserCredential) {
     <>
       <div className="flex flex-row items-center justify-between mt-[-10px]">
         <div className="flex items-center space-x-2">
-          <span className="dark:text-black">Gastos por categoria</span>
+          <span className="dark:text-black">
+            Porcentagem de gastos por categoria
+          </span>
         </div>
         <div className="z-20">
           <Link href={"/periodo"}>
@@ -98,24 +105,20 @@ export default function PieChartComponent({ userId }: UserCredential) {
       <div className="font-raleway w-full h-80 flex items-center justify-center">
         <div className="dark:text-white z-10 h-[380px] w-[600px]">
           <PieChart
-            colors={["#0081cf", "#00c9a7", "#e09f1f", "#98e288", "#f9f871", "#f08080"]}
+            colors={[
+              "#0081cf",
+              "#00c9a7",
+              "#e09f1f",
+              "#98e288",
+              "#f9f871",
+              "#f08080"
+            ]}
             series={[
               {
                 data: pieChartData,
                 arcLabel: (item) =>
-                  `${
-                    item.value !== 0
-                      ? `${new Intl.NumberFormat("pt-BR", {
-                          style: "currency",
-                          currency: "BRL"
-                        }).format(item.value)}`
-                      : ""
-                  } `,
-                valueFormatter: (item) =>
-                  `${new Intl.NumberFormat("pt-BR", {
-                    style: "currency",
-                    currency: "BRL"
-                  }).format(item.value)}`,
+                  item.value !== 0 ? `${item.value.toFixed(1)}%` : "",
+                valueFormatter: (item) => `${item.value.toFixed(1)}%`,
                 outerRadius: 115
               }
             ]}
