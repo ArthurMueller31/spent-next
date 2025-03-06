@@ -36,6 +36,7 @@ export default function CustomDateBarChart() {
     useState(false);
   const [userSelectedFutureDataModalOpen, setUserSelectedFutureDataModalOpen] =
     useState(false);
+  const [totalExpenses, setTotalExpenses] = useState(0);
 
   useEffect(() => {
     const setUidFromLoggedUser = onAuthStateChanged(auth, (user) => {
@@ -113,8 +114,18 @@ export default function CustomDateBarChart() {
       setSelectedCategory("all");
       setBarChartDates([]);
       setBarChartData([]);
+      setTotalExpenses(0);
       return;
     }
+
+    const calculateFilteredTotal = filteredPurchases.reduce((acc, purchase) => {
+      const totalSpent = purchase.items.reduce<number>(
+        (sum, item) => sum + parseFloat(item.price) * parseFloat(item.quantity),
+        0
+      );
+      return acc + totalSpent;
+    }, 0);
+    setTotalExpenses(calculateFilteredTotal);
 
     // Calcula os totais por data
     const totals: { [date: string]: number } = {};
@@ -231,7 +242,7 @@ export default function CustomDateBarChart() {
 
   return (
     <>
-      <div className="md:pl-64 md:ml-12 px-14 pb-2 pt-[70px] h-screen overflow-auto font-hostGrotesk tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
+      <div className="md:pl-64 md:ml-12 px-14 pb-2 pt-[68px] h-screen overflow-auto font-hostGrotesk tracking-wide bg-gray-50 dark:bg-darkerCustomColor overflow-y-auto">
         <div className="bg-white rounded-lg shadow-lg p-6 dark:bg-white">
           <div className="grid grid-rows-2 2xl:flex 2xl:justify-between mb-20 h-fit sm:mb-10 sm:h-44 xl:mb-0">
             <div className="text-center xl:text-left h-12 mt-5 xl:mt-2">
@@ -389,15 +400,28 @@ export default function CustomDateBarChart() {
               />
             </div>
           </div>
-          <div className="flex justify-start">
-            <Image
-              className="self-center mr-2"
-              src={"icons/info-black.svg"}
-              width={20}
-              height={20}
-              alt="info-icon"
-            />
-            <p className="dark:text-black">Datas ordenadas da menor à maior</p>
+          <div className="grid grid-rows-2 justify-center lg:flex lg:justify-between">
+            <div className="mb-5 text-center lg:mb-0 lg:text-left">
+              Gastos totais com esses filtros:{" "}
+              <strong>
+                {new Intl.NumberFormat("pt-BR", {
+                  style: "currency",
+                  currency: "BRL"
+                }).format(totalExpenses)}
+              </strong>
+            </div>
+            <div className="flex justify-start items-center">
+              <Image
+                className="mr-2"
+                src={"icons/info-black.svg"}
+                width={20}
+                height={20}
+                alt="info-icon"
+              />
+              <p className="dark:text-black text-left">
+                Datas ordenadas da menor à maior
+              </p>
+            </div>
           </div>
         </div>
       </div>

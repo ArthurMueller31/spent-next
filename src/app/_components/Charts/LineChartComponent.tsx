@@ -10,14 +10,14 @@ type UserCredential = {
 };
 
 export function LineChartComponent({ userId }: UserCredential) {
+  const { purchases } = usePurchases(userId);
+
   const [selectedPeriodLineChart, setSelectedPeriodLineChart] = useState(365);
   const [userHasPurchasesInPeriod, setUserHasPurchasesInPeriod] = useState<
     Record<number, boolean>
   >({ 7: true, 30: true, 90: true, 365: true });
   const [lineChartData, setLineChartData] = useState<number[]>([]);
   const [lineChartDates, setLineChartDates] = useState<string[]>([]);
-
-  const { purchases } = usePurchases(userId);
 
   useEffect(() => {
     if (!userId) return;
@@ -105,6 +105,16 @@ export function LineChartComponent({ userId }: UserCredential) {
 
     setUserHasPurchasesInPeriod(purchasesInPeriod);
   }, [userId, purchases, setUserHasPurchasesInPeriod]);
+
+  if (!purchases || purchases.length < 2) {
+    return (
+      <div className="text-center flex justify-center items-center h-full">
+        <p className="font-bold">
+        Adicione duas ou mais compras para exibirmos este gráfico!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <>
