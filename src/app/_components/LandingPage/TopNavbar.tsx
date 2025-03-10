@@ -29,8 +29,8 @@ export default function TopNavbar() {
               className="size-[50] md:size-[60]"
               src={"/images/spent-logo1.png"}
               alt="spent-logo"
-              width={100}
-              height={100}
+              width={60}
+              height={60}
               unoptimized={true}
               priority
             />
