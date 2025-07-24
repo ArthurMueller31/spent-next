@@ -89,7 +89,7 @@ export default function PieChartComponent({ userId }: UserCredential) {
     <>
       <div className="flex flex-row items-center justify-between mt-[-10px]">
         <div className="flex items-center space-x-2">
-          <span className="dark:text-black">
+          <span className="dark:text-black font-medium">
             Porcentagem de gastos por categoria
           </span>
         </div>

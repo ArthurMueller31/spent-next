@@ -73,7 +73,7 @@ export default function BarChartComponent({ userId }: UserCredential) {
     <>
       <div className="flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className="dark:text-black pb-3 md:p-0">
+          <span className="dark:text-black font-medium pb-3 md:p-0">
             Dias com valores em gastos mais altos
           </span>
         </div>
