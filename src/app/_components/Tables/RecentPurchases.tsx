@@ -67,11 +67,11 @@ export default function RecentPurchasesTable({ userId }: UserCredential) {
   return (
     <div className="relative w-full">
       <div className="flex justify-between items-center relative pt-0 xl:pt-10">
-        <span className="dark:text-black">
+        <span className="dark:text-black font-medium">
           Minhas últimas compras (até cinco)
         </span>
         <Link href={"/minhas-compras"}>
-          <button className="flex items-center text-white p-2 rounded-lg font-hostGrotesk border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
+          <button className="flex items-center text-white p-2 rounded-lg font-workSans border-black bg-darkerCustomColor dark:bg-darkerCustomColor dark:text-white hover:bg-gray-800 dark:hover:bg-gray-800">
             Ver todas
             <Image
               src={"./icons/arrow-forward.svg"}

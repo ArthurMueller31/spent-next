@@ -11,6 +11,14 @@ import AddProductsModal from "../../Modals/AddProductsModal";
 import { doc, getDoc } from "firebase/firestore";
 import useSidebarStore from "./sidebarStore";
 import useTotalSpent from "@/hooks/useTotalSpent";
+import {
+  CalendarDays,
+  House,
+  LogOut,
+  SquarePlus,
+  Table2,
+  UserRoundCog
+} from "lucide-react";
 
 export default function Sidebar() {
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false);
@@ -177,24 +185,8 @@ export default function Sidebar() {
               onClick={handleModalToggle}
               className="flex flex-row items-center"
             >
-              <Image
-                className="mr-2 block dark:hidden group-hover:hidden"
-                src={"/icons/sidebar-add.svg"}
-                alt="home-icon"
-                width={30}
-                height={30}
-              />
-              <Image
-                className="mr-2 hidden dark:block group-hover:hidden"
-                src={"/icons/sidebar-add-white.svg"}
-                alt="home-icon"
-                width={30}
-                height={30}
-              />
-              <Image
-                className="mr-2 hidden dark:hidden group-hover:block"
-                src={"/icons/sidebar-add-black.svg"}
-                alt="home-icon"
+              <SquarePlus
+                className="mr-2 block text-gray-600 dark:text-white group-hover:text-black transition-all duration-100"
                 width={30}
                 height={30}
               />
@@ -216,26 +208,15 @@ export default function Sidebar() {
                   : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
               }`}
             >
-              <Image
-                className={` group-hover:hidden ${
-                  pathname === "/home" ? "dark:hidden" : "dark:block"
+              <House
+                className={`group-hover:text-black ${
+                  pathname === "/home"
+                    ? "dark:text-black"
+                    : "dark:text-gray-600"
                 }`}
-                src={"/icons/sidebar-home.svg"}
-                alt="home-icon"
                 width={30}
                 height={30}
               />
-
-              <Image
-                className={`hidden group-hover:block ${
-                  pathname === "/home" ? "dark:block" : "dark:hidden"
-                }`}
-                src={"/icons/sidebar-home-black.svg"}
-                alt="home-icon"
-                width={30}
-                height={30}
-              />
-
               <span
                 className={`mx-4 font-medium ${
                   pathname === "/home" ? "dark:text-black" : ""
@@ -254,22 +235,12 @@ export default function Sidebar() {
                   : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
               }`}
             >
-              <Image
-                className={`group-hover:hidden ${
-                  pathname === "/minhas-compras" ? "dark:hidden" : "dark:block"
+              <Table2
+                className={`group-hover:text-black ${
+                  pathname === "/minhas-compras"
+                    ? "dark:text-black"
+                    : "dark:text-gray-600"
                 }`}
-                src={"/icons/sidebar-table.svg"}
-                alt="table-icon"
-                width={30}
-                height={30}
-              />
-
-              <Image
-                className={`hidden group-hover:block ${
-                  pathname === "/minhas-compras" ? "dark:block" : "dark:hidden"
-                }`}
-                src={"/icons/sidebar-table-black.svg"}
-                alt="table-icon"
                 width={30}
                 height={30}
               />
@@ -292,22 +263,12 @@ export default function Sidebar() {
                   : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
               }`}
             >
-              <Image
-                className={`group-hover:hidden ${
-                  pathname === "/periodo" ? "dark:hidden" : "dark:block"
+              <CalendarDays
+                className={`group-hover:text-black ${
+                  pathname === "/periodo"
+                    ? "dark:text-black"
+                    : "dark:text-gray-600"
                 }`}
-                src={"/icons/sidebar-date-range.svg"}
-                alt="table-icon"
-                width={30}
-                height={30}
-              />
-
-              <Image
-                className={`hidden group-hover:block ${
-                  pathname === "/periodo" ? "dark:block" : "dark:hidden"
-                }`}
-                src={"/icons/sidebar-date-range-black.svg"}
-                alt="table-icon"
                 width={30}
                 height={30}
               />
@@ -330,22 +291,12 @@ export default function Sidebar() {
                   : "hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-700 dark:hover:text-black"
               }`}
             >
-              <Image
-                className={`group-hover:hidden ${
-                  pathname === "/conta" ? "dark:hidden" : "dark:block"
+              <UserRoundCog
+                className={`group-hover:text-black ${
+                  pathname === "/conta"
+                    ? "dark:text-black"
+                    : "dark:text-gray-600"
                 }`}
-                src={"/icons/sidebar-settings.svg"}
-                alt="settings-icon"
-                width={30}
-                height={30}
-              />
-
-              <Image
-                className={`hidden group-hover:block ${
-                  pathname === "/conta" ? "dark:block" : "dark:hidden"
-                }`}
-                src={"/icons/sidebar-settings-black.svg"}
-                alt="settings-icon"
                 width={30}
                 height={30}
               />
@@ -365,21 +316,11 @@ export default function Sidebar() {
               className="group flex items-center px-4 py-2 mt-5 w-full text-gray-600 transition-colors duration-300 transform rounded-md hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:text-gray-400"
               onClick={handleLogout}
             >
-              <Image
-                className="block dark:block group-hover:hidden"
-                src={"/icons/sidebar-logout.svg"}
-                alt="logout-icon"
+              <LogOut
+                className="group-hover:text-black dark:text-gray-600 rotate-180"
                 width={30}
                 height={30}
               />
-              <Image
-                className="hidden group-hover:block dark:hidden"
-                src={"/icons/sidebar-logout-black.svg"}
-                alt="logout-icon"
-                width={30}
-                height={30}
-              />
-
               <span className="mx-4 font-medium">Sair</span>
             </button>
           </nav>

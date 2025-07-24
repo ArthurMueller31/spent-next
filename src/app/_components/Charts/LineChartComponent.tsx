@@ -120,7 +120,7 @@ export function LineChartComponent({ userId }: UserCredential) {
     <>
       <div className="flex flex-col md:flex-row items-center justify-between">
         <div className="flex items-center space-x-2">
-          <span className="dark:text-black text-center md:text-start">
+          <span className="dark:text-black font-medium text-center md:text-start">
             Gastos nos últimos
           </span>
           <select
